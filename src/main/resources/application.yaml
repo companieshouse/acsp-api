@@ -1,0 +1,18 @@
+server:
+  port: 18642
+spring:
+  application:
+    name: acsp-api
+  main:
+    allow-bean-definition-overriding: true
+management:
+  endpoint:
+    health:
+      show-details: "always"
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health
