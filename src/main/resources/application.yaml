@@ -5,6 +5,11 @@ spring:
     name: acsp-api
   main:
     allow-bean-definition-overriding: true
+#Below are the properties to connect to MongoDB. Replace 'collection_name' with the collection you want to access.
+#  data:
+#    mongodb:
+#      uri: ${MONGODB_URL:mongodb://127.0.0.1:27017/collection_name}
+#      collection: ${MONGODB_COLLECTION:collection_name}
 management:
   endpoint:
     health:
@@ -16,3 +21,6 @@ management:
       base-path: /
       exposure:
         include: health
+
+
+
