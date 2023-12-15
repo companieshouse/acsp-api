@@ -4,8 +4,6 @@ import org.springframework.web.bind.annotation.*;
 import uk.gov.companieshouse.acsp.Exception.CompanyNotFoundException;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.service.CompanyProfileApiService;
-import uk.gov.companieshouse.api.company.CompanyProfile;
-import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 
 
 @RestController
