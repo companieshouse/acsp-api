@@ -21,6 +21,7 @@ management:
       base-path: /
       exposure:
         include: health
+ACSP01_COST: 100
 
 
 
