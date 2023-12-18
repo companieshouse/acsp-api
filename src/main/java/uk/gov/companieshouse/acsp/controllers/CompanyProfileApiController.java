@@ -7,7 +7,7 @@ import uk.gov.companieshouse.acsp.service.CompanyProfileApiService;
 
 
 @RestController
-@RequestMapping("/acsp/company-profile")
+@RequestMapping("/acsp")
 public class CompanyProfileApiController {
 
     private final CompanyProfileApiService companyProfileApiService;
@@ -17,11 +17,11 @@ public class CompanyProfileApiController {
         this.companyProfileApiService = companyProfileApiService;
     }
 
-    @GetMapping("/{company-number}")
+    @GetMapping("/company-profile/{company-number}")
     public String getCompanyNumber(@PathVariable("company-number") String companyNumber) throws ServiceException, CompanyNotFoundException {
 
        var companyProfileApi =  companyProfileApiService.getCompanyProfile(companyNumber);
 
-        return companyNumber;
+        return companyProfileApi.getCompanyName();
     }
 }
