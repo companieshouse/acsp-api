@@ -30,5 +30,25 @@ public class ApiClientServiceImpl implements ApiClientService {
     public InternalApiClient getInternalApiClient(String passthroughHeader) throws IOException {
         return ApiSdkManager.getPrivateSDK(passthroughHeader);
     }
+
+    @Override
+    public ApiClient postApiClient(String uri, Object requestBody) {
+        return ApiSdkManager.getSDK();
+    }
+
+    @Override
+    public ApiClient postApiClient(String passthroughHeader, String uri, Object requestBody) throws IOException {
+        return null;
+    }
+
+    @Override
+    public InternalApiClient postInternalApiClient() {
+        return null;
+    }
+
+    @Override
+    public InternalApiClient postInternalApiClient(String passthroughHeader) throws IOException {
+        return null;
+    }
 }
 
