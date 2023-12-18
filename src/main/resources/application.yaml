@@ -24,7 +24,11 @@ management:
       base-path: /
       exposure:
         include: health
+
+api:
+  key: ${CHS_API_KEY}
+  url: ${API_URL}
+
+payments:
+  url: ${PAYMENTS_API_URL}
 ACSP01_COST: 100
-
-
-
