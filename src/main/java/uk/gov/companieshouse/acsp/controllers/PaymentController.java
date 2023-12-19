@@ -19,7 +19,7 @@ public class PaymentController {
     @PostMapping(path="/{transaction-id}/payments")
     public String createPayment(@PathVariable("transaction-id") final String transactionId,
                                             @Valid @RequestBody PaymentDataRequest paymentDataRequest) throws ServiceException {
-        String paymentStatus = paymentService.paymentStatus(paymentDataRequest, transactionId);
+        String paymentStatus = paymentService.createPaymentStatus(paymentDataRequest, transactionId);
         return paymentStatus;
     }
 

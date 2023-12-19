@@ -27,19 +27,19 @@ public class PaymentService {
         this.apiClientService = apiClientService;
     }
 
-    public String paymentStatus(PaymentDataRequest paymentDataRequest, String paymentReference) throws ServiceException {
+    public String createPaymentStatus(PaymentDataRequest paymentDataRequest, String transactionId) throws ServiceException {
         try {
-            String uri = "/private/payments/" + paymentReference + "/payment-details";
+            String uri = "/" + transactionId + "/payment";
             return apiClientService.postApiClient(uri, paymentDataRequest).payment().get(uri).execute().getData().getStatus();
         } catch (URIValidationException e) {
-            throw new ServiceException(String.format(EXCEPTION_MESSAGE, paymentReference), e);
+            throw new ServiceException(String.format(EXCEPTION_MESSAGE, transactionId), e);
         } catch (ApiErrorResponseException e) {
             if (HttpStatus.NOT_FOUND.value() == e.getStatusCode()) {
                 throw new ServiceException("Payment request failed due to " + e.getMessage());
             }
             var message = String.format(
                     EXCEPTION_MESSAGE_WITH_HTTP_CODE,
-                    paymentReference,
+                    transactionId,
                     e.getStatusCode());
             throw new ServiceException(message, e);
         }

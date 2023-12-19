@@ -36,19 +36,5 @@ public class ApiClientServiceImpl implements ApiClientService {
         return ApiSdkManager.getSDK();
     }
 
-    @Override
-    public ApiClient postApiClient(String passthroughHeader, String uri, Object requestBody) throws IOException {
-        return null;
-    }
-
-    @Override
-    public InternalApiClient postInternalApiClient() {
-        return null;
-    }
-
-    @Override
-    public InternalApiClient postInternalApiClient(String passthroughHeader) throws IOException {
-        return null;
-    }
 }
 
