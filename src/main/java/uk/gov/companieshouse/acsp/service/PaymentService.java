@@ -11,6 +11,7 @@ import uk.gov.companieshouse.acsp.model.PaymentDataRequest;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.api.model.payment.PaymentApi;
 
 @Service
 public class PaymentService {
@@ -27,19 +28,35 @@ public class PaymentService {
         this.apiClientService = apiClientService;
     }
 
-    public String createPaymentStatus(PaymentDataRequest paymentDataRequest, String transactionId) throws ServiceException {
+    public String createPaymentStatus(PaymentDataRequest paymentDataRequest) throws ServiceException {
         try {
-            String uri = "/" + transactionId + "/payment";
+            String uri =  "/payments";
             return apiClientService.postApiClient(uri, paymentDataRequest).payment().get(uri).execute().getData().getStatus();
         } catch (URIValidationException e) {
-            throw new ServiceException(String.format(EXCEPTION_MESSAGE, transactionId), e);
+            throw new ServiceException(String.format(EXCEPTION_MESSAGE), e);
         } catch (ApiErrorResponseException e) {
             if (HttpStatus.NOT_FOUND.value() == e.getStatusCode()) {
                 throw new ServiceException("Payment request failed due to " + e.getMessage());
             }
             var message = String.format(
                     EXCEPTION_MESSAGE_WITH_HTTP_CODE,
-                    transactionId,
+                    e.getStatusCode());
+            throw new ServiceException(message, e);
+        }
+    }
+
+    public PaymentApi getPayment(String transactionId) throws ServiceException {
+        try {
+            String uri =  "/" + transactionId + "/payments";
+            return apiClientService.getApiClient().payment().get(uri).execute().getData();
+        } catch (URIValidationException e) {
+            throw new ServiceException(String.format(EXCEPTION_MESSAGE), e);
+        } catch (ApiErrorResponseException e) {
+            if (HttpStatus.NOT_FOUND.value() == e.getStatusCode()) {
+                throw new ServiceException("Payment request failed due to " + e.getMessage());
+            }
+            var message = String.format(
+                    EXCEPTION_MESSAGE_WITH_HTTP_CODE,
                     e.getStatusCode());
             throw new ServiceException(message, e);
         }
