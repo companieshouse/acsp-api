@@ -21,8 +21,8 @@ public class CompanyProfileController {
 
     @GetMapping(value = "/company/{id}")
     public ResponseEntity getCompany(@PathVariable String id, HttpServletRequest request) throws IOException, URIValidationException {
-        String transactionsUri = GET_COMPANY_URI.expand(id).toString();
-        CompanyProfileApi companyProfile = companyApiService.getCompany(request, transactionsUri);
+        String companyUri = GET_COMPANY_URI.expand(id).toString();
+        CompanyProfileApi companyProfile = companyApiService.getCompany(request, companyUri);
         return ResponseEntity.ok(companyProfile);
     }
 }

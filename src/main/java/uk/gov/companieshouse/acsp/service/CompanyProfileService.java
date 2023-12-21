@@ -22,8 +22,8 @@ public class CompanyProfileService {
     }
     public CompanyProfileApi getCompany(HttpServletRequest request, String companyUri) throws IOException, URIValidationException {
 
-        String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-        ApiClient apiClient = apiClientService.getApiClient(passthroughHeader);
+        String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+        ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
         return apiClient.company().get(companyUri).execute().getData();
     }
 
