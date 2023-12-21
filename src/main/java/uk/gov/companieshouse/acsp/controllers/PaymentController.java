@@ -17,21 +17,24 @@ import javax.validation.Valid;
 @RestController
 public class PaymentController {
 
-    private static final UriTemplate GET_PAYMENT_URI = new UriTemplate("/payments");
+    private static final UriTemplate POST_PAYMENT_URI = new UriTemplate("/payments");
+
+    private static final UriTemplate GET_PAYMENT_URI = new UriTemplate("/payments/{payment-id}");
     @Autowired
     private PaymentService paymentService;
 
     @PostMapping(value = "/payments")
     public ResponseEntity createPayment(@Valid @RequestBody PaymentSessionApi paymentSessionApi) throws ApiErrorResponseException, URIValidationException {
-        String paymentUri = GET_PAYMENT_URI.toString();
+        String paymentUri = POST_PAYMENT_URI.toString();
         PaymentApi paymentApi = paymentService.createPaymentStatus(paymentUri, paymentSessionApi);
         return ResponseEntity.ok(paymentApi);
     }
 
-    @GetMapping(path = "/{transaction-id}/payments")
-    public PaymentApi getPayment(@PathVariable("transaction-id") String transactionId) throws ServiceException {
-        PaymentApi payment = paymentService.getPayment(transactionId);
-        return payment;
+    @GetMapping(path = "/payments/{payment-id}")
+    public ResponseEntity getPayment(@PathVariable("payment-id") String paymentId) throws ApiErrorResponseException, URIValidationException {
+        String getPaymentUri = GET_PAYMENT_URI.expand(paymentId).toString();
+        PaymentApi payment = paymentService.getPayment(getPaymentUri);
+        return ResponseEntity.ok(payment);
     }
 
 }
