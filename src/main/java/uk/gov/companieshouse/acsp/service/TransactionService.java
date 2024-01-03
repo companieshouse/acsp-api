@@ -7,10 +7,16 @@ import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_CS;
 
 @Service
 public class TransactionService {
@@ -38,9 +44,21 @@ public class TransactionService {
         return apiClient.transactions().get(transactionsUri).execute().getData();
     }
 
-    public void updateTransaction(Transaction transaction, String passthroughHeader) throws ServiceException {
+    public void updateTransaction(HttpServletRequest request, Transaction transaction) throws ServiceException {
+        String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         try {
             var uri = "/private/transactions/" + transaction.getId();
+
+            String createdUri = "/transactions/" + transaction.getId() + "/acsp/" + "tempACSPId";
+            String costUri = "/transactions/" + transaction.getId() + "/acsp/" + "tempACSPId" + "/costs";
+            var csResource = new Resource();
+            csResource.setKind(FILING_KIND_CS);
+            Map<String, String> linksMap = new HashMap<>();
+            linksMap.put("resource", createdUri);
+            linksMap.put("costs", costUri);
+            csResource.setLinks(linksMap);
+            transaction.setResources(Collections.singletonMap(createdUri, csResource));
+
             var resp = apiClientService.getInternalApiClient(passthroughHeader).privateTransaction().patch(uri, transaction).execute();
 
             if (resp.getStatusCode() != 204) {
