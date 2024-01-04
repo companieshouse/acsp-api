@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.acsp.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.ApiClient;
@@ -10,7 +10,6 @@ import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
-import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,23 +23,27 @@ import static uk.gov.companieshouse.acsp.util.Constants.PAYMENT_REQUIRED_HEADER;
 public class TransactionService {
 
     private final ApiClientService apiClientService;
+    private static final UriTemplate TRANSACTIONS_URI = new UriTemplate("/transactions/{id}");
 
     @Autowired
     public TransactionService(ApiClientService apiClientService) {
         this.apiClientService = apiClientService;
     }
 
-    public Transaction getTransaction(String passThroughHeader, String transactionsUri) throws IOException, URIValidationException {
-        ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
-        return apiClient.transactions().get(transactionsUri).execute().getData();
+    public Transaction getTransaction(String passThroughHeader, String id) throws ServiceException {
+        try {
+            String transactionsUri = TRANSACTIONS_URI.expand(id).toString();
+            ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
+            return apiClient.transactions().get(transactionsUri).execute().getData();
+        } catch (URIValidationException | IOException e) {
+            throw new ServiceException("Error Retrieving Transaction " + id, e);
+        }
     }
 
     public void updateTransaction(String passThroughHeader, Transaction transaction) throws ServiceException {
         try {
             var uri = "/private/transactions/" + transaction.getId();
-
             var resp = apiClientService.getInternalApiClient(passThroughHeader).privateTransaction().patch(uri, transaction).execute();
-
             if (resp.getStatusCode() != 204) {
                 throw new IOException("Invalid Status Code received: " + resp.getStatusCode());
             }
@@ -50,25 +53,20 @@ public class TransactionService {
     }
 
     public boolean closeTransaction(Transaction transaction) throws ServiceException {
-
         try {
             transaction.setStatus(TransactionStatus.CLOSED);
             var uri = "/transactions/" + transaction.getId();
-
             Map<String, Object> headers =
                     apiClientService.getApiClient()
                             .transactions().update(uri, transaction)
                             .execute().getHeaders();
 
             boolean paymentRequired = false;
-
             List<String> paymentRequiredHeaders = (ArrayList) headers.get(PAYMENT_REQUIRED_HEADER);
             if (paymentRequiredHeaders != null) {
                 paymentRequired = true;
             }
-
             return paymentRequired;
-
         } catch (URIValidationException e) {
             throw new ServiceException("Invalid URI for transactions resource", e);
         } catch (ApiErrorResponseException e) {
