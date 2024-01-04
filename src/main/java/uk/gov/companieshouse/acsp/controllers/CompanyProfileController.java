@@ -10,6 +10,7 @@ import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.acsp.service.CompanyProfileService;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
+import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import java.io.IOException;
 
@@ -22,7 +23,8 @@ public class CompanyProfileController {
     @GetMapping(value = "/company/{id}")
     public ResponseEntity getCompany(@PathVariable String id, HttpServletRequest request) throws IOException, URIValidationException {
         String companyUri = GET_COMPANY_URI.expand(id).toString();
-        CompanyProfileApi companyProfile = companyApiService.getCompany(request, companyUri);
+        String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+        CompanyProfileApi companyProfile = companyApiService.getCompany(passThroughHeader, companyUri);
         return ResponseEntity.ok(companyProfile);
     }
 }
