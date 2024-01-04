@@ -12,8 +12,8 @@ import java.io.IOException;
  */
 public interface ApiClientService {
     ApiClient getApiClient();
-    ApiClient getApiClient(String passthroughHeader) throws IOException;
+    ApiClient getApiClient(String passThroughHeader) throws IOException;
 
     InternalApiClient getInternalApiClient();
-    InternalApiClient getInternalApiClient(String passthroughHeader) throws IOException;
+    InternalApiClient getInternalApiClient(String passThroughHeader) throws IOException;
 }

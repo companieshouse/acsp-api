@@ -7,4 +7,5 @@ import uk.gov.companieshouse.acsp.model.ACSPData;
 @Repository
 //For now datatype is String, Change the datatype later accordingly
 public interface ACSPRepository extends MongoRepository<ACSPData, String> {
+
 }
