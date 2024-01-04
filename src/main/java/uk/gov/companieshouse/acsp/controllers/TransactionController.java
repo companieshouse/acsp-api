@@ -11,6 +11,7 @@ import uk.gov.companieshouse.acsp.service.TransactionService;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -28,7 +29,8 @@ public class TransactionController {
     @GetMapping(value = "/transaction/{id}")
     public ResponseEntity getTransaction(@PathVariable String id, HttpServletRequest request) throws IOException, URIValidationException {
         String transactionsUri = TRANSACTIONS_URI.expand(id).toString();
-        Transaction transaction = transactionService.getTransaction(request, transactionsUri);
+        String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+        Transaction transaction = transactionService.getTransaction(passThroughHeader, transactionsUri);
         return ResponseEntity.ok(transaction);
     }
 
@@ -36,9 +38,10 @@ public class TransactionController {
     public ResponseEntity<Object> patchTransaction(@PathVariable String id, HttpServletRequest request) throws IOException, URIValidationException {
         try {
             String transactionsUri = TRANSACTIONS_URI.expand(id).toString();
-            Transaction transaction = transactionService.getTransaction(request, transactionsUri);
+            String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+            Transaction transaction = transactionService.getTransaction(passThroughHeader, transactionsUri);
             updatedTransaction(transaction);
-            transactionService.updateTransaction(request, transaction);
+            transactionService.updateTransaction(passThroughHeader, transaction);
         } catch (ServiceException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -61,7 +64,8 @@ public class TransactionController {
     public ResponseEntity<Object> closeTransaction(@PathVariable String id, HttpServletRequest request) throws IOException, URIValidationException {
         try {
             String transactionsUri = TRANSACTIONS_URI.expand(id).toString();
-            Transaction transaction = transactionService.getTransaction(request, transactionsUri);
+            String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+            Transaction transaction = transactionService.getTransaction(passThroughHeader, transactionsUri);
             boolean isPaymentRequired =  transactionService.closeTransaction(transaction);
             return ResponseEntity.ok().body(isPaymentRequired);
         } catch (ServiceException e) {

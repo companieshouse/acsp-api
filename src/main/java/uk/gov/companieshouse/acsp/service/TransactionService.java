@@ -30,28 +30,16 @@ public class TransactionService {
         this.apiClientService = apiClientService;
     }
 
-    public Transaction getTransaction(String transactionId, String passthroughHeader) throws ServiceException {
-        try {
-            var uri = "/transactions/" + transactionId;
-            return apiClientService.getApiClient(passthroughHeader).transactions().get(uri).execute().getData();
-        } catch (URIValidationException | IOException e) {
-            throw new ServiceException("Error Retrieving Transaction " + transactionId, e);
-        }
-    }
-
-    public Transaction getTransaction(HttpServletRequest request, String transactionsUri) throws IOException, URIValidationException {
-
-        String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-        ApiClient apiClient = apiClientService.getApiClient(passthroughHeader);
+    public Transaction getTransaction(String passThroughHeader, String transactionsUri) throws IOException, URIValidationException {
+        ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
         return apiClient.transactions().get(transactionsUri).execute().getData();
     }
 
-    public void updateTransaction(HttpServletRequest request, Transaction transaction) throws ServiceException {
-        String passthroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+    public void updateTransaction(String passThroughHeader, Transaction transaction) throws ServiceException {
         try {
             var uri = "/private/transactions/" + transaction.getId();
 
-            var resp = apiClientService.getInternalApiClient(passthroughHeader).privateTransaction().patch(uri, transaction).execute();
+            var resp = apiClientService.getInternalApiClient(passThroughHeader).privateTransaction().patch(uri, transaction).execute();
 
             if (resp.getStatusCode() != 204) {
                 throw new IOException("Invalid Status Code received: " + resp.getStatusCode());
