@@ -31,6 +31,7 @@ class CompanyProfileServiceTest {
     private ApiResponse<CompanyProfileApi> apiResponse;
     @InjectMocks
     private CompanyProfileService companyProfileService;
+
     private static final String COMPANY_NUMBER = "12345678";
     private static final String PASS_THROUGH_HEADER = "passthrough";
     @Mock

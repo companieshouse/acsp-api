@@ -20,10 +20,11 @@ class CompanyProfileControllerTest {
 
     @Mock
     private CompanyProfileService companyProfileService;
-   @Mock
+    @Mock
     private HttpServletRequest request;
     @InjectMocks
     private CompanyProfileController companyProfileController;
+
     private static final UriTemplate GET_COMPANY_URI = new UriTemplate("/company/{id}");
     private static final String COMPANY_NUMBER = "12345678";
 
