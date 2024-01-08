@@ -16,4 +16,5 @@ public interface ApiClientService {
 
     InternalApiClient getInternalApiClient();
     InternalApiClient getInternalApiClient(String passThroughHeader) throws IOException;
+    ApiClient postApiClient(String uri, Object requestBody);
 }
