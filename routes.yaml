@@ -3,4 +3,5 @@ group: web
 
 weight: 100
 routes:
-  1: ^/acsp/*
+  1: ^/transaction/(.*)/acsp/(.*)/costs
+  2: ^/transaction/payments/(.*)

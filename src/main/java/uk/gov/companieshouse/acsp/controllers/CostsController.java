@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.acsp.service.CostService;
 import uk.gov.companieshouse.api.model.payment.Cost;
 
+
 import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/transactions/{transaction_id}/acsp/{acsp_id}/costs")
+@RequestMapping("/transaction/{transaction_id}/acsp/{acsp_id}/costs")
 public class CostsController {
 
     private final CostService costService;
@@ -24,7 +25,7 @@ public class CostsController {
 
     @GetMapping
     public ResponseEntity<List<Cost>> getCosts() {
-
+    System.out.println("Entered Costs Controller");
         var cost = costService.getCosts();
 
         return ResponseEntity.ok(Collections.singletonList(cost));
