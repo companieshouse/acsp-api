@@ -16,6 +16,7 @@ import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import java.util.Map;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_CS;
 
 @RestController
+
 public class TransactionController {
     @Autowired
     private TransactionService transactionService;
@@ -37,6 +39,11 @@ public class TransactionController {
         } catch (ServiceException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping(value = "/healthCheck")
+    public String health( )  {
+            return "OK";
     }
 
     @PatchMapping(value = "/transaction/patch/{id}")
@@ -53,8 +60,8 @@ public class TransactionController {
     }
 
     private void updatedTransaction(Transaction transaction) {
-        String createdUri = "/transactions/" + transaction.getId() + "/acsp/" + "tempACSPId";
-        String costUri = "/transactions/" + transaction.getId() + "/acsp/" + "tempACSPId" + "/costs";
+        String createdUri = "/transaction/" + transaction.getId() + "/acsp/" + "tempACSPId";
+        String costUri = "/transaction/" + transaction.getId() + "/acsp/" + "tempACSPId" + "/costs";
         var csResource = new Resource();
         csResource.setKind(FILING_KIND_CS);
         Map<String, String> linksMap = new HashMap<>();

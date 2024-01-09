@@ -2,14 +2,19 @@ package uk.gov.companieshouse.acsp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
+
+
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
-import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.api.handler.payment.request.PaymentCreate;
+import uk.gov.companieshouse.api.model.ApiResponse;
+import uk.gov.companieshouse.api.model.payment.PaymentApi;
+import uk.gov.companieshouse.api.model.payment.PaymentSessionApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,41 +23,22 @@ import java.util.Map;
 
 import static uk.gov.companieshouse.acsp.util.Constants.PAYMENT_REQUIRED_HEADER;
 
-
 @Service
-public class TransactionService {
-
+public class PaymentsService {
     private final ApiClientService apiClientService;
-    private static final UriTemplate TRANSACTIONS_URI = new UriTemplate("/transactions/{id}");
 
     @Autowired
-    public TransactionService(ApiClientService apiClientService) {
+    public PaymentsService(ApiClientService apiClientService) {
         this.apiClientService = apiClientService;
     }
 
-    public Transaction getTransaction(String passThroughHeader, String id) throws ServiceException {
-        try {
-            String transactionsUri = TRANSACTIONS_URI.expand(id).toString();
-            ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
-            return apiClient.transactions().get(transactionsUri).execute().getData();
-        } catch (URIValidationException | IOException e) {
-            throw new ServiceException("Error Retrieving Transaction " + id, e);
-        }
-    }
+    public PaymentApi getPaymentsDetails(String passThroughHeader, Transaction transaction) throws ServiceException {
+        PaymentSessionApi paymentSessionApi = new PaymentSessionApi();
+        paymentSessionApi.setRedirectUri("https://cidev.aws.chdev.org/transactions/117524-754816-491724/company/10000025/confirmation");
+        paymentSessionApi.setReference("company-accounts_TB32652391");
+        paymentSessionApi.setResource("http://api.chs.local:4001/transactions/117524-754816-491724/payment");
+        paymentSessionApi.setState("d7a6a1d8-0da6-4eec-9f2f-455dfa206e28");
 
-    public void updateTransaction(String passThroughHeader, Transaction transaction) throws ServiceException {
-        try {
-            var uri = "/private/transactions/" + transaction.getId();
-            var resp = apiClientService.getInternalApiClient(passThroughHeader).privateTransaction().patch(uri, transaction).execute();
-            if (resp.getStatusCode() != 204) {
-                throw new IOException("Invalid Status Code received: " + resp.getStatusCode());
-            }
-        } catch (IOException | URIValidationException e) {
-            throw new ServiceException("Error Updating Transaction " + transaction.getId(), e);
-        }
-    }
-
-    public boolean closeTransaction(Transaction transaction) throws ServiceException {
         try {
             transaction.setStatus(TransactionStatus.CLOSED);
             var uri = "/transactions/" + transaction.getId();
@@ -63,11 +49,22 @@ public class TransactionService {
 
             boolean paymentRequired = false;
             List<String> paymentRequiredHeaders = (ArrayList) headers.get(PAYMENT_REQUIRED_HEADER);
-            if (paymentRequiredHeaders != null) {
-                paymentRequired = true;
-            }
 
-            return paymentRequired;
+            if (paymentRequiredHeaders != null) {
+                System.out.println(" Payment Entered : " + paymentRequiredHeaders.get(0) );
+                PaymentCreate paymentCreate = null;
+                try {
+                    paymentCreate = apiClientService.getApiClient(passThroughHeader).payment().create("/payments",paymentSessionApi);
+
+                } catch (IOException e) {
+                    System.out.println(" Payment error : " + e.getStackTrace());
+                    throw new RuntimeException(e);
+                }
+                ApiResponse<PaymentApi> paymentsAPI = paymentCreate.execute();
+                System.out.println(" Payment Created : " + paymentsAPI.getData());
+                return paymentsAPI.getData();
+            }
+            return null;
         } catch (URIValidationException e) {
             throw new ServiceException("Invalid URI for transactions resource", e);
         } catch (ApiErrorResponseException e) {

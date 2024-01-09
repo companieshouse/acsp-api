@@ -1,5 +1,5 @@
 server:
-  port: 18642
+  port: 5099
 spring:
   application:
     name: acsp-api

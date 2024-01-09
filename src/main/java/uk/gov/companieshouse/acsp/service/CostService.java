@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.payment.Cost;
 
+
 import java.util.Collections;
 
 @Service
@@ -15,6 +16,7 @@ public class CostService {
     private static final String PAYMENT_ACCOUNT = "data-maintenance";
 
     public Cost getCosts() {
+        System.out.println("Entered Costs Controller");
         var cost = new Cost();
         cost.setAmount(costAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList("credit-card"));

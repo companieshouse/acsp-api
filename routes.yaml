@@ -1,0 +1,7 @@
+app_name: acsp.api.ch.gov.uk
+group: api
+
+weight: 90
+routes:
+  1: ^/transaction/(.*)/acsp/(.*)/costs
+  2: ^/transaction/payments/(.*)
