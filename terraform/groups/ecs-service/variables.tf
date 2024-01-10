@@ -114,7 +114,7 @@ variable "log_level" {
   description = "The log level for services to use: trace, debug, info or error"
 }
 
-variable "authentication_service_version" {
+variable "acsp_api_version" {
   type        = string
-  description = "The version of the authentication-service container to run."
+  description = "The version of the acsp-api container to run."
 }

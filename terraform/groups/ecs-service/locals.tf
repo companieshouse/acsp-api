@@ -17,7 +17,7 @@ locals {
   application_subnet_pattern = local.stack_secrets["application_subnet_pattern"]
   use_set_environment_files  = var.use_set_environment_files
   s3_config_bucket           = data.vault_generic_secret.shared_s3.data["config_bucket_name"]
-  app_environment_filename   = "authentication-service.env"
+  app_environment_filename   = "acsp-api.env"
   vpc_name                   = data.aws_ssm_parameter.secret[format("/%s/%s", local.name_prefix, "vpc-name")].value
 
   # create a map of secret name => secret arn to pass into ecs service module
