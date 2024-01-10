@@ -16,7 +16,6 @@ public class CostService {
     private static final String PAYMENT_ACCOUNT = "data-maintenance";
 
     public Cost getCosts() {
-        System.out.println("Entered Costs Controller");
         var cost = new Cost();
         cost.setAmount(costAmount);
         cost.setAvailablePaymentMethods(Collections.singletonList("credit-card"));
