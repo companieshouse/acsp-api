@@ -25,7 +25,6 @@ public class CostsController {
 
     @GetMapping
     public ResponseEntity<List<Cost>> getCosts() {
-    System.out.println("Entered Costs Controller");
         var cost = costService.getCosts();
 
         return ResponseEntity.ok(Collections.singletonList(cost));
