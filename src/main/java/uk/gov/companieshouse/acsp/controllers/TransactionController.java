@@ -11,12 +11,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.service.TransactionService;
-import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +27,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @GetMapping(value = "/transaction/{id}")
-    public ResponseEntity getTransaction(@PathVariable String id, HttpServletRequest request) throws IOException, URIValidationException {
+    public ResponseEntity getTransaction(@PathVariable String id, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
             Transaction transaction = transactionService.getTransaction(passThroughHeader, id);
@@ -40,7 +38,7 @@ public class TransactionController {
     }
 
     @PatchMapping(value = "/transaction/patch/{id}")
-    public ResponseEntity<Object> patchTransaction(@PathVariable String id, HttpServletRequest request) throws IOException, URIValidationException {
+    public ResponseEntity<Object> patchTransaction(@PathVariable String id, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
             Transaction transaction = transactionService.getTransaction(passThroughHeader, id);
@@ -65,7 +63,7 @@ public class TransactionController {
     }
 
     @PutMapping(value = "/transaction/close/{id}")
-    public ResponseEntity<Object> closeTransaction(@PathVariable String id, HttpServletRequest request) throws IOException, URIValidationException {
+    public ResponseEntity<Object> closeTransaction(@PathVariable String id, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
             Transaction transaction = transactionService.getTransaction(passThroughHeader, id);
