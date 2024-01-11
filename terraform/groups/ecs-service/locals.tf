@@ -59,15 +59,6 @@ locals {
     }
   ]
 
-  # secrets to go in list
-#  task_secrets = concat(local.global_secret_list, local.service_secret_list, [
-#    { "name" : "COOKIE_SECRET", "valueFrom" : "${local.service_secrets_arn_map.cookie_secret}" },
-#    { "name" : "CHS_DEVELOPER_CLIENT_SECRET", "valueFrom" : "${local.service_secrets_arn_map.chs_developer_client_secret}" },
-#    { "name" : "CHS_DEVELOPER_CLIENT_ID", "valueFrom" : "${local.service_secrets_arn_map.chs_developer_client_id}" },
-#    { "name" : "OAUTH2_REQUEST_KEY", "valueFrom" : "${local.service_secrets_arn_map.oauth2_request_key}" },
-#    { "name" : "DEVELOPER_OAUTH2_REQUEST_KEY", "valueFrom" : "${local.service_secrets_arn_map.developer_oauth2_request_key}" },
-#  ])
-
   task_secrets = concat(local.global_secret_list, local.service_secret_list)
 
   task_environment = concat(local.ssm_global_version_map,local.ssm_service_version_map)
