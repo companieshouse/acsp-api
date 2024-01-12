@@ -20,6 +20,10 @@ locals {
   app_environment_filename   = "acsp-api.env"
   vpc_name                   = data.aws_ssm_parameter.secret[format("/%s/%s", local.name_prefix, "vpc-name")].value
 
+  # Enable Eric
+  use_eric_reverse_proxy    = true
+  eric_port                 = "18643" # container port plus 1
+
   # create a map of secret name => secret arn to pass into ecs service module
   # using the trimprefix function to remove the prefixed path from the secret name
   secrets_arn_map = {
@@ -62,4 +66,12 @@ locals {
   task_secrets = concat(local.global_secret_list, local.service_secret_list)
 
   task_environment = concat(local.ssm_global_version_map,local.ssm_service_version_map)
+
+  # get eric secrets from global secrets map
+  eric_secrets = [
+    { "name": "API_KEY", "valueFrom": local.global_secrets_arn_map.eric_api_key },
+    { "name": "AES256_KEY", "valueFrom": local.global_secrets_arn_map.eric_aes256_key }
+  ]
+
+  eric_environment_filename = "eric.env"
 }
