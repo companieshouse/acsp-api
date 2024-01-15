@@ -1,6 +1,0 @@
-app_name: acsp-api
-group: web
-
-weight: 100
-routes:
-  1: ^/acsp/*
