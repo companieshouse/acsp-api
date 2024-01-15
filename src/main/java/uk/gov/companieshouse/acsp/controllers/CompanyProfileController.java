@@ -22,7 +22,7 @@ public class CompanyProfileController {
 
     @GetMapping(value = "/company/{id}")
     public ResponseEntity getCompany(@PathVariable String id, HttpServletRequest request) throws IOException, URIValidationException {
-        String companyUri = GET_COMPANY_URI.expand(id).toString();
+        String companyUri = GET_COMPANY_URI.expand(id.toUpperCase()).toString();
         String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         CompanyProfileApi companyProfile = companyApiService.getCompany(passThroughHeader, companyUri);
         return ResponseEntity.ok(companyProfile);
