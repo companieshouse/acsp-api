@@ -1,5 +1,8 @@
 server:
   port: 18642
+  servlet:
+    context-path: /acsp-api
+
 spring:
   application:
     name: acsp-api
