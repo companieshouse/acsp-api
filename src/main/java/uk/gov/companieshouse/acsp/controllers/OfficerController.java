@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.service.OfficerService;
@@ -24,10 +25,12 @@ public class OfficerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
 
     @GetMapping(value = "/company/{companyNumber}/officers")
-    public ResponseEntity getOfficers(@PathVariable String companyNumber, HttpServletRequest request) {
+    public ResponseEntity getOfficers(@PathVariable String companyNumber,
+                                      @RequestParam(required = false) String registerType,
+                                      HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-            OfficersApi officersApi = officerService.getOfficers(passThroughHeader, companyNumber);
+            OfficersApi officersApi = officerService.getOfficers(passThroughHeader, companyNumber, registerType);
             return ResponseEntity.ok(officersApi);
         } catch (ServiceException e) {
             LOGGER.error("Error Retrieving directors for "+ companyNumber + " Error: "+ e.getCause().getMessage());

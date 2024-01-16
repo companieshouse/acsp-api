@@ -30,23 +30,24 @@ public class OfficerControllerTest {
     private OfficerService officerService;
     private static final String COMPANY_ID = "GFEDCBA";
     private static final String PASSTHROUGH_HEADER = "passthrough";
+    public static final String REGISTER_TYPE_DIRECTORS = "directors";
 
     @Test
     void getOfficers() throws  ServiceException {
         OfficersApi dummyOfficersApi = new OfficersApi();
         dummyOfficersApi.setEtag("123");
-        when(officerService.getOfficers(PASSTHROUGH_HEADER, COMPANY_ID)).thenReturn(dummyOfficersApi);
+        when(officerService.getOfficers(PASSTHROUGH_HEADER, COMPANY_ID, REGISTER_TYPE_DIRECTORS)).thenReturn(dummyOfficersApi);
         when(request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader())).thenReturn(PASSTHROUGH_HEADER);
-        var response = officerController.getOfficers(COMPANY_ID, request);
+        var response = officerController.getOfficers(COMPANY_ID, REGISTER_TYPE_DIRECTORS, request);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void getTransactionServiceException() throws ServiceException {
         doThrow(new ServiceException("ERROR", new IOException())).when(officerService)
-                .getOfficers(PASSTHROUGH_HEADER, COMPANY_ID);
+                .getOfficers(PASSTHROUGH_HEADER, COMPANY_ID, REGISTER_TYPE_DIRECTORS);
         when(request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader())).thenReturn(PASSTHROUGH_HEADER);
-        var response = officerController.getOfficers(COMPANY_ID, request);
+        var response = officerController.getOfficers(COMPANY_ID, REGISTER_TYPE_DIRECTORS, request);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 

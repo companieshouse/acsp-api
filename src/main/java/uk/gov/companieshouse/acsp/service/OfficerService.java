@@ -3,6 +3,7 @@ package uk.gov.companieshouse.acsp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
@@ -17,6 +18,7 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 import java.io.IOException;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
+import static uk.gov.companieshouse.acsp.util.Constants.TRUE;
 
 @Service
 public class OfficerService {
@@ -24,6 +26,8 @@ public class OfficerService {
     private final ApiClientService apiClientService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
+    public static final String DIRECTORS = "directors";
+    public static final Integer ITEMS_PER_PAGE = 100;;
 
     @Autowired
     public OfficerService(ApiClientService apiClientService) {
@@ -33,20 +37,19 @@ public class OfficerService {
     private static final UriTemplate GET_OFFICERS_URI =
         new UriTemplate("/company/{companyNumber}/officers");
 
-    public OfficersApi getOfficers(String passThroughHeader, String companyNumber) throws ServiceException {
+    public OfficersApi getOfficers(String passThroughHeader, String companyNumber, String registerType) throws ServiceException {
         try {
             ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
 
             OfficersApi officersApi;
             int startIndex = 0;
-            int itemsPerPage = 100;
 
-            officersApi = retrieveOfficerAppointments(companyNumber, apiClient, startIndex, itemsPerPage);
+            officersApi = retrieveOfficerAppointments(companyNumber, apiClient, startIndex, registerType);
 
             while (officersApi.getItems().size() < officersApi.getTotalResults()) {
                 try {
-                    startIndex += itemsPerPage;
-                    OfficersApi moreResults = retrieveOfficerAppointments(companyNumber, apiClient, startIndex, itemsPerPage);
+                    startIndex += ITEMS_PER_PAGE;
+                    OfficersApi moreResults = retrieveOfficerAppointments(companyNumber, apiClient, startIndex, registerType);
                     officersApi.getItems().addAll(moreResults.getItems());
                 } catch (ServiceException se) {
                     if (!CollectionUtils.isEmpty(officersApi.getItems())) {
@@ -63,16 +66,17 @@ public class OfficerService {
         }
     }
 
-    private OfficersApi retrieveOfficerAppointments(String companyNumber, ApiClient apiClient, Integer startIndex, Integer itemsPerPage)
+    private OfficersApi retrieveOfficerAppointments(String companyNumber, ApiClient apiClient, Integer startIndex,
+                                                    String registerType)
             throws ServiceException {
         String uri = GET_OFFICERS_URI.expand(companyNumber).toString();
         OfficersApi officersApi = null;
         try {
             OfficersList officersList = apiClient.officers().list(uri);
-            officersList.addQueryParams("items_per_page", itemsPerPage.toString());
+            officersList.addQueryParams("items_per_page", ITEMS_PER_PAGE.toString());
             officersList.addQueryParams("start_index", startIndex.toString());
-            officersList.addQueryParams("register_type", "directors");
-            officersList.addQueryParams("register_view", "true");
+            officersList.addQueryParams("register_type", ObjectUtils.isEmpty(registerType) ? DIRECTORS : registerType);
+            officersList.addQueryParams("register_view", TRUE);
 
             officersApi = officersList.execute().getData();
         } catch (ApiErrorResponseException e) {

@@ -50,6 +50,7 @@ public class OfficerServiceTest {
 
     private static final String PASSTHROUGH_HEADER = "passthrough";
     private static final String OFFICERS_URI = "/company/00000000/officers";
+    public static final String REGISTER_TYPE_DIRECTORS = "directors";
 
 
     @BeforeEach
@@ -65,7 +66,7 @@ public class OfficerServiceTest {
         addOfficerItems(officersApi, 10);
         when(mockApiResponse.getData()).thenReturn(officersApi);
 
-        OfficersApi returnedOfficers = officerService.getOfficers(PASSTHROUGH_HEADER, COMPANY_NUMBER);
+        OfficersApi returnedOfficers = officerService.getOfficers(PASSTHROUGH_HEADER, COMPANY_NUMBER, REGISTER_TYPE_DIRECTORS);
 
         assertNotNull(returnedOfficers);
         assertEquals(10, returnedOfficers.getItems().size());
@@ -75,14 +76,14 @@ public class OfficerServiceTest {
     void testGetOfficersApiErrorResponseExceptionReturnsServiceException()
             throws ApiErrorResponseException, URIValidationException {
         when(mockOfficersList.execute()).thenThrow(ApiErrorResponseException.class);
-        assertThrows(ServiceException.class, () -> officerService.getOfficers(PASSTHROUGH_HEADER, COMPANY_NUMBER));
+        assertThrows(ServiceException.class, () -> officerService.getOfficers(PASSTHROUGH_HEADER, COMPANY_NUMBER, REGISTER_TYPE_DIRECTORS));
     }
 
     @Test
     void testGetOfficersURIValidationExceptionReturnsServiceException()
             throws ApiErrorResponseException, URIValidationException {
         when(mockOfficersList.execute()).thenThrow(URIValidationException.class);
-        assertThrows(ServiceException.class, () -> officerService.getOfficers(PASSTHROUGH_HEADER, COMPANY_NUMBER));
+        assertThrows(ServiceException.class, () -> officerService.getOfficers(PASSTHROUGH_HEADER, COMPANY_NUMBER, REGISTER_TYPE_DIRECTORS));
     }
 
     private OfficersApi createOfficersApi() {
