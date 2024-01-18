@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.ApiClient;
+import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.company.CompanyResourceHandler;
 import uk.gov.companieshouse.api.handler.company.request.CompanyGet;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
@@ -56,4 +57,29 @@ class CompanyProfileServiceTest {
 
         }
 
+    @Test
+    void getCompanyProfileURIException() throws IOException, URIValidationException{
+
+        when(apiClientService.getApiClient(PASS_THROUGH_HEADER)).thenReturn(apiClient);
+        when(apiClient.company()).thenReturn(companyResourceHandler);
+        when(companyResourceHandler.get(COMPANY_NUMBER)).thenReturn(companyGet);
+        when(companyGet.execute()).thenThrow(new URIValidationException("ERROR"));
+
+        assertThrows(ServiceException.class, () -> {
+            companyProfileService.getCompany(PASS_THROUGH_HEADER, COMPANY_NUMBER);
+        });
+    }
+
+    @Test
+    void getCompanyProfileApiErrorResponse() throws IOException, URIValidationException{
+
+        when(apiClientService.getApiClient(PASS_THROUGH_HEADER)).thenReturn(apiClient);
+        when(apiClient.company()).thenReturn(companyResourceHandler);
+        when(companyResourceHandler.get(COMPANY_NUMBER)).thenReturn(companyGet);
+        when(companyGet.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("Error")));
+
+        assertThrows(ServiceException.class, () -> {
+            companyProfileService.getCompany(PASS_THROUGH_HEADER, COMPANY_NUMBER);
+        });
+    }
 }
