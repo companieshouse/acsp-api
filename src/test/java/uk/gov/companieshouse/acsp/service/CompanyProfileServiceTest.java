@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.handler.company.CompanyResourceHandler;
@@ -38,7 +39,7 @@ class CompanyProfileServiceTest {
     private CompanyGet companyGet;
 
         @Test
-        void testGetCompany() throws IOException, URIValidationException {
+        void testGetCompany() throws IOException, URIValidationException, ServiceException {
             CompanyProfileApi companyProfile = new CompanyProfileApi();
             companyProfile.setCompanyNumber(COMPANY_NUMBER);
 
