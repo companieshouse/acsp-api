@@ -81,6 +81,7 @@ module "ecs-service" {
   app_environment_filename  = local.app_environment_filename
   use_set_environment_files = local.use_set_environment_files
 
+
   # Eric variables
   use_eric_reverse_proxy    = local.use_eric_reverse_proxy
   eric_port                 = local.eric_port
