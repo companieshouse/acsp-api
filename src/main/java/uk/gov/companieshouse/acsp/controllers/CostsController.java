@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/transaction/{transaction_id}/acsp/{acsp_id}/costs")
+@RequestMapping("/transactions/{transaction_id}/acsp/{acsp_id}/costs")
 public class CostsController {
 
     private final CostService costService;
