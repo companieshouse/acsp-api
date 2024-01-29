@@ -4,7 +4,7 @@ locals {
   name_prefix               = "${local.stack_name}-${var.environment}"
   global_prefix             = "global-${var.environment}"
   service_name              = "acsp-api"
-  container_port            = "8080" # default Java port to match start script
+  container_port            = "18642" # default Java port to match start script
   docker_repo               = "acsp-api"
   lb_listener_rule_priority = 12
   lb_listener_paths         = ["/acsp-api/*"]
