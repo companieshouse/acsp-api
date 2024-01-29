@@ -21,6 +21,8 @@ management:
         enabled: true
   endpoints:
     web:
+      path-mapping:
+        health: healthcheck
       base-path: /
       exposure:
         include: health
