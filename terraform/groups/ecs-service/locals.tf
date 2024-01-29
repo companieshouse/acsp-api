@@ -6,7 +6,7 @@ locals {
   service_name              = "acsp-api"
   container_port            = "18642" # default Java port to match start script
   docker_repo               = "acsp-api"
-  lb_listener_rule_priority = 14
+  lb_listener_rule_priority = 12
   lb_listener_paths         = ["/acsp-api/*"]
   healthcheck_path          = "/healthcheck" #healthcheck path for acsp-api service
   healthcheck_matcher       = "200"
