@@ -2,6 +2,6 @@
 #
 # Start script for acsp-api
 
-PORT=18642
+PORT=8080
 
 exec java -jar -Dserver.port="${PORT}" "acsp-api.jar"
