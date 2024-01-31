@@ -10,12 +10,15 @@ import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.PAYMENT_REQUIRED_HEADER;
 
 
@@ -24,6 +27,7 @@ public class TransactionService {
 
     private final ApiClientService apiClientService;
     private static final UriTemplate TRANSACTIONS_URI = new UriTemplate("/transactions/{id}");
+    private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
 
     @Autowired
     public TransactionService(ApiClientService apiClientService) {
@@ -48,6 +52,7 @@ public class TransactionService {
                 throw new IOException("Invalid Status Code received: " + resp.getStatusCode());
             }
         } catch (IOException | URIValidationException e) {
+            LOGGER.error("Error updating the transaction", e);
             throw new ServiceException("Error Updating Transaction " + transaction.getId(), e);
         }
     }

@@ -8,4 +8,5 @@ public class Constants {
     public static final String TRANSACTION_ID_KEY = "transaction_id";
     public static final String FILING_KIND_CS = "acsp";
     public static final String PAYMENT_REQUIRED_HEADER = "x-payment-required";
+    public static final String TRUE = "true";
 }
