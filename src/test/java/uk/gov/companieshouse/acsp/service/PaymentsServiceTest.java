@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.powermock.reflect.Whitebox;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.ApiClient;
@@ -18,6 +20,8 @@ import uk.gov.companieshouse.api.model.payment.PaymentApi;
 import uk.gov.companieshouse.api.model.payment.PaymentSessionApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.transaction.TransactionLinks;
+import uk.gov.companieshouse.environment.EnvironmentReader;
+
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,6 +45,7 @@ class PaymentsServiceTest {
     @Mock
     private ApiResponse<PaymentApi> response;
 
+    private  EnvironmentReader environmentReader;
     @InjectMocks
     private PaymentsService paymentsService;
 
@@ -55,6 +60,10 @@ class PaymentsServiceTest {
         TransactionLinks transactionLinks = new TransactionLinks();
         transactionLinks.setPayment("/payments");
         transaction.setLinks(transactionLinks);
+        environmentReader = Mockito.mock(EnvironmentReader.class);
+        Mockito.when(environmentReader.getMandatoryString(Mockito.anyString())).thenReturn("http://chs.local");
+        Whitebox.setInternalState(PaymentsService.class, "environmentReader", environmentReader);
+
     }
     @Test
     void getPaymentDetails_Success() throws IOException, URIValidationException, ServiceException {
