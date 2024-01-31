@@ -22,7 +22,7 @@ locals {
 
   # Enable Eric
   use_eric_reverse_proxy    = true
-  eric_port                 = "18643" # container port plus 1
+  eric_port                 = "18643" # container port plus  1
 
   # create a map of secret name => secret arn to pass into ecs service module
   # using the trimprefix function to remove the prefixed path from the secret name
