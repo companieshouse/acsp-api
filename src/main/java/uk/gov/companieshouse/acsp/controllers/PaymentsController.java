@@ -22,7 +22,7 @@ public class PaymentsController {
     @Autowired
     private PaymentsService paymentsService;
 
-    @PostMapping(value = "/transaction/payments/{id}")
+    @PostMapping(value = "/transaction/{id}/payments")
     public ResponseEntity<Object> getPaymentDetails(@PathVariable String id, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
