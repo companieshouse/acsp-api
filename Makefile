@@ -34,6 +34,9 @@ test-unit:
 test-integration:
 	mvn integration-test verify -Dskip.unit.tests=true failsafe:verify
 
+.PHONY: verify
+verify: test-unit test-integration
+
 .PHONY: package
 package:
 ifndef version
@@ -54,8 +57,8 @@ dist: clean build package
 
 .PHONY: sonar
 sonar:
-	mvn clean package sonar:sonar
+	mvn sonar:sonar
 
 .PHONY: sonar-pr-analysis
 sonar-pr-analysis:
-	mvn clean package sonar:sonar -P sonar-pr-analysis
+	mvn sonar:sonar -P sonar-pr-analysis
