@@ -27,16 +27,15 @@
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
 		<sonar-maven-plugin.version>3.10.0.2594</sonar-maven-plugin.version>
-		<sonar.junit.reportsPath>target/surefire-reports</sonar.junit.reportsPath>
-		<sonar.surefire.reportsPath>target/surefire-reports</sonar.surefire.reportsPath>
-		<sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 	</properties>
 	<profiles>
 		<profile>
 			<id>sonar-pr-analysis</id>
 			<properties>
 				<sonar.pullrequest.base>main</sonar.pullrequest.base>
+				<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+				<sonar.jacoco.reports>${project.build.directory}/site</sonar.jacoco.reports>
+				<sonar.coverage.exclusions>**/model/*</sonar.coverage.exclusions>
 			</properties>
 		</profile>
 	</profiles>
@@ -188,6 +187,12 @@
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>${jacoco-maven-plugin.version}</version>
+					<configuration>
+						<append>true</append>
+						<destFile>${sonar.jacoco.reports}/jacoco.exec</destFile>
+						<dataFile>${sonar.jacoco.reports}/jacoco.exec</dataFile>
+						<outputDirectory>${sonar.jacoco.reports}/jacoco</outputDirectory>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
