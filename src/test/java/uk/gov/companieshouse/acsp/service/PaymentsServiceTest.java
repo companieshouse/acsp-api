@@ -83,7 +83,7 @@ class PaymentsServiceTest {
     void getPaymentDetails_IOException() throws IOException {
 
         when(apiClientService.getApiClient(null)).thenThrow(new IOException("ERROR"));
-        assertThrows(RuntimeException.class,() -> paymentsService.createPaymentSession(null, transaction));
+        assertThrows(ServiceException.class,() -> paymentsService.createPaymentSession(null, transaction));
     }
 
     @Test
@@ -94,7 +94,7 @@ class PaymentsServiceTest {
         when(paymentResourceHandler.create(anyString(), any(PaymentSessionApi.class))).thenReturn(paymentCreate);
         when(paymentCreate.execute()).thenThrow(new URIValidationException("ERROR"));
 
-        assertThrows(RuntimeException.class, () -> {
+        assertThrows(ServiceException.class, () -> {
             paymentsService.createPaymentSession(null, transaction);
         });
     }
@@ -107,6 +107,6 @@ class PaymentsServiceTest {
         when(paymentResourceHandler.create(anyString(), any(PaymentSessionApi.class))).thenReturn(paymentCreate);
         when(paymentCreate.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
-        assertThrows(RuntimeException.class, () -> paymentsService.createPaymentSession(null, transaction));
+        assertThrows(ServiceException.class, () -> paymentsService.createPaymentSession(null, transaction));
     }
 }
