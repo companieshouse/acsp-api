@@ -43,7 +43,7 @@ public class PaymentsService {
         try {
             paymentCreate = apiClientService.getApiClient(passThroughHeader).payment().create("/payments", paymentSessionApi);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ServiceException("Error creating payment session", e);
         }
 
         ApiResponse<PaymentApi> paymentsAPI = null;
@@ -51,10 +51,8 @@ public class PaymentsService {
         try {
             paymentsAPI = paymentCreate.execute();
             return paymentsAPI.getData();
-        } catch (URIValidationException e) {
-            throw new RuntimeException(e);
-        } catch (ApiErrorResponseException e) {
-            throw new RuntimeException(e);
+        } catch (URIValidationException | ApiErrorResponseException e){
+            throw new ServiceException("Error getting payment response", e);
         }
     }
 }

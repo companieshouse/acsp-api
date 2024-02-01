@@ -14,7 +14,6 @@ import uk.gov.companieshouse.api.model.payment.PaymentApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
-import java.io.IOException;
 @RestController
 public class PaymentsController {
     @Autowired
