@@ -27,12 +27,18 @@ build:
 test: test-integration test-unit
 
 .PHONY: test-unit
-test-unit:
-	mvn test -Dskip.integration.tests=true
+test-unit: clean
+	mvn verify -Dskip.unit.tests=false -Dskip.integration.tests=true
+
+.PHONY: test
+test: test-integration test-unit
 
 .PHONY: test-integration
 test-integration:
-	mvn integration-test verify -Dskip.unit.tests=true failsafe:verify
+	mvn integration-test -Dskip.unit.tests=true failsafe:verify
+
+.PHONY: verify
+verify: test-unit test-integration
 
 .PHONY: package
 package:
