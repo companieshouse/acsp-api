@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>uk.gov.companieshouse</groupId>
@@ -27,16 +27,18 @@
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
 		<sonar-maven-plugin.version>3.10.0.2594</sonar-maven-plugin.version>
-		<sonar.junit.reportsPath>target/surefire-reports</sonar.junit.reportsPath>
-		<sonar.surefire.reportsPath>target/surefire-reports</sonar.surefire.reportsPath>
-		<sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 	</properties>
 	<profiles>
 		<profile>
 			<id>sonar-pr-analysis</id>
 			<properties>
-				<sonar.pullrequest.base>main</sonar.pullrequest.base>
+				<sonar.projectKey>uk.gov.companieshouse:acsp-api</sonar.projectKey>
+				<sonar.sources>src/main</sonar.sources>
+				<sonar.tests>src/test</sonar.tests>
+				<sonar.verbose>true</sonar.verbose>
+				<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+				<sonar.jacoco.reports>${project.build.directory}/site</sonar.jacoco.reports>
+				<sonar.coverage.exclusions>**/model/*</sonar.coverage.exclusions>
 			</properties>
 		</profile>
 	</profiles>
@@ -78,10 +80,10 @@
 			<artifactId>mapstruct</artifactId>
 			<version>${org.mapstruct.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>uk.gov.companieshouse</groupId>
 			<artifactId>api-sdk-manager-java-library</artifactId>
@@ -144,6 +146,14 @@
 			<version>4.5.1</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito2 -->
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito2</artifactId>
+			<version>2.0.9</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>mongodb</artifactId>
@@ -180,6 +190,12 @@
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>${jacoco-maven-plugin.version}</version>
+					<configuration>
+						<append>true</append>
+						<destFile>${sonar.jacoco.reports}/jacoco.exec</destFile>
+						<dataFile>${sonar.jacoco.reports}/jacoco.exec</dataFile>
+						<outputDirectory>${sonar.jacoco.reports}/jacoco</outputDirectory>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
