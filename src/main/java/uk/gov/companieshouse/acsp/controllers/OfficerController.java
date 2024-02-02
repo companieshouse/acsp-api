@@ -24,7 +24,7 @@ public class OfficerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
 
-    @GetMapping(value = "/company/{companyNumber}/officers")
+    @GetMapping(value = "/transactions/{transaction_id}/company/{companyNumber}/officers")
     public ResponseEntity getOfficers(@PathVariable String companyNumber,
                                       @RequestParam(required = false) String registerType,
                                       HttpServletRequest request) {

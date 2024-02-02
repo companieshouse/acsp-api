@@ -22,7 +22,7 @@ public class CompanyProfileController {
     @Autowired
     private CompanyProfileService companyApiService;
 
-    @GetMapping(value = "/company/{id}")
+    @GetMapping(value = "/transactions/{transaction_id}/company/{id}")
     public ResponseEntity getCompany(@PathVariable String id, HttpServletRequest request) throws IOException, URIValidationException {
        try{
            String companyUri = GET_COMPANY_URI.expand(id.toUpperCase()).toString();
