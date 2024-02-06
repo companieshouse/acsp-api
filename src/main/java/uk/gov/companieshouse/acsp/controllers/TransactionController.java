@@ -43,7 +43,6 @@ public class TransactionController {
     public ResponseEntity<Object> createTransaction(@RequestBody Transaction transaction, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-            passThroughHeader = "0fec383d-6235-4a6f-9487-4857a8eb669b";
             transactionService.createTransaction(transaction, passThroughHeader);
         } catch (ServiceException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
