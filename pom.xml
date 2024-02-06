@@ -8,8 +8,8 @@
 		<version>2.1.4</version> <!-- lookup parent from repository -->
 	</parent>
 	<artifactId>acsp-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>acsp</name>
+	<version>unversioned</version>
+	<name>acsp-api</name>
 	<description>ACSP workstream</description>
 	<properties>
 		<java.version>21</java.version>
