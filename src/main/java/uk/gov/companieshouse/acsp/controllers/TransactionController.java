@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.acsp.controllers;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.service.TransactionService;
@@ -36,6 +38,20 @@ public class TransactionController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping(value = "/transactions")
+    public ResponseEntity<Object> createTransaction(@RequestBody Transaction transaction, HttpServletRequest request) {
+        try {
+            String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+            passThroughHeader = "0fec383d-6235-4a6f-9487-4857a8eb669b";
+            transactionService.createTransaction(transaction, passThroughHeader);
+        } catch (ServiceException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
 
     @PatchMapping(value = "/transaction/patch/{id}")
     public ResponseEntity<Object> patchTransaction(@PathVariable String id, HttpServletRequest request) {

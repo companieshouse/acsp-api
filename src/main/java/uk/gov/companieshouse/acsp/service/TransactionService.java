@@ -27,6 +27,7 @@ public class TransactionService {
 
     private final ApiClientService apiClientService;
     private static final UriTemplate TRANSACTIONS_URI = new UriTemplate("/transactions/{id}");
+    private static final UriTemplate TRANSACTIONS = new UriTemplate("/transactions");
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
 
     @Autowired
@@ -41,6 +42,16 @@ public class TransactionService {
             return apiClient.transactions().get(transactionsUri).execute().getData();
         } catch (URIValidationException | IOException e) {
             throw new ServiceException("Error Retrieving Transaction " + id, e);
+        }
+    }
+
+    public Transaction createTransaction(Transaction transaction, String passThroughHeader) throws ServiceException {
+        try {
+            String transactionsUri = TRANSACTIONS.toString();
+            ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
+            return apiClient.transactions().create(transactionsUri, transaction).execute().getData();
+        } catch (URIValidationException | IOException e) {
+            throw new ServiceException("Error creating Transaction ", e);
         }
     }
 
