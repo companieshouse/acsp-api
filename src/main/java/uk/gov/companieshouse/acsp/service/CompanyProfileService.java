@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.acsp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
@@ -26,12 +25,11 @@ public class CompanyProfileService {
         try{
             ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
             return apiClient.company().get(companyUri).execute().getData();
-        }catch (ApiErrorResponseException e){
+        } catch (ApiErrorResponseException e){
             throw new ServiceException(e.getStatusCode(), e.getStatusMessage());
         } catch (URIValidationException | IOException e) {
             throw new ServiceException("Error Retrieving Company profile info ", e);
         }
 
     }
-
 }
