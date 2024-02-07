@@ -30,10 +30,10 @@ public class CompanyProfileController {
            CompanyProfileApi companyProfile = companyApiService.getCompany(passThroughHeader, companyUri);
            return ResponseEntity.ok(companyProfile);
        } catch (ServiceException e){
+           if(HttpStatus.NOT_FOUND.value() == e.getStatusCode()){
+               return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+           }
            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
        }
-
-
     }
 }
