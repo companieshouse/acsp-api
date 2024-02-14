@@ -71,6 +71,7 @@ public class TransactionService {
             if (paymentRequiredHeaders != null) {
                 paymentRequired = true;
             }
+
             return paymentRequired;
         } catch (URIValidationException e) {
             throw new ServiceException("Invalid URI for transactions resource", e);

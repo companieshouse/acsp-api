@@ -51,8 +51,8 @@ public class TransactionController {
     }
 
     private void updatedTransaction(Transaction transaction) {
-        String createdUri = "/transactions/" + transaction.getId() + "/acsp/" + "tempACSPId";
-        String costUri = "/transactions/" + transaction.getId() + "/acsp/" + "tempACSPId" + "/costs";
+        String createdUri = "/acsp-api/transactions/" + transaction.getId() + "/acsp/" + "tempACSPId";
+        String costUri = "/acsp-api/transactions/" + transaction.getId() + "/acsp/" + "tempACSPId" + "/costs";
         var csResource = new Resource();
         csResource.setKind(FILING_KIND_CS);
         Map<String, String> linksMap = new HashMap<>();
