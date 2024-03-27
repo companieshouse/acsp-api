@@ -29,4 +29,12 @@ class AcspControllerTest {
         var response = acspController.saveAcspData(acspData);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
+    @Test
+    void getAcsp(){
+        AcspData acspData = new AcspData();
+        when(acspService.getAcsp(any())).thenReturn(acspData);
+        var response = acspController.getAcspData("demo@ch.gov.uk");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
 }

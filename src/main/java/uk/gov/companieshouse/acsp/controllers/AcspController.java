@@ -22,4 +22,10 @@ public class AcspController {
         LOGGER.debug("received request to save acsp data");
         return new ResponseEntity<>(acspService.saveOrUpdateAcsp(acspData), HttpStatus.OK);
     }
+
+    @GetMapping("/acsp/{id}")
+    public ResponseEntity<AcspData> getAcspData(@PathVariable String id){
+        LOGGER.debug("received request to get acsp data");
+        return new ResponseEntity<>(acspService.getAcsp(id), HttpStatus.OK);
+    }
 }
