@@ -26,6 +26,13 @@ public class AcspController {
     @GetMapping("/acsp/{id}")
     public ResponseEntity<AcspData> getAcspData(@PathVariable String id){
         LOGGER.debug("received request to get acsp data");
-        return new ResponseEntity<>(acspService.getAcsp(id), HttpStatus.OK);
+        AcspData acspData = acspService.getAcsp(id);
+        if (acspData == null){
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
+        }else{
+            return new ResponseEntity<>(acspData, HttpStatus.OK);
+        }
+
+
     }
 }
