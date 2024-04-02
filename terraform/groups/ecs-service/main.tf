@@ -19,7 +19,7 @@ terraform {
 }
 
 module "secrets" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=bugfix/fix-list-issue"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=bugfix/fix-list-issue"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
