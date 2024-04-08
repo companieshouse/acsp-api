@@ -7,12 +7,4 @@
         <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson\-databind@.*$</packageUrl>
         <cve>CVE-2023-35116</cve>
     </suppress>
-    <suppress until="2024-09-01Z">
-        <notes><![CDATA[
-   file name: spring-web-6.1.3.jar
-   Fix: The CVE is still under analysis hence no fix for it is available
-   ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org.springframework/spring-web@6.1.3@.*$</packageUrl>
-        <cve>CVE-2024-22243</cve>
-    </suppress>
 </suppressions>
