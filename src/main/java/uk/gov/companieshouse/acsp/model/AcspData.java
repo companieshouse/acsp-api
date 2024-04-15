@@ -17,11 +17,11 @@ public class AcspData {
     private RoleType roleType;
     private Date dateOfBirth;
     private Boolean verified;
-    private Nationality[] nationality;
+    private Nationality[] nationality; // no need of array
     private String countryOfResidence;
     private String businessName;
     private SectorOfWork workSector;
-    private Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies;
+    private Map<Integer,AMLSupervisoryBodies> amlSupervisoryBodies;
     private Company companyDetails;
     private boolean companyAuthCodeProvided;
 
@@ -121,11 +121,11 @@ public class AcspData {
         this.workSector = workSector;
     }
 
-    public Map<AMLSupervisoryBodies, Integer> getAmlSupervisoryBodies() {
+    public Map<Integer, AMLSupervisoryBodies> getAmlSupervisoryBodies() {
         return amlSupervisoryBodies;
     }
 
-    public void setAmlSupervisoryBodies(Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies) {
+    public void setAmlSupervisoryBodies(Map<Integer, AMLSupervisoryBodies> amlSupervisoryBodies) {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
