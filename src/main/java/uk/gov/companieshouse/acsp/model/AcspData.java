@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 import java.util.Map;
 
-@Document
+@Document(collection = "applications")
 public class AcspData {
     @Id
     private String id;
