@@ -11,7 +11,6 @@ public class AcspApplication {
 
 	public static final String APP_NAMESPACE = "acsp-api";
 	public static void main(String[] args) {
-		System.out.println("MAIN running------------");
 		SpringApplication.run(AcspApplication.class, args);
 	}
 

@@ -17,9 +17,9 @@ public class AcspController {
     @Autowired
     private AcspService acspService;
 
-    @PutMapping("/acsp")
+    @PutMapping("/transactions/{transactionId}/acsp")
     public ResponseEntity<AcspData> saveAcspData(@RequestBody AcspData acspData){
-        LOGGER.debug("received request to save acsp data");
+        LOGGER.info("received request to save acsp data");
         return new ResponseEntity<>(acspService.saveOrUpdateAcsp(acspData), HttpStatus.OK);
     }
 
@@ -32,7 +32,6 @@ public class AcspController {
         }else{
             return new ResponseEntity<>(acspData, HttpStatus.OK);
         }
-
-
     }
+
 }
