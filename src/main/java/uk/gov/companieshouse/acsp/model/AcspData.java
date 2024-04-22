@@ -12,7 +12,7 @@ public class AcspData {
     private String id;
     private String firstName;
     private String lastName;
-    private Address[] addresses;
+    private Address[] addresses; // need to match with web
     private TypeOfBusiness typeofBusiness;
     private RoleType roleType;
     private Date dateOfBirth;
@@ -21,7 +21,7 @@ public class AcspData {
     private String countryOfResidence;
     private String businessName;
     private SectorOfWork workSector;
-    private Map<Integer,AMLSupervisoryBodies> amlSupervisoryBodies;
+    private Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies;
     private Company companyDetails;
     private boolean companyAuthCodeProvided;
 
@@ -121,11 +121,11 @@ public class AcspData {
         this.workSector = workSector;
     }
 
-    public Map<Integer, AMLSupervisoryBodies> getAmlSupervisoryBodies() {
+    public Map<AMLSupervisoryBodies, Integer> getAmlSupervisoryBodies() {
         return amlSupervisoryBodies;
     }
 
-    public void setAmlSupervisoryBodies(Map<Integer, AMLSupervisoryBodies> amlSupervisoryBodies) {
+    public void setAmlSupervisoryBodies(Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies) {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
