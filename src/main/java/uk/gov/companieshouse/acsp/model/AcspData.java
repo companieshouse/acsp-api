@@ -12,12 +12,12 @@ public class AcspData {
     private String id;
     private String firstName;
     private String lastName;
-    private Address[] addresses;
-    private TypeOfBusiness typeofBusiness;
+    private Address[] addresses; // need to match with web
+    private TypeOfBusiness typeOfBusiness;
     private RoleType roleType;
     private Date dateOfBirth;
     private Boolean verified;
-    private Nationality[] nationality;
+    private Nationality[] nationality; // no need of array
     private String countryOfResidence;
     private String businessName;
     private SectorOfWork workSector;
@@ -57,12 +57,12 @@ public class AcspData {
         this.addresses = addresses;
     }
 
-    public TypeOfBusiness getTypeofBusiness() {
-        return typeofBusiness;
+    public TypeOfBusiness getTypeOfBusiness() {
+        return typeOfBusiness;
     }
 
-    public void setTypeofBusiness(TypeOfBusiness typeofBusiness) {
-        this.typeofBusiness = typeofBusiness;
+    public void setTypeOfBusiness(TypeOfBusiness typeOfBusiness) {
+        this.typeOfBusiness = typeOfBusiness;
     }
 
     public RoleType getRoleType() {

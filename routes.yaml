@@ -1,6 +1,7 @@
 app_name: acsp-api
-group: web
+group: api
 
 weight: 100
 routes:
   1: ^/acsp/*
+  2: ^/transactions/(.*)/acsp/(.*)

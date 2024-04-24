@@ -17,22 +17,21 @@ public class AcspController {
     @Autowired
     private AcspService acspService;
 
-    @PutMapping("/acsp")
+    @PutMapping("/transactions/{transactionId}/acsp")
     public ResponseEntity<AcspData> saveAcspData(@RequestBody AcspData acspData){
-        LOGGER.debug("received request to save acsp data");
+        LOGGER.info("received request to save acsp data");
         return new ResponseEntity<>(acspService.saveOrUpdateAcsp(acspData), HttpStatus.OK);
     }
 
-    @GetMapping("/acsp/{id}")
+    @GetMapping("/transactions/{transactionId}/acsp/{id}")
     public ResponseEntity<AcspData> getAcspData(@PathVariable String id){
-        LOGGER.debug("received request to get acsp data");
+        LOGGER.info("received request to get acsp data");
         AcspData acspData = acspService.getAcsp(id);
         if (acspData == null){
             return new ResponseEntity<>( HttpStatus.NOT_FOUND);
         }else{
             return new ResponseEntity<>(acspData, HttpStatus.OK);
         }
-
-
     }
+
 }
