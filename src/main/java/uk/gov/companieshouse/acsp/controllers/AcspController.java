@@ -10,20 +10,22 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
+import static uk.gov.companieshouse.acsp.util.Constants.TRANSACTION_ID_KEY;
 
 @RestController
+@RequestMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
 public class AcspController {
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
     @Autowired
     private AcspService acspService;
 
-    @PutMapping("/transactions/{transactionId}/acsp")
+    @PutMapping
     public ResponseEntity<AcspData> saveAcspData(@RequestBody AcspData acspData){
         LOGGER.info("received request to save acsp data");
         return new ResponseEntity<>(acspService.saveOrUpdateAcsp(acspData), HttpStatus.OK);
     }
 
-    @GetMapping("/transactions/{transactionId}/acsp/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<AcspData> getAcspData(@PathVariable String id){
         LOGGER.info("received request to get acsp data");
         AcspData acspData = acspService.getAcsp(id);
