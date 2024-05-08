@@ -59,7 +59,7 @@ public class AcspService {
 
         String submissionId = acspDataDto.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
-        updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
+        updateAcspRegWithMetaData(insertedSubmission, submissionUri, requestId, userId);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var acspTransactionResource = createAcspTransactionResource(submissionUri);
@@ -121,7 +121,7 @@ public class AcspService {
         } catch (JsonProcessingException e) {
             LOGGER.info(e.getMessage());
         }
-        transactionService.updateTransaction(transaction, requestId);
+        transactionService.updateTransaction(requestId,transaction);
 
         LOGGER.info("updateTransaction done");
     }

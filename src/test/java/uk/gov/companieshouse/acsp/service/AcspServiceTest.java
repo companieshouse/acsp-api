@@ -5,38 +5,81 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.acsp.model.AcspData;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import uk.gov.companieshouse.acsp.model.dao.AcspDataDao;
+import uk.gov.companieshouse.acsp.model.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
+import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AcspServiceTest {
+    private static final String REQUEST_ID = "fd4gld5h3jhh";
+    private static final String SUBMISSION_ID = "demo@ch.gov.uk";
+    private static final String USER_ID = "22334455";
+    private static final String TRANSACTION_ID = "12345678";
+
     @InjectMocks
     private AcspService acspService;
 
     @Mock
+    private TransactionService transactionService;
+
+    @Mock
+    private Transaction transaction;
+
+    @Mock
     private AcspRepository acspRepository;
 
+    @Mock
+    private AcspDataDto acspDataDto;
+
+    @Mock
+    private ACSPRegDataDtoDaoMapper acspRegDataDtoDaoMapper;
+
     @Test
-    void saveAcsp(){
-        AcspData acspData = new AcspData();
+    void saveAcsp() throws Exception{
+        AcspDataDto acspData = new AcspDataDto();
         acspData.setId("demo@ch.gov.uk");
-        when(acspRepository.save(any())).thenReturn(acspData);
-        AcspData response = acspService.saveOrUpdateAcsp(acspData);
-        assertEquals(acspData.getId(), response.getId());
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+        doNothing().when(transactionService).updateTransaction(any(), any());
+        ResponseEntity<Object> response = acspService.saveOrUpdateAcsp(transaction,
+                acspDataDto,
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
-    void getAcsp(){
-        AcspData acspData = new AcspData();
-        acspData.setId("demo@ch.gov.uk");
-        when(acspRepository.findById(any())).thenReturn(Optional.of(acspData));
-        AcspData response = acspService.getAcsp("demo@ch.gov.uk");
-        assertEquals(acspData.getId(), response.getId());
+    void testGetSavedAcspWhenFoundSuccessfully() {
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setId(SUBMISSION_ID);
+        when(acspRepository.findById(SUBMISSION_ID)
+        ).thenReturn(Optional.of(acspDataDao));
+        when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao)
+        ).thenReturn(acspDataDto);
+
+        var response = acspService.getAcsp(SUBMISSION_ID);
+        var responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    private Transaction buildTransaction() {
+        Transaction transaction = new Transaction();
+        transaction.setId(TRANSACTION_ID);
+        return transaction;
     }
 }
