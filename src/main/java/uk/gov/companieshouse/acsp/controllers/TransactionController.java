@@ -26,7 +26,7 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    @GetMapping(value = "/transaction/{id}")
+    @GetMapping(value = "/transactions/{id}")
     public ResponseEntity getTransaction(@PathVariable String id, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
@@ -37,13 +37,13 @@ public class TransactionController {
         }
     }
 
-    @PatchMapping(value = "/transaction/patch/{id}")
+    @PatchMapping(value = "/transactions/patch/{id}")
     public ResponseEntity<Object> patchTransaction(@PathVariable String id, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
             Transaction transaction = transactionService.getTransaction(passThroughHeader, id);
             updatedTransaction(transaction);
-            transactionService.updateTransaction(passThroughHeader, transaction);
+            transactionService.updateTransaction(transaction, passThroughHeader);
         } catch (ServiceException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -62,7 +62,7 @@ public class TransactionController {
         transaction.setResources(Collections.singletonMap(createdUri, csResource));
     }
 
-    @PutMapping(value = "/transaction/close/{id}")
+    @PutMapping(value = "/transactions/close/{id}")
     public ResponseEntity<Object> closeTransaction(@PathVariable String id, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());

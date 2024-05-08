@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
+import uk.gov.companieshouse.acsp.util.ApiLogger;
 import uk.gov.companieshouse.api.ApiClient;
+import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -20,6 +22,7 @@ import java.util.Map;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.PAYMENT_REQUIRED_HEADER;
+import static uk.gov.companieshouse.acsp.util.Constants.TRANSACTIONS_PRIVATE_API_PREFIX;
 
 
 @Service
@@ -38,22 +41,32 @@ public class TransactionService {
         try {
             String transactionsUri = TRANSACTIONS_URI.expand(id).toString();
             ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
+            LOGGER.info("Got API client");
             return apiClient.transactions().get(transactionsUri).execute().getData();
         } catch (URIValidationException | IOException e) {
             throw new ServiceException("Error Retrieving Transaction " + id, e);
         }
     }
 
-    public void updateTransaction(String passThroughHeader, Transaction transaction) throws ServiceException {
+    public void updateTransaction(Transaction transaction, String loggingContext) throws ServiceException {
         try {
-            var uri = "/private/transactions/" + transaction.getId();
-            var resp = apiClientService.getInternalApiClient(passThroughHeader).privateTransaction().patch(uri, transaction).execute();
-            if (resp.getStatusCode() != 204) {
-                throw new IOException("Invalid Status Code received: " + resp.getStatusCode());
+            var uri = TRANSACTIONS_PRIVATE_API_PREFIX + transaction.getId();
+
+            // The internal API key client is used here as the transaction service will call back into the OE API to get
+            // the costs (if a costs end-point has already been set on the transaction) and those calls cannot be made
+            // with a user token
+            InternalApiClient apiClient = apiClientService.getInternalApiClient();
+            var patchRequest = apiClient.privateTransaction().patch(uri, transaction);
+            LOGGER.info("patchrequest request created");
+            var response = patchRequest.execute();
+
+            if (response.getStatusCode() != 204) {
+                throw new IOException("Invalid Status Code received from Transactions-api: " + response.getStatusCode());
             }
         } catch (IOException | URIValidationException e) {
-            LOGGER.error("Error updating the transaction", e);
-            throw new ServiceException("Error Updating Transaction " + transaction.getId(), e);
+            var message = "Error Updating Transaction " + transaction.getId();
+            ApiLogger.errorContext(loggingContext, message, e);
+            throw new ServiceException(message, e);
         }
     }
 

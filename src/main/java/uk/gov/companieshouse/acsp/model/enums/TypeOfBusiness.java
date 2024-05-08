@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.acsp.model;
+package uk.gov.companieshouse.acsp.model.enums;
 
 public enum TypeOfBusiness {
     LIMITED_COMPANY("Limited company"),

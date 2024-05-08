@@ -1,29 +1,64 @@
-package uk.gov.companieshouse.acsp.model;
+package uk.gov.companieshouse.acsp.model.dao;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import uk.gov.companieshouse.acsp.model.enums.RoleType;
+import uk.gov.companieshouse.acsp.model.enums.TypeOfBusiness;
 
 import java.util.Date;
 import java.util.Map;
 
 @Document(collection = "applications")
-public class AcspData {
+public class AcspDataDao {
+
     @Id
     private String id;
+
+    @Field("first_name")
     private String firstName;
+
+    @Field("last_name")
     private String lastName;
-    private Address[] addresses; // need to match with web
+
+    @Field("addresses")
+    private AddressDao[] addresses; // need to match with web
+
+    @Field("type_of_business")
     private TypeOfBusiness typeOfBusiness;
+
+    @Field("role_type")
     private RoleType roleType;
+
+    @Field("date_of_birth")
     private Date dateOfBirth;
+
+    @Field("verified")
     private Boolean verified;
-    private Nationality[] nationality; // no need of array
+
+    @Field("nationality")
+    private NationalityDao[] nationality; // no need of array
+
+    @Field("country_of_residence")
     private String countryOfResidence;
+
+    @Field("business_name")
     private String businessName;
-    private SectorOfWork workSector;
-    private Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies;
-    private Company companyDetails;
+
+    @Field("work_sector")
+    private SectorOfWorkDao workSector;
+
+    @Field("aml_supervisory_bodies")
+    private Map<AMLSupervisoryBodiesDao, Integer> amlSupervisoryBodies;
+
+    @Field("company_details")
+    private CompanyDao companyDetails;
+
+    @Field("company_authcode_provided")
     private boolean companyAuthCodeProvided;
+
+    @Field("acsp_data_submission")
+    private AcspDataSubmissionDao acspDataSubmission;
 
     public String getId() {
         return id;
@@ -49,11 +84,11 @@ public class AcspData {
         this.lastName = lastName;
     }
 
-    public Address[] getAddresses() {
+    public AddressDao[] getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(Address[] addresses) {
+    public void setAddresses(AddressDao[] addresses) {
         this.addresses = addresses;
     }
 
@@ -89,11 +124,11 @@ public class AcspData {
         this.verified = verified;
     }
 
-    public Nationality[] getNationality() {
+    public NationalityDao[] getNationality() {
         return nationality;
     }
 
-    public void setNationality(Nationality[] nationality) {
+    public void setNationality(NationalityDao[] nationality) {
         this.nationality = nationality;
     }
 
@@ -113,27 +148,27 @@ public class AcspData {
         this.businessName = businessName;
     }
 
-    public SectorOfWork getWorkSector() {
+    public SectorOfWorkDao getWorkSector() {
         return workSector;
     }
 
-    public void setWorkSector(SectorOfWork workSector) {
+    public void setWorkSector(SectorOfWorkDao workSector) {
         this.workSector = workSector;
     }
 
-    public Map<AMLSupervisoryBodies, Integer> getAmlSupervisoryBodies() {
+    public Map<AMLSupervisoryBodiesDao, Integer> getAmlSupervisoryBodies() {
         return amlSupervisoryBodies;
     }
 
-    public void setAmlSupervisoryBodies(Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies) {
+    public void setAmlSupervisoryBodies(Map<AMLSupervisoryBodiesDao, Integer> amlSupervisoryBodies) {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
-    public Company getCompanyDetails() {
+    public CompanyDao getCompanyDetails() {
         return companyDetails;
     }
 
-    public void setCompanyDetails(Company companyDetails) {
+    public void setCompanyDetails(CompanyDao companyDetails) {
         this.companyDetails = companyDetails;
     }
 
@@ -143,5 +178,13 @@ public class AcspData {
 
     public void setCompanyAuthCodeProvided(boolean companyAuthCodeProvided) {
         this.companyAuthCodeProvided = companyAuthCodeProvided;
+    }
+
+    public AcspDataSubmissionDao getAcspDataSubmission() {
+        return acspDataSubmission;
+    }
+
+    public void setAcspDataSubmission(AcspDataSubmissionDao acspDataSubmission) {
+        this.acspDataSubmission = acspDataSubmission;
     }
 }
