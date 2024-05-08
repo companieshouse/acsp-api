@@ -12,7 +12,6 @@ import uk.gov.companieshouse.acsp.model.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.model.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.ApiLogger;
-import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
@@ -44,9 +43,7 @@ public class AcspService {
 
     public ResponseEntity<Object> saveOrUpdateAcsp(Transaction transaction, AcspDataDto acspData,
                                         String requestId, String userId) throws ServiceException {
-        ResponseEntity<Object> resp =  createAcspData(transaction, acspData, requestId, userId);
-
-        return resp;
+        return createAcspData(transaction, acspData, requestId, userId);
     }
 
     private ResponseEntity<Object> createAcspData(Transaction transaction,
@@ -76,7 +73,7 @@ public class AcspService {
                                            String submissionUri,
                                            String requestId,
                                            String userId) {
-        AcspDataSubmissionDao submission = new AcspDataSubmissionDao();
+        var submission = new AcspDataSubmissionDao();
         submission.setLinks(Collections.singletonMap(LINK_SELF, submissionUri));
         submission.setCreatedAt(LocalDateTime.now());
         submission.setHttpRequestId(requestId);
@@ -89,8 +86,12 @@ public class AcspService {
 
     public ResponseEntity<Object> getAcsp(String id) {
         Optional<AcspDataDao> acspData = acspRepository.findById(id);
-        var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspData.get());
-        return ResponseEntity.ok().body(acspDataDto);
+        if(acspData.isPresent()) {
+            var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspData.get());
+            return ResponseEntity.ok().body(acspDataDto);
+        } else {
+            return null;
+        }
     }
 
 
@@ -111,19 +112,10 @@ public class AcspService {
                                             String submissionUri,
                                             Resource resource,
                                             String requestId) throws ServiceException {
-        LOGGER.info("in updateTransactionWithLinks");
         transaction.setResources(Collections.singletonMap(submissionUri, resource));
-        String resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId); //fix the RESUME_JOURNEY_URI_PATTERN
+        var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId); //fix the RESUME_JOURNEY_URI_PATTERN
         transaction.setResumeJourneyUri(resumeJourneyUri);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            LOGGER.info(objectMapper.writeValueAsString(transaction));
-        } catch (JsonProcessingException e) {
-            LOGGER.info(e.getMessage());
-        }
         transactionService.updateTransaction(requestId,transaction);
-
-        LOGGER.info("updateTransaction done");
     }
 
     private String getSubmissionUri(String transactionId, String submissionId) {

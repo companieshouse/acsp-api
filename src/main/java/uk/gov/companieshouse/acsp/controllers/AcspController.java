@@ -32,16 +32,14 @@ public class AcspController {
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             @RequestBody AcspDataDto acspData) throws ServiceException {
         LOGGER.info("received request to save acsp data");
-        Transaction transaction = transactionService.getTransaction(requestId, transactionId);
-        ResponseEntity<Object> responseEntity = acspService.saveOrUpdateAcsp(transaction, acspData, requestId, userId);
-        return responseEntity;
+        var transaction = transactionService.getTransaction(requestId, transactionId);
+        return acspService.saveOrUpdateAcsp(transaction, acspData, requestId, userId);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getAcspData(@PathVariable(TRANSACTION_ID_KEY) String transactionId,
                                               @PathVariable("id") String id,
-                                              @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId)
-            throws ServiceException {
+                                              @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
         LOGGER.info("received request to get acsp data");
         var acspData = acspService.getAcsp(id);
         if (acspData == null){

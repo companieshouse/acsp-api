@@ -5,9 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
-import uk.gov.companieshouse.acsp.util.ApiLogger;
 import uk.gov.companieshouse.api.ApiClient;
-import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -22,7 +20,6 @@ import java.util.Map;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.PAYMENT_REQUIRED_HEADER;
-import static uk.gov.companieshouse.acsp.util.Constants.TRANSACTIONS_PRIVATE_API_PREFIX;
 
 
 @Service
