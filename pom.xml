@@ -33,6 +33,7 @@
 			<id>sonar-pr-analysis</id>
 			<properties>
 				<sonar.pullrequest.base>main</sonar.pullrequest.base>
+				<sonar.coverage.exclusions>**/model/**/*</sonar.coverage.exclusions>
 			</properties>
 		</profile>
 	</profiles>
