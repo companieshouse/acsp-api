@@ -31,9 +31,6 @@
 	<profiles>
 		<profile>
 			<id>sonar-pr-analysis</id>
-			<properties>
-				<sonar.pullrequest.base>main</sonar.pullrequest.base>
-			</properties>
 		</profile>
 	</profiles>
 	<dependencyManagement>
@@ -258,7 +255,7 @@
 						<image>416670754337.dkr.ecr.eu-west-2.amazonaws.com/ci-corretto-build-21</image>
 					</from>
 					<to>
-						<image>416670754337.dkr.ecr.eu-west-2.amazonaws.com/accounts-association-api</image>
+						<image>my-api-image</image>
 					</to>
 					<container>
 						<expandClasspathDependencies>true</expandClasspathDependencies>
