@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.acsp.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,30 +39,28 @@ public class AcspService {
         this.acspRegDataDtoDaoMapper = acspRegDataDtoDaoMapper;
     }
 
-    public ResponseEntity<Object> saveOrUpdateAcsp(Transaction transaction, AcspDataDto acspData,
-                                        String requestId, String userId) throws ServiceException {
-        return createAcspData(transaction, acspData, requestId, userId);
+    public ResponseEntity<Object> saveAcspRegData(Transaction transaction, AcspDataDto acspData,
+                                                  String requestId, String userId) throws ServiceException {
+        return saveDataAndUpdateTransaction(transaction, acspData, requestId, userId);
     }
 
-    private ResponseEntity<Object> createAcspData(Transaction transaction,
-                                                        AcspDataDto acspDataDto,
-                                                        String requestId,
-                                                        String userId) throws ServiceException {
+    private ResponseEntity<Object> saveDataAndUpdateTransaction(Transaction transaction,
+                                                                AcspDataDto acspDataDto,
+                                                                String requestId,
+                                                                String userId) throws ServiceException {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
-        var insertedSubmission = acspRepository.save(acspDataDao);
-
-        String submissionId = acspDataDto.getId();
+        String submissionId = acspDataDao.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
-        updateAcspRegWithMetaData(insertedSubmission, submissionUri, requestId, userId);
+        updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var acspTransactionResource = createAcspTransactionResource(submissionUri);
-        // submission (aka resource) to the transaction (and potentially also a link for the 'resume' journey)
+        var insertedSubmission = acspRepository.save(acspDataDao);
         updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId);
         ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                 transaction.getId(), insertedSubmission.getId()));
-        acspDataDto.setId(insertedSubmission.getId());
+        acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
         return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
     }
 
@@ -79,7 +75,6 @@ public class AcspService {
         submission.setHttpRequestId(requestId);
         submission.setLastModifiedByUserId(userId);
         acspData.setAcspDataSubmission(submission);
-        acspRepository.save(acspData);
     }
 
 

@@ -53,10 +53,11 @@ class AcspServiceTest {
 
         AcspDataDao acspDataDao = new AcspDataDao();
         acspDataDao.setId("demo@ch.gov.uk");
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
         when(acspRepository.save(any())).thenReturn(acspDataDao);
         doNothing().when(transactionService).updateTransaction(any(), any());
-        ResponseEntity<Object> response = acspService.saveOrUpdateAcsp(transaction,
-                acspDataDto,
+        ResponseEntity<Object> response = acspService.saveAcspRegData(transaction,
+                acspData,
                 REQUEST_ID,
                 USER_ID);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());

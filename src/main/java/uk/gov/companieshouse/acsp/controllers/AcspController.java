@@ -8,7 +8,6 @@ import uk.gov.companieshouse.acsp.Exception.ServiceException;
 import uk.gov.companieshouse.acsp.model.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
 import uk.gov.companieshouse.acsp.service.TransactionService;
-import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -33,7 +32,7 @@ public class AcspController {
             @RequestBody AcspDataDto acspData) throws ServiceException {
         LOGGER.info("received request to save acsp data");
         var transaction = transactionService.getTransaction(requestId, transactionId);
-        return acspService.saveOrUpdateAcsp(transaction, acspData, requestId, userId);
+        return acspService.saveAcspRegData(transaction, acspData, requestId, userId);
     }
 
     @GetMapping("/{id}")

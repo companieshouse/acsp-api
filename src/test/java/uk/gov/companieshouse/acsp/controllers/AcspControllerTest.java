@@ -49,7 +49,7 @@ class AcspControllerTest {
     @Test
     void saveAcsp() throws ServiceException {
         when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
-        when(acspService.saveOrUpdateAcsp(transaction,
+        when(acspService.saveAcspRegData(transaction,
                 acspDataDto,
                 REQUEST_ID,
                 USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
