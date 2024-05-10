@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ServiceExceptionTest {
+class ServiceExceptionTest {
 
     final String MESSAGE_PARAM = "Test Message";
     final int STATUS_CODE = 404;
