@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.acsp.model;
+package uk.gov.companieshouse.acsp.model.enums;
 
 public enum RoleType {
     SOLE_TRADER("Sole Trader"),

@@ -1,8 +1,16 @@
-package uk.gov.companieshouse.acsp.model;
+package uk.gov.companieshouse.acsp.model.dto;
 
-public class Nationality {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class NationalityDto {
+
+    @JsonProperty("first_name")
     private String firstNationality;
+
+    @JsonProperty("second_nationality")
     private String secondNationality;
+
+    @JsonProperty("third_nationality")
     private String thirdNationality;
 
     public String getFirstNationality() {

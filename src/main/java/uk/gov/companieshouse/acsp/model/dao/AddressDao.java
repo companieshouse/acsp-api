@@ -1,12 +1,28 @@
-package uk.gov.companieshouse.acsp.model;
+package uk.gov.companieshouse.acsp.model.dao;
 
-public class Address {
+import org.springframework.data.mongodb.core.mapping.Field;
+
+public class AddressDao {
+
+    @Field("property_details")
     private String propertyDetails;
+
+    @Field("line1")
     private String line1;
+
+    @Field("line2")
     private String line2;
+
+    @Field("town")
     private String town;
+
+    @Field("county")
     private String county;
+
+    @Field("country")
     private String country;
+
+    @Field("postcode")
     private String postcode;
 
     public String getPropertyDetails() {
