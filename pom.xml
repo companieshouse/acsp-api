@@ -32,13 +32,7 @@
 		<profile>
 			<id>sonar-pr-analysis</id>
 			<properties>
-				<sonar.projectKey>uk.gov.companieshouse:acsp-api</sonar.projectKey>
-				<sonar.sources>src/main</sonar.sources>
-				<sonar.tests>src/test</sonar.tests>
-				<sonar.verbose>true</sonar.verbose>
-				<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-				<sonar.jacoco.reports>${project.build.directory}/site</sonar.jacoco.reports>
-				<sonar.coverage.exclusions>**/model/*</sonar.coverage.exclusions>
+				<sonar.pullrequest.base>main</sonar.pullrequest.base>
 			</properties>
 		</profile>
 	</profiles>
