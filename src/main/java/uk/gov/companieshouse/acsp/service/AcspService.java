@@ -3,7 +3,7 @@ package uk.gov.companieshouse.acsp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.acsp.Exception.ServiceException;
+import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 import uk.gov.companieshouse.acsp.model.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.model.dao.AcspDataSubmissionDao;
