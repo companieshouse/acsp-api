@@ -52,8 +52,8 @@ public class TransactionService {
                 throw new IOException("Invalid Status Code received: " + resp.getStatusCode());
             }
         } catch (IOException | URIValidationException e) {
-            LOGGER.error("Error updating the transaction", e);
-            throw new ServiceException("Error Updating Transaction " + transaction.getId(), e);
+            var message = "Error Updating Transaction " + transaction.getId();
+            throw new ServiceException(message, e);
         }
     }
 

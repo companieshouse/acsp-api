@@ -1,14 +1,29 @@
-package uk.gov.companieshouse.acsp.model;
+package uk.gov.companieshouse.acsp.model.dao;
 
+import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.api.appointment.ServiceAddress;
 
-public class Company {
+public class CompanyDao {
+
+    @Field("company_name")
     private String companyName;
+
+    @Field("company_number")
     private String companyNumber;
+
+    @Field("status")
     private String status;
+
+    @Field("incorporation_date")
     private String incorporationDate;
+
+    @Field("company_type")
     private String companyType;
+
+    @Field("registered_office_address")
     private Object registeredOfficeAddress;
+
+    @Field("correspondence_address")
     private ServiceAddress correspondenceAddress;
 
     public String getCompanyName() {
