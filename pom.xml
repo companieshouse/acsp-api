@@ -26,6 +26,7 @@
 		<api-security-java.version>0.4.3</api-security-java.version>
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
+                <sonar.dependencyCheck.htmlReportPath>target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
 		<sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
 	</properties>
 	<profiles>
