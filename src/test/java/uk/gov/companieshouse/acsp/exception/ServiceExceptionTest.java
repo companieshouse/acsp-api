@@ -1,15 +1,8 @@
 package uk.gov.companieshouse.acsp.exception;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import uk.gov.companieshouse.acsp.model.AcspData;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
-
-import javax.validation.constraints.Null;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 public class ServiceExceptionTest {
 
