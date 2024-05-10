@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.acsp.Exception;
+package uk.gov.companieshouse.acsp.exception;
 
 public class ServiceException extends Exception {
 
