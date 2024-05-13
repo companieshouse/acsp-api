@@ -10,9 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.service.CompanyProfileService;
+import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -30,11 +32,15 @@ class CompanyProfileControllerTest {
     private static final String COMPANY_NUMBER = "12345678";
 
     @Test
-    void getCompany(){
+    void getCompany() throws ServiceException{
+        var companyProfile = new CompanyProfileApi();
+        companyProfile.setCompanyNumber("12345678");
 
         String companyUri = GET_COMPANY_URI.expand(COMPANY_NUMBER).toString();
+        when(companyProfileService.getCompany(any(), any())).thenReturn(companyProfile);
         var response = companyProfileController.getCompany(companyUri, request);
 
+        assertEquals(((CompanyProfileApi) response.getBody()).getCompanyNumber(), "12345678");
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
