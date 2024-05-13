@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.UriTemplate;
+import uk.gov.companieshouse.acsp.controller.CompanyProfileController;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.service.CompanyProfileService;
 import uk.gov.companieshouse.api.model.company.CompanyProfileApi;
