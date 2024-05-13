@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.acsp.controller;
+package uk.gov.companieshouse.acsp.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

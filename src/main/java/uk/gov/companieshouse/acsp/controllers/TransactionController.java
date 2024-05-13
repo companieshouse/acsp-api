@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.acsp.controller;
+package uk.gov.companieshouse.acsp.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
