@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.acsp.model.dao;
+package uk.gov.companieshouse.acsp.models.dao;
 
 public enum AMLSupervisoryBodiesDao {
     ACCA("Association of Chartered Certified Accountants (ACCA)"),

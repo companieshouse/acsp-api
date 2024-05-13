@@ -1,10 +1,10 @@
-package uk.gov.companieshouse.acsp.model.dao;
+package uk.gov.companieshouse.acsp.models.dto;
 
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SectorOfWorkDao {
+public class SectorOfWorkDto {
 
-    @Field("whichSector")
+    @JsonProperty("whichSector")
     private String whichSector;
 
     public String getWhichSector() {

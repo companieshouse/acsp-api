@@ -1,63 +1,64 @@
-package uk.gov.companieshouse.acsp.model.dto;
+package uk.gov.companieshouse.acsp.models.dao;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.acsp.model.enums.AMLSupervisoryBodies;
-import uk.gov.companieshouse.acsp.model.enums.RoleType;
-import uk.gov.companieshouse.acsp.model.enums.TypeOfBusiness;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import uk.gov.companieshouse.acsp.models.enums.RoleType;
+import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 
 import java.util.Date;
 import java.util.Map;
 
+@Document(collection = "applications")
+public class AcspDataDao {
 
-public class AcspDataDto {
-
-    @JsonProperty("id")
+    @Id
     private String id;
 
-    @JsonProperty("first_name")
+    @Field("first_name")
     private String firstName;
 
-    @JsonProperty("last_name")
+    @Field("last_name")
     private String lastName;
 
-    @JsonProperty("addresses")
-    private AddressDto[] addresses; // need to match with web
+    @Field("addresses")
+    private AddressDao[] addresses; // need to match with web
 
-    @JsonProperty("typeOfBusiness")
+    @Field("type_of_business")
     private TypeOfBusiness typeOfBusiness;
 
-    @JsonProperty("roleType")
+    @Field("role_type")
     private RoleType roleType;
 
-    @JsonProperty("dateOfBirth")
+    @Field("date_of_birth")
     private Date dateOfBirth;
 
-    @JsonProperty("verified")
+    @Field("verified")
     private Boolean verified;
 
-    @JsonProperty("nationality")
-    private NationalityDto[] nationality; // no need of array
+    @Field("nationality")
+    private NationalityDao[] nationality; // no need of array
 
-    @JsonProperty("countryOfResidence")
+    @Field("country_of_residence")
     private String countryOfResidence;
 
-    @JsonProperty("businessName")
+    @Field("business_name")
     private String businessName;
 
-    @JsonProperty("workSector")
-    private SectorOfWorkDto workSector;
+    @Field("work_sector")
+    private SectorOfWorkDao workSector;
 
-    @JsonProperty("amlSupervisoryBodies")
-    private Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies;
+    @Field("aml_supervisory_bodies")
+    private Map<AMLSupervisoryBodiesDao, Integer> amlSupervisoryBodies;
 
-    @JsonProperty("companyDetails")
-    private CompanyDto companyDetails;
+    @Field("company_details")
+    private CompanyDao companyDetails;
 
-    @JsonProperty("companyAuthCodeProvided")
+    @Field("company_authcode_provided")
     private boolean companyAuthCodeProvided;
 
-    @JsonProperty("acspDataSubmission")
-    private AcspDataSubmissionDto acspDataSubmission;
+    @Field("acsp_data_submission")
+    private AcspDataSubmissionDao acspDataSubmission;
 
     public String getId() {
         return id;
@@ -83,11 +84,11 @@ public class AcspDataDto {
         this.lastName = lastName;
     }
 
-    public AddressDto[] getAddresses() {
+    public AddressDao[] getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(AddressDto[] addresses) {
+    public void setAddresses(AddressDao[] addresses) {
         this.addresses = addresses;
     }
 
@@ -123,11 +124,11 @@ public class AcspDataDto {
         this.verified = verified;
     }
 
-    public NationalityDto[] getNationality() {
+    public NationalityDao[] getNationality() {
         return nationality;
     }
 
-    public void setNationality(NationalityDto[] nationality) {
+    public void setNationality(NationalityDao[] nationality) {
         this.nationality = nationality;
     }
 
@@ -147,27 +148,27 @@ public class AcspDataDto {
         this.businessName = businessName;
     }
 
-    public SectorOfWorkDto getWorkSector() {
+    public SectorOfWorkDao getWorkSector() {
         return workSector;
     }
 
-    public void setWorkSector(SectorOfWorkDto workSector) {
+    public void setWorkSector(SectorOfWorkDao workSector) {
         this.workSector = workSector;
     }
 
-    public Map<AMLSupervisoryBodies, Integer> getAmlSupervisoryBodies() {
+    public Map<AMLSupervisoryBodiesDao, Integer> getAmlSupervisoryBodies() {
         return amlSupervisoryBodies;
     }
 
-    public void setAmlSupervisoryBodies(Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies) {
+    public void setAmlSupervisoryBodies(Map<AMLSupervisoryBodiesDao, Integer> amlSupervisoryBodies) {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
-    public CompanyDto getCompanyDetails() {
+    public CompanyDao getCompanyDetails() {
         return companyDetails;
     }
 
-    public void setCompanyDetails(CompanyDto companyDetails) {
+    public void setCompanyDetails(CompanyDao companyDetails) {
         this.companyDetails = companyDetails;
     }
 
@@ -179,11 +180,11 @@ public class AcspDataDto {
         this.companyAuthCodeProvided = companyAuthCodeProvided;
     }
 
-    public AcspDataSubmissionDto getAcspDataSubmission() {
+    public AcspDataSubmissionDao getAcspDataSubmission() {
         return acspDataSubmission;
     }
 
-    public void setAcspDataSubmission(AcspDataSubmissionDto acspDataSubmission) {
+    public void setAcspDataSubmission(AcspDataSubmissionDao acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
     }
 }
