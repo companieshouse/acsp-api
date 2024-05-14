@@ -40,7 +40,7 @@ class CompanyProfileControllerTest {
         when(companyProfileService.getCompany(any(), any())).thenReturn(companyProfile);
         var response = companyProfileController.getCompany(companyUri, request);
 
-        assertEquals(((CompanyProfileApi) response.getBody()).getCompanyNumber(), "12345678");
+        assertEquals("12345678", ((CompanyProfileApi) response.getBody()).getCompanyNumber());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
