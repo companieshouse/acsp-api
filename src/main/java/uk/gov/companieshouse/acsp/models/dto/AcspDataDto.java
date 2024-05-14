@@ -1,6 +1,9 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.mapping.Field;
+import uk.gov.companieshouse.acsp.models.dao.AddressDao;
+import uk.gov.companieshouse.acsp.models.dao.AmlSupervisoryBodyDao;
 import uk.gov.companieshouse.acsp.models.enums.AMLSupervisoryBodies;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
@@ -14,17 +17,14 @@ public class AcspDataDto {
     @JsonProperty("id")
     private String id;
 
+    @JsonProperty("typeOfBusiness")
+    private TypeOfBusiness typeOfBusiness;
+
     @JsonProperty("first_name")
     private String firstName;
 
     @JsonProperty("last_name")
     private String lastName;
-
-    @JsonProperty("addresses")
-    private AddressDto[] addresses; // need to match with web
-
-    @JsonProperty("typeOfBusiness")
-    private TypeOfBusiness typeOfBusiness;
 
     @JsonProperty("roleType")
     private RoleType roleType;
@@ -47,14 +47,23 @@ public class AcspDataDto {
     @JsonProperty("workSector")
     private SectorOfWorkDto workSector;
 
-    @JsonProperty("amlSupervisoryBodies")
-    private Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies;
+    @JsonProperty("companyAuthCodeProvided")
+    private boolean companyAuthCodeProvided;
 
     @JsonProperty("companyDetails")
     private CompanyDto companyDetails;
 
-    @JsonProperty("companyAuthCodeProvided")
-    private boolean companyAuthCodeProvided;
+    @JsonProperty("name_registered_with_Aml")
+    private String nameRegisteredWithAml;
+
+    @JsonProperty("correspondence_Address")
+    private AddressDto correspondenceAddress;
+
+    @JsonProperty("business_Address")
+    private AddressDto businessAddress;
+
+    @JsonProperty("aml_supervisory_bodies")
+    private AmlSupervisoryBodyDto[] amlSupervisoryBodies;
 
     @JsonProperty("acspDataSubmission")
     private AcspDataSubmissionDto acspDataSubmission;
@@ -81,14 +90,6 @@ public class AcspDataDto {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public AddressDto[] getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(AddressDto[] addresses) {
-        this.addresses = addresses;
     }
 
     public TypeOfBusiness getTypeOfBusiness() {
@@ -155,14 +156,6 @@ public class AcspDataDto {
         this.workSector = workSector;
     }
 
-    public Map<AMLSupervisoryBodies, Integer> getAmlSupervisoryBodies() {
-        return amlSupervisoryBodies;
-    }
-
-    public void setAmlSupervisoryBodies(Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies) {
-        this.amlSupervisoryBodies = amlSupervisoryBodies;
-    }
-
     public CompanyDto getCompanyDetails() {
         return companyDetails;
     }
@@ -185,5 +178,37 @@ public class AcspDataDto {
 
     public void setAcspDataSubmission(AcspDataSubmissionDto acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
+    }
+
+    public String getNameRegisteredWithAml() {
+        return nameRegisteredWithAml;
+    }
+
+    public void setNameRegisteredWithAml(String nameRegisteredWithAml) {
+        this.nameRegisteredWithAml = nameRegisteredWithAml;
+    }
+
+    public AddressDto getCorrespondenceAddress() {
+        return correspondenceAddress;
+    }
+
+    public void setCorrespondenceAddress(AddressDto correspondenceAddress) {
+        this.correspondenceAddress = correspondenceAddress;
+    }
+
+    public AddressDto getBusinessAddress() {
+        return businessAddress;
+    }
+
+    public void setBusinessAddress(AddressDto businessAddress) {
+        this.businessAddress = businessAddress;
+    }
+
+    public AmlSupervisoryBodyDto[] getAmlSupervisoryBodies() {
+        return amlSupervisoryBodies;
+    }
+
+    public void setAmlSupervisoryBodies(AmlSupervisoryBodyDto[] amlSupervisoryBodies) {
+        this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 }
