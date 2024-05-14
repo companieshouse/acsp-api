@@ -1,26 +1,26 @@
-package uk.gov.companieshouse.acsp.model.dto;
+package uk.gov.companieshouse.acsp.models.dao;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-public class AcspDataSubmissionDto {
+public class AcspDataSubmissionDao {
 
-    @JsonProperty("created_at")
+    @Field("created_at")
     private LocalDateTime createdAt;
 
-    @JsonProperty("updated_at")
+    @Field("updated_at")
     private LocalDateTime updatedAt;
 
-    @JsonProperty("links")
+    @Field("links")
     private Map<String, String> links;
 
-    @JsonProperty("last_modified_by_user_id")
+    @Field("last_modified_by_user_id")
 
     private String lastModifiedByUserId;
 
-    @JsonProperty("http_request_id")
+    @Field("http_request_id")
     private String httpRequestId;
 
     public LocalDateTime getCreatedAt() {

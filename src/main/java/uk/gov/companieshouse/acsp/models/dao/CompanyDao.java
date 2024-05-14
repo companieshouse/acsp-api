@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.acsp.model.dao;
+package uk.gov.companieshouse.acsp.models.dao;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.api.appointment.ServiceAddress;

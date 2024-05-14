@@ -1,29 +1,30 @@
-package uk.gov.companieshouse.acsp.model.dto;
+package uk.gov.companieshouse.acsp.models.dao;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-public class AddressDto {
+public class AddressDao {
 
-    @JsonProperty("property_details")
+    @Field("property_details")
     private String propertyDetails;
 
-    @JsonProperty("line1")
+    @Field("line1")
     private String line1;
 
-    @JsonProperty("line2")
+    @Field("line2")
     private String line2;
 
-    @JsonProperty("town")
+    @Field("town")
     private String town;
 
-    @JsonProperty("county")
+    @Field("county")
     private String county;
 
-    @JsonProperty("country")
+    @Field("country")
     private String country;
 
-    @JsonProperty("postcode")
+    @Field("postcode")
     private String postcode;
+
     public String getPropertyDetails() {
         return propertyDetails;
     }

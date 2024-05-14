@@ -24,21 +24,16 @@ build:
 	cp ./target/$(artifact_name)-$(version).jar ./$(artifact_name).jar
 
 .PHONY: test
-test: test-integration test-unit
+test: clean
+	mvn verify
 
 .PHONY: test-unit
 test-unit: clean
 	mvn verify -Dskip.unit.tests=false -Dskip.integration.tests=true
 
-.PHONY: test
-test: test-integration test-unit
-
 .PHONY: test-integration
 test-integration:
 	mvn integration-test -Dskip.unit.tests=true failsafe:verify
-
-.PHONY: verify
-verify: test-unit test-integration
 
 .PHONY: package
 package:

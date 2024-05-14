@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.acsp.model.dto;
+package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.api.appointment.ServiceAddress;

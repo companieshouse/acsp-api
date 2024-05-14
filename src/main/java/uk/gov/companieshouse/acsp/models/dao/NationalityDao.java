@@ -1,16 +1,16 @@
-package uk.gov.companieshouse.acsp.model.dto;
+package uk.gov.companieshouse.acsp.models.dao;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-public class NationalityDto {
+public class NationalityDao {
 
-    @JsonProperty("first_name")
+    @Field("first_name")
     private String firstNationality;
 
-    @JsonProperty("second_nationality")
+    @Field("second_nationality")
     private String secondNationality;
 
-    @JsonProperty("third_nationality")
+    @Field("third_nationality")
     private String thirdNationality;
 
     public String getFirstNationality() {

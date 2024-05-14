@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.companieshouse.acsp.Exception.ServiceException;
+import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.service.TransactionService;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -27,10 +27,10 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @GetMapping(value = "/transactions/{id}")
-    public ResponseEntity getTransaction(@PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<Object> getTransaction(@PathVariable String id, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-            Transaction transaction = transactionService.getTransaction(passThroughHeader, id);
+            var transaction = transactionService.getTransaction(passThroughHeader, id);
             return ResponseEntity.ok(transaction);
         } catch (ServiceException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -41,7 +41,7 @@ public class TransactionController {
     public ResponseEntity<Object> patchTransaction(@PathVariable String id, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-            Transaction transaction = transactionService.getTransaction(passThroughHeader, id);
+            var transaction = transactionService.getTransaction(passThroughHeader, id);
             updatedTransaction(transaction);
             transactionService.updateTransaction(passThroughHeader, transaction);
         } catch (ServiceException e) {
@@ -66,7 +66,7 @@ public class TransactionController {
     public ResponseEntity<Object> closeTransaction(@PathVariable String id, HttpServletRequest request) {
         try {
             String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-            Transaction transaction = transactionService.getTransaction(passThroughHeader, id);
+            var transaction = transactionService.getTransaction(passThroughHeader, id);
             boolean isPaymentRequired =  transactionService.closeTransaction(transaction);
             return ResponseEntity.ok().body(isPaymentRequired);
         } catch (ServiceException e) {
