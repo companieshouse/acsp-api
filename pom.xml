@@ -33,12 +33,6 @@
 			<id>sonar-pr-analysis</id>
 			<properties>
 				<sonar.pullrequest.base>main</sonar.pullrequest.base>
-				<sonar.projectKey>uk.gov.companieshouse:acsp-api</sonar.projectKey>
-				<sonar.sources>src/main</sonar.sources>
-				<sonar.tests>src/test</sonar.tests>
-				<sonar.verbose>true</sonar.verbose>
-				<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-				<sonar.jacoco.reports>${project.build.directory}/target/site</sonar.jacoco.reports>
 			</properties>
 		</profile>
 	</profiles>
@@ -158,12 +152,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>6.1.6</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct</artifactId>
-			<version>${org.mapstruct.version}</version>
 		</dependency>
 
 		<dependency>
