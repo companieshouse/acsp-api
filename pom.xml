@@ -33,6 +33,7 @@
 			<id>sonar-pr-analysis</id>
 			<properties>
 				<sonar.pullrequest.base>main</sonar.pullrequest.base>
+				<sonar.binaries>build/classes</sonar.binaries>
 				<sonar.projectKey>uk.gov.companieshouse:acsp-api</sonar.projectKey>
 				<sonar.sources>src/main</sonar.sources>
 				<sonar.tests>src/test</sonar.tests>
