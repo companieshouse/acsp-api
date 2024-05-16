@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.acsp.models.dao;
 
 import org.springframework.data.mongodb.core.mapping.Field;
+import uk.gov.companieshouse.acsp.models.type.Address;
 import uk.gov.companieshouse.api.appointment.ServiceAddress;
 
 public class CompanyDao {
@@ -21,7 +22,7 @@ public class CompanyDao {
     private String companyType;
 
     @Field("registered_office_address")
-    private Object registeredOfficeAddress;
+    private Address registeredOfficeAddress;
 
     @Field("correspondence_address")
     private ServiceAddress correspondenceAddress;
@@ -66,11 +67,11 @@ public class CompanyDao {
         this.companyType = companyType;
     }
 
-    public Object getRegisteredOfficeAddress() {
+    public Address getRegisteredOfficeAddress() {
         return registeredOfficeAddress;
     }
 
-    public void setRegisteredOfficeAddress(Object registeredOfficeAddress) {
+    public void setRegisteredOfficeAddress(Address registeredOfficeAddress) {
         this.registeredOfficeAddress = registeredOfficeAddress;
     }
 

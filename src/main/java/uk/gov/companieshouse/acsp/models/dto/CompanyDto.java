@@ -1,29 +1,30 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.companieshouse.acsp.models.type.Address;
 import uk.gov.companieshouse.api.appointment.ServiceAddress;
 
 public class CompanyDto {
 
-    @JsonProperty("company_name")
+    @JsonProperty("companyName")
     private String companyName;
 
-    @JsonProperty("company_number")
+    @JsonProperty("companyNumber")
     private String companyNumber;
 
     @JsonProperty("status")
     private String status;
 
-    @JsonProperty("incorporation_date")
+    @JsonProperty("incorporationDate")
     private String incorporationDate;
 
-    @JsonProperty("company_type")
+    @JsonProperty("companyType")
     private String companyType;
 
-    @JsonProperty("registered_office_address")
-    private Object registeredOfficeAddress;
+    @JsonProperty("registeredOfficeAddress")
+    private Address registeredOfficeAddress;
 
-    @JsonProperty("correspondence_address")
+    @JsonProperty("correspondenceAddress")
     private ServiceAddress correspondenceAddress;
 
     public String getCompanyName() {
@@ -66,11 +67,11 @@ public class CompanyDto {
         this.companyType = companyType;
     }
 
-    public Object getRegisteredOfficeAddress() {
+    public Address getRegisteredOfficeAddress() {
         return registeredOfficeAddress;
     }
 
-    public void setRegisteredOfficeAddress(Object registeredOfficeAddress) {
+    public void setRegisteredOfficeAddress(Address registeredOfficeAddress) {
         this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
