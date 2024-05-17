@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class NationalityDto {
 
-    @JsonProperty("first_name")
+    @JsonProperty("firstNationality")
     private String firstNationality;
 
-    @JsonProperty("second_nationality")
+    @JsonProperty("secondNationality")
     private String secondNationality;
 
-    @JsonProperty("third_nationality")
+    @JsonProperty("thirdNationality")
     private String thirdNationality;
 
     public String getFirstNationality() {

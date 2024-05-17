@@ -1,13 +1,14 @@
 package uk.gov.companieshouse.acsp.models.dao;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
+import uk.gov.companieshouse.acsp.models.type.Address;
 
 import java.util.Date;
-import java.util.Map;
 
 @Document(collection = "applications")
 public class AcspDataDao {
@@ -21,8 +22,17 @@ public class AcspDataDao {
     @Field("last_name")
     private String lastName;
 
-    @Field("addresses")
-    private AddressDao[] addresses; // need to match with web
+    @Field("middle_name")
+    private String middleName;
+
+    @Field("email")
+    private String email;
+
+    @Field("correspondence_address")
+    private Address correspondenceAddress;
+
+    @Field("business_address")
+    private Address businessAddress;
 
     @Field("type_of_business")
     private TypeOfBusiness typeOfBusiness;
@@ -37,7 +47,7 @@ public class AcspDataDao {
     private Boolean verified;
 
     @Field("nationality")
-    private NationalityDao[] nationality; // no need of array
+    private NationalityDao nationality;
 
     @Field("country_of_residence")
     private String countryOfResidence;
@@ -46,10 +56,10 @@ public class AcspDataDao {
     private String businessName;
 
     @Field("work_sector")
-    private SectorOfWorkDao workSector;
+    private String workSector;
 
     @Field("aml_supervisory_bodies")
-    private Map<AMLSupervisoryBodiesDao, Integer> amlSupervisoryBodies;
+    private AMLSupervisoryBodiesDao[] amlSupervisoryBodies;
 
     @Field("company_details")
     private CompanyDao companyDetails;
@@ -59,6 +69,9 @@ public class AcspDataDao {
 
     @Field("acsp_data_submission")
     private AcspDataSubmissionDao acspDataSubmission;
+
+    @JsonProperty("how_are_you_registered_with_aml")
+    private String howAreYouRegisteredWithAML;
 
     public String getId() {
         return id;
@@ -84,12 +97,36 @@ public class AcspDataDao {
         this.lastName = lastName;
     }
 
-    public AddressDao[] getAddresses() {
-        return addresses;
+    public String getMiddleName() {
+        return middleName;
     }
 
-    public void setAddresses(AddressDao[] addresses) {
-        this.addresses = addresses;
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Address getCorrespondenceAddresses() {
+        return correspondenceAddress;
+    }
+
+    public void setCorrespondenceAddresses(Address correspondenceAddresses) {
+        this.correspondenceAddress = correspondenceAddresses;
+    }
+
+    public Address getBusinessAddress() {
+        return businessAddress;
+    }
+
+    public void setBusinessAddress(Address businessAddress) {
+        this.businessAddress = businessAddress;
     }
 
     public TypeOfBusiness getTypeOfBusiness() {
@@ -124,11 +161,11 @@ public class AcspDataDao {
         this.verified = verified;
     }
 
-    public NationalityDao[] getNationality() {
+    public NationalityDao getNationality() {
         return nationality;
     }
 
-    public void setNationality(NationalityDao[] nationality) {
+    public void setNationality(NationalityDao nationality) {
         this.nationality = nationality;
     }
 
@@ -148,20 +185,12 @@ public class AcspDataDao {
         this.businessName = businessName;
     }
 
-    public SectorOfWorkDao getWorkSector() {
+    public String getWorkSector() {
         return workSector;
     }
 
-    public void setWorkSector(SectorOfWorkDao workSector) {
+    public void setWorkSector(String workSector) {
         this.workSector = workSector;
-    }
-
-    public Map<AMLSupervisoryBodiesDao, Integer> getAmlSupervisoryBodies() {
-        return amlSupervisoryBodies;
-    }
-
-    public void setAmlSupervisoryBodies(Map<AMLSupervisoryBodiesDao, Integer> amlSupervisoryBodies) {
-        this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
     public CompanyDao getCompanyDetails() {
@@ -186,5 +215,21 @@ public class AcspDataDao {
 
     public void setAcspDataSubmission(AcspDataSubmissionDao acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
+    }
+
+    public AMLSupervisoryBodiesDao[] getAmlSupervisoryBodies() {
+        return amlSupervisoryBodies;
+    }
+
+    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDao[] amlSupervisoryBodies) {
+        this.amlSupervisoryBodies = amlSupervisoryBodies;
+    }
+
+    public String getHowAreYouRegisteredWithAML() {
+        return howAreYouRegisteredWithAML;
+    }
+
+    public void setHowAreYouRegisteredWithAML(String howAreYouRegisteredWithAML) {
+        this.howAreYouRegisteredWithAML = howAreYouRegisteredWithAML;
     }
 }

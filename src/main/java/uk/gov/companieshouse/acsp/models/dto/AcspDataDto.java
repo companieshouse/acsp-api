@@ -1,12 +1,11 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.acsp.models.enums.AMLSupervisoryBodies;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
+import uk.gov.companieshouse.acsp.models.type.Address;
 
 import java.util.Date;
-import java.util.Map;
 
 
 public class AcspDataDto {
@@ -14,14 +13,23 @@ public class AcspDataDto {
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("first_name")
+    @JsonProperty("firstName")
     private String firstName;
 
-    @JsonProperty("last_name")
+    @JsonProperty("middleName")
+    private String middleName;
+
+    @JsonProperty("lastName")
     private String lastName;
 
-    @JsonProperty("addresses")
-    private AddressDto[] addresses; // need to match with web
+    @JsonProperty("email")
+    private String email;
+
+    @JsonProperty("correspondenceAddress")
+    private Address correspondenceAddress;
+
+    @JsonProperty("businessAddress")
+    private Address businessAddress;
 
     @JsonProperty("typeOfBusiness")
     private TypeOfBusiness typeOfBusiness;
@@ -36,7 +44,7 @@ public class AcspDataDto {
     private Boolean verified;
 
     @JsonProperty("nationality")
-    private NationalityDto[] nationality; // no need of array
+    private NationalityDto nationality;
 
     @JsonProperty("countryOfResidence")
     private String countryOfResidence;
@@ -45,10 +53,10 @@ public class AcspDataDto {
     private String businessName;
 
     @JsonProperty("workSector")
-    private SectorOfWorkDto workSector;
+    private String workSector;
 
     @JsonProperty("amlSupervisoryBodies")
-    private Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies;
+    private AMLSupervisoryBodiesDto[] amlSupervisoryBodies;
 
     @JsonProperty("companyDetails")
     private CompanyDto companyDetails;
@@ -58,6 +66,9 @@ public class AcspDataDto {
 
     @JsonProperty("acspDataSubmission")
     private AcspDataSubmissionDto acspDataSubmission;
+
+    @JsonProperty("howAreYouRegisteredWithAML")
+    private String howAreYouRegisteredWithAML;
 
     public String getId() {
         return id;
@@ -75,6 +86,14 @@ public class AcspDataDto {
         this.firstName = firstName;
     }
 
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
     public String getLastName() {
         return lastName;
     }
@@ -83,12 +102,28 @@ public class AcspDataDto {
         this.lastName = lastName;
     }
 
-    public AddressDto[] getAddresses() {
-        return addresses;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAddresses(AddressDto[] addresses) {
-        this.addresses = addresses;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Address getCorrespondenceAddresses() {
+        return correspondenceAddress;
+    }
+
+    public void setCorrespondenceAddresses(Address correspondenceAddresses) {
+        this.correspondenceAddress = correspondenceAddresses;
+    }
+
+    public Address getBusinessAddress() {
+        return businessAddress;
+    }
+
+    public void setBusinessAddress(Address businessAddress) {
+        this.businessAddress = businessAddress;
     }
 
     public TypeOfBusiness getTypeOfBusiness() {
@@ -123,11 +158,11 @@ public class AcspDataDto {
         this.verified = verified;
     }
 
-    public NationalityDto[] getNationality() {
+    public NationalityDto getNationality() {
         return nationality;
     }
 
-    public void setNationality(NationalityDto[] nationality) {
+    public void setNationality(NationalityDto nationality) {
         this.nationality = nationality;
     }
 
@@ -147,20 +182,12 @@ public class AcspDataDto {
         this.businessName = businessName;
     }
 
-    public SectorOfWorkDto getWorkSector() {
+    public String getWorkSector() {
         return workSector;
     }
 
-    public void setWorkSector(SectorOfWorkDto workSector) {
+    public void setWorkSector(String workSector) {
         this.workSector = workSector;
-    }
-
-    public Map<AMLSupervisoryBodies, Integer> getAmlSupervisoryBodies() {
-        return amlSupervisoryBodies;
-    }
-
-    public void setAmlSupervisoryBodies(Map<AMLSupervisoryBodies, Integer> amlSupervisoryBodies) {
-        this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
     public CompanyDto getCompanyDetails() {
@@ -185,5 +212,21 @@ public class AcspDataDto {
 
     public void setAcspDataSubmission(AcspDataSubmissionDto acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
+    }
+
+    public String getHowAreYouRegisteredWithAML() {
+        return howAreYouRegisteredWithAML;
+    }
+
+    public void setHowAreYouRegisteredWithAML(String howAreYouRegisteredWithAML) {
+        this.howAreYouRegisteredWithAML = howAreYouRegisteredWithAML;
+    }
+
+    public AMLSupervisoryBodiesDto[] getAmlSupervisoryBodies() {
+        return amlSupervisoryBodies;
+    }
+
+    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDto[] amlSupervisoryBodies) {
+        this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 }

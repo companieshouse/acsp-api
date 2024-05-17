@@ -1,14 +1,15 @@
-package uk.gov.companieshouse.acsp.models.dao;
+package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.acsp.models.enums.AMLSupervisoryBodies;
 
-public class AMLSupervisoryBodiesDao {
-    @JsonProperty("aml_supervisory_body")
-//    private AMLSupervisoryBodies amlSupervisoryBody;   //this needs to be fixed in web
+public class AMLSupervisoryBodiesDto {
+
+    @JsonProperty("amlSupervisoryBody")
+//    private AMLSupervisoryBodies amlSupervisoryBody; //this needs to be fixed in web
     private String amlSupervisoryBody;
 
-    @JsonProperty("membership_id")
+    @JsonProperty("membershipId")
     private String membershipId;
 
     public String getMembershipId() {
@@ -26,6 +27,7 @@ public class AMLSupervisoryBodiesDao {
 //    public void setAmlSupervisoryBody(AMLSupervisoryBodies amlSupervisoryBody) {
 //        this.amlSupervisoryBody = amlSupervisoryBody;
 //    }
+
 
     public String getAmlSupervisoryBody() {
         return amlSupervisoryBody;

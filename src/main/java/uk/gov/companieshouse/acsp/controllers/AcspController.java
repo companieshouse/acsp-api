@@ -44,7 +44,7 @@ public class AcspController {
         if (acspData == null){
             return new ResponseEntity<>( HttpStatus.NOT_FOUND);
         }else{
-            return new ResponseEntity<>(acspData, HttpStatus.OK);
+            return acspData;
         }
     }
 
