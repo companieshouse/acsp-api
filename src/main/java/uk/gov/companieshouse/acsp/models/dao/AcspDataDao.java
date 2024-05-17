@@ -29,7 +29,7 @@ public class AcspDataDao {
     private String email;
 
     @Field("correspondence_address")
-    private Address correspondenceAddresses;
+    private Address correspondenceAddress;
 
     @Field("business_address")
     private Address businessAddress;
@@ -114,11 +114,11 @@ public class AcspDataDao {
     }
 
     public Address getCorrespondenceAddresses() {
-        return correspondenceAddresses;
+        return correspondenceAddress;
     }
 
     public void setCorrespondenceAddresses(Address correspondenceAddresses) {
-        this.correspondenceAddresses = correspondenceAddresses;
+        this.correspondenceAddress = correspondenceAddresses;
     }
 
     public Address getBusinessAddress() {

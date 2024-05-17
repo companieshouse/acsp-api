@@ -26,7 +26,7 @@ public class AcspDataDto {
     private String email;
 
     @JsonProperty("correspondenceAddress")
-    private Address correspondenceAddresses;
+    private Address correspondenceAddress;
 
     @JsonProperty("businessAddress")
     private Address businessAddress;
@@ -111,11 +111,11 @@ public class AcspDataDto {
     }
 
     public Address getCorrespondenceAddresses() {
-        return correspondenceAddresses;
+        return correspondenceAddress;
     }
 
     public void setCorrespondenceAddresses(Address correspondenceAddresses) {
-        this.correspondenceAddresses = correspondenceAddresses;
+        this.correspondenceAddress = correspondenceAddresses;
     }
 
     public Address getBusinessAddress() {
