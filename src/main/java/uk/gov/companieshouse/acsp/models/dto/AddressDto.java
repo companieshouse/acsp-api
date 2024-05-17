@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AddressDto {
 
-    @JsonProperty("property_details")
+    @JsonProperty("propertyDetails")
     private String propertyDetails;
 
     @JsonProperty("line1")

@@ -24,8 +24,6 @@ public class CompanyDto {
     @JsonProperty("registeredOfficeAddress")
     private Address registeredOfficeAddress;
 
-    @JsonProperty("correspondenceAddress")
-    private ServiceAddress correspondenceAddress;
 
     public String getCompanyName() {
         return companyName;
@@ -75,11 +73,4 @@ public class CompanyDto {
         this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
-    public ServiceAddress getCorrespondenceAddress() {
-        return correspondenceAddress;
-    }
-
-    public void setCorrespondenceAddress(ServiceAddress correspondenceAddress) {
-        this.correspondenceAddress = correspondenceAddress;
-    }
 }

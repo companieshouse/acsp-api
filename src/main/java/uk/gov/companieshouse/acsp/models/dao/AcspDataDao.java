@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.acsp.models.dao;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -27,7 +28,7 @@ public class AcspDataDao {
     @Field("email")
     private String email;
 
-    @Field("correspondence_addresses")
+    @Field("correspondence_address")
     private Address correspondenceAddresses;
 
     @Field("business_address")
@@ -58,7 +59,7 @@ public class AcspDataDao {
     private String workSector;
 
     @Field("aml_supervisory_bodies")
-    private AMLSupervisoryBodiesDao amlSupervisoryBodies;
+    private AMLSupervisoryBodiesDao[] amlSupervisoryBodies;
 
     @Field("company_details")
     private CompanyDao companyDetails;
@@ -68,6 +69,9 @@ public class AcspDataDao {
 
     @Field("acsp_data_submission")
     private AcspDataSubmissionDao acspDataSubmission;
+
+    @JsonProperty("how_are_you_registered_with_aml")
+    private String howAreYouRegisteredWithAML;
 
     public String getId() {
         return id;
@@ -189,14 +193,6 @@ public class AcspDataDao {
         this.workSector = workSector;
     }
 
-    public AMLSupervisoryBodiesDao getAmlSupervisoryBodies() {
-        return amlSupervisoryBodies;
-    }
-
-    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDao amlSupervisoryBodies) {
-        this.amlSupervisoryBodies = amlSupervisoryBodies;
-    }
-
     public CompanyDao getCompanyDetails() {
         return companyDetails;
     }
@@ -219,5 +215,21 @@ public class AcspDataDao {
 
     public void setAcspDataSubmission(AcspDataSubmissionDao acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
+    }
+
+    public AMLSupervisoryBodiesDao[] getAmlSupervisoryBodies() {
+        return amlSupervisoryBodies;
+    }
+
+    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDao[] amlSupervisoryBodies) {
+        this.amlSupervisoryBodies = amlSupervisoryBodies;
+    }
+
+    public String getHowAreYouRegisteredWithAML() {
+        return howAreYouRegisteredWithAML;
+    }
+
+    public void setHowAreYouRegisteredWithAML(String howAreYouRegisteredWithAML) {
+        this.howAreYouRegisteredWithAML = howAreYouRegisteredWithAML;
     }
 }

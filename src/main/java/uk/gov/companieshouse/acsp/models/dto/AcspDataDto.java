@@ -25,7 +25,7 @@ public class AcspDataDto {
     @JsonProperty("email")
     private String email;
 
-    @JsonProperty("correspondenceAddresses")
+    @JsonProperty("correspondenceAddress")
     private Address correspondenceAddresses;
 
     @JsonProperty("businessAddress")
@@ -56,7 +56,7 @@ public class AcspDataDto {
     private String workSector;
 
     @JsonProperty("amlSupervisoryBodies")
-    private AMLSupervisoryBodiesDto amlSupervisoryBodies;
+    private AMLSupervisoryBodiesDto[] amlSupervisoryBodies;
 
     @JsonProperty("companyDetails")
     private CompanyDto companyDetails;
@@ -190,14 +190,6 @@ public class AcspDataDto {
         this.workSector = workSector;
     }
 
-    public AMLSupervisoryBodiesDto getAmlSupervisoryBodies() {
-        return amlSupervisoryBodies;
-    }
-
-    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDto amlSupervisoryBodies) {
-        this.amlSupervisoryBodies = amlSupervisoryBodies;
-    }
-
     public CompanyDto getCompanyDetails() {
         return companyDetails;
     }
@@ -228,5 +220,13 @@ public class AcspDataDto {
 
     public void setHowAreYouRegisteredWithAML(String howAreYouRegisteredWithAML) {
         this.howAreYouRegisteredWithAML = howAreYouRegisteredWithAML;
+    }
+
+    public AMLSupervisoryBodiesDto[] getAmlSupervisoryBodies() {
+        return amlSupervisoryBodies;
+    }
+
+    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDto[] amlSupervisoryBodies) {
+        this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 }

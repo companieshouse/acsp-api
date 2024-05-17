@@ -63,12 +63,12 @@ class AcspControllerTest {
 
     @Test
     void getAcsp() throws ServiceException{
+        acspDataDto = new AcspDataDto();
       when(acspService.getAcsp(any())).thenReturn(ResponseEntity.ok().body(acspDataDto));
 
         var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID, REQUEST_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }

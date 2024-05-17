@@ -30,7 +30,7 @@ public class AcspController {
             @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             @RequestBody AcspDataDto acspData) throws ServiceException {
-        LOGGER.info("received request to save acsp data");
+        LOGGER.info("received request to save acsp data" + acspData);
         var transaction = transactionService.getTransaction(requestId, transactionId);
         return acspService.saveAcspRegData(transaction, acspData, requestId, userId);
     }
@@ -44,7 +44,7 @@ public class AcspController {
         if (acspData == null){
             return new ResponseEntity<>( HttpStatus.NOT_FOUND);
         }else{
-            return new ResponseEntity<>(acspData, HttpStatus.OK);
+            return acspData;
         }
     }
 
