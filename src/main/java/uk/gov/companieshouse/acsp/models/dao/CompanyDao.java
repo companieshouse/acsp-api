@@ -23,9 +23,6 @@ public class CompanyDao {
     @Field("registered_office_address")
     private Object registeredOfficeAddress;
 
-    @Field("correspondence_address")
-    private ServiceAddress correspondenceAddress;
-
     public String getCompanyName() {
         return companyName;
     }
@@ -72,13 +69,5 @@ public class CompanyDao {
 
     public void setRegisteredOfficeAddress(Object registeredOfficeAddress) {
         this.registeredOfficeAddress = registeredOfficeAddress;
-    }
-
-    public ServiceAddress getCorrespondenceAddress() {
-        return correspondenceAddress;
-    }
-
-    public void setCorrespondenceAddress(ServiceAddress correspondenceAddress) {
-        this.correspondenceAddress = correspondenceAddress;
     }
 }

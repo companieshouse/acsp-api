@@ -15,17 +15,14 @@ public class AcspDataDao {
     @Id
     private String id;
 
+    @Field("type_of_business")
+    private TypeOfBusiness typeOfBusiness;
+
     @Field("first_name")
     private String firstName;
 
     @Field("last_name")
     private String lastName;
-
-    @Field("addresses")
-    private AddressDao[] addresses; // need to match with web
-
-    @Field("type_of_business")
-    private TypeOfBusiness typeOfBusiness;
 
     @Field("role_type")
     private RoleType roleType;
@@ -48,14 +45,23 @@ public class AcspDataDao {
     @Field("work_sector")
     private SectorOfWorkDao workSector;
 
-    @Field("aml_supervisory_bodies")
-    private Map<AMLSupervisoryBodiesDao, Integer> amlSupervisoryBodies;
+    @Field("company_authcode_provided")
+    private boolean companyAuthCodeProvided;
 
     @Field("company_details")
     private CompanyDao companyDetails;
 
-    @Field("company_authcode_provided")
-    private boolean companyAuthCodeProvided;
+    @Field("name_registered_with_Aml")
+    private String nameRegisteredWithAml;
+
+    @Field("correspondence_Address")
+    private AddressDao correspondenceAddress;
+
+    @Field("business_Address")
+    private AddressDao businessAddress;
+
+    @Field("aml_supervisory_bodies")
+    private AmlSupervisoryBodyDao[] amlSupervisoryBodies;
 
     @Field("acsp_data_submission")
     private AcspDataSubmissionDao acspDataSubmission;
@@ -82,14 +88,6 @@ public class AcspDataDao {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public AddressDao[] getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(AddressDao[] addresses) {
-        this.addresses = addresses;
     }
 
     public TypeOfBusiness getTypeOfBusiness() {
@@ -156,14 +154,6 @@ public class AcspDataDao {
         this.workSector = workSector;
     }
 
-    public Map<AMLSupervisoryBodiesDao, Integer> getAmlSupervisoryBodies() {
-        return amlSupervisoryBodies;
-    }
-
-    public void setAmlSupervisoryBodies(Map<AMLSupervisoryBodiesDao, Integer> amlSupervisoryBodies) {
-        this.amlSupervisoryBodies = amlSupervisoryBodies;
-    }
-
     public CompanyDao getCompanyDetails() {
         return companyDetails;
     }
@@ -186,5 +176,37 @@ public class AcspDataDao {
 
     public void setAcspDataSubmission(AcspDataSubmissionDao acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
+    }
+
+    public String getNameRegisteredWithAml() {
+        return nameRegisteredWithAml;
+    }
+
+    public void setNameRegisteredWithAml(String nameRegisteredWithAml) {
+        this.nameRegisteredWithAml = nameRegisteredWithAml;
+    }
+
+    public AddressDao getCorrespondenceAddress() {
+        return correspondenceAddress;
+    }
+
+    public void setCorrespondenceAddress(AddressDao correspondenceAddress) {
+        this.correspondenceAddress = correspondenceAddress;
+    }
+
+    public AddressDao getBusinessAddress() {
+        return businessAddress;
+    }
+
+    public void setBusinessAddress(AddressDao businessAddress) {
+        this.businessAddress = businessAddress;
+    }
+
+    public void setAmlSupervisoryBodies(AmlSupervisoryBodyDao[] amlSupervisoryBodies) {
+        this.amlSupervisoryBodies = amlSupervisoryBodies;
+    }
+
+    public AmlSupervisoryBodyDao[] getAmlSupervisoryBodies() {
+        return amlSupervisoryBodies;
     }
 }
