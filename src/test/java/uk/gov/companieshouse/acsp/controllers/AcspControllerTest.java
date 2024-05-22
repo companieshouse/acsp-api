@@ -71,4 +71,13 @@ class AcspControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
+
+    @Test
+    void checkHasApplication() throws ServiceException {
+        acspDataDto = new AcspDataDto();
+        when(acspService.getAcsp(any())).thenReturn(ResponseEntity.ok().body(acspDataDto));
+
+        var response = acspController.checkHasApplication(USER_ID, REQUEST_ID);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
 }
