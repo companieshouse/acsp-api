@@ -49,7 +49,7 @@ public class AcspController {
 
     @GetMapping("/acsp-api/user/{id}/application")
     public ResponseEntity<Object> checkHasApplication(@PathVariable("id") String id,
-                                                @RequestHeader(value = ERIC_ACCESS_TOKEN, required = false) String requestId){
+                                                @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId){
         LOGGER.info("received request to check for user applications");
         int acspCount = acspService.getAcspApplicationCount(id);
         if (acspCount < 1){
