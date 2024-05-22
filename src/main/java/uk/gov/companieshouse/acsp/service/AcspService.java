@@ -89,6 +89,10 @@ public class AcspService {
         }
     }
 
+    public int getAcspApplicationCount(String userId){
+        return acspRepository.countById(userId);
+    }
+
 
     private Resource createAcspTransactionResource(String submissionUri) {
         var acspResource = new Resource();

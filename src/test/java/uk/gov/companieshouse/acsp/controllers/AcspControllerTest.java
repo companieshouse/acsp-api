@@ -74,8 +74,7 @@ class AcspControllerTest {
 
     @Test
     void checkHasApplicationTrue() {
-        acspDataDto = new AcspDataDto();
-        when(acspService.getAcsp(any())).thenReturn(ResponseEntity.ok().body(acspDataDto));
+        when(acspService.getAcspApplicationCount(any())).thenReturn(1);
 
         var response = acspController.checkHasApplication(USER_ID, REQUEST_ID);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
@@ -83,8 +82,7 @@ class AcspControllerTest {
 
     @Test
     void checkHasApplicationFalse() {
-        acspDataDto = new AcspDataDto();
-        when(acspService.getAcsp(any())).thenReturn(null);
+        when(acspService.getAcspApplicationCount(any())).thenReturn(0);
 
         var response = acspController.checkHasApplication(USER_ID, REQUEST_ID);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
