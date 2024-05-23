@@ -8,4 +8,6 @@ import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 //For now datatype is String, Change the datatype later accordingly
 public interface AcspRepository extends MongoRepository<AcspDataDao, String> {
 
+    int countById(String id);
+
 }

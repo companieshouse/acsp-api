@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.acsp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
@@ -86,6 +87,16 @@ public class AcspService {
             return ResponseEntity.ok().body(acspDataDto);
         } else {
             return null;
+        }
+    }
+
+    public ResponseEntity<Object> getAcspApplicationCount(String userId){
+
+        int acspCount = acspRepository.countById(userId);
+        if (acspCount < 1){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 
