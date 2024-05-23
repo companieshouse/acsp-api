@@ -63,14 +63,21 @@ class AcspServiceTest {
     }
 
     @Test
-    void getAcspApplicationCount() {
+    void getAcspApplicationCountGreaterThanOne() {
         int expectedApplicationCount = 3;
-
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         when(acspRepository.countById(USER_ID)).thenReturn(expectedApplicationCount);
+        ResponseEntity<Object> response = acspService.getAcspApplicationCount(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
 
-        int actualCount = acspService.getAcspApplicationCount(USER_ID);
-
-        assertEquals(actualCount, expectedApplicationCount);
+    @Test
+    void getAcspApplicationCountLessThanOne() {
+        int expectedApplicationCount = 0;
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        when(acspRepository.countById(USER_ID)).thenReturn(expectedApplicationCount);
+        ResponseEntity<Object> response = acspService.getAcspApplicationCount(USER_ID);
+        assertEquals(expectedResponse, response);
     }
 
     @Test
