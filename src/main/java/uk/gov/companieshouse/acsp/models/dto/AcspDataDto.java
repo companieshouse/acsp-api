@@ -67,8 +67,8 @@ public class AcspDataDto {
     @JsonProperty("acspDataSubmission")
     private AcspDataSubmissionDto acspDataSubmission;
 
-    @JsonProperty("howAreYouRegisteredWithAML")
-    private String howAreYouRegisteredWithAML;
+    @JsonProperty("howAreYouRegisteredWithAml")
+    private String howAreYouRegisteredWithAml;
 
     public String getId() {
         return id;
@@ -214,19 +214,27 @@ public class AcspDataDto {
         this.acspDataSubmission = acspDataSubmission;
     }
 
-    public String getHowAreYouRegisteredWithAML() {
-        return howAreYouRegisteredWithAML;
-    }
-
-    public void setHowAreYouRegisteredWithAML(String howAreYouRegisteredWithAML) {
-        this.howAreYouRegisteredWithAML = howAreYouRegisteredWithAML;
-    }
-
     public AMLSupervisoryBodiesDto[] getAmlSupervisoryBodies() {
         return amlSupervisoryBodies;
     }
 
     public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDto[] amlSupervisoryBodies) {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
+    }
+
+    public Address getCorrespondenceAddress() {
+        return correspondenceAddress;
+    }
+
+    public void setCorrespondenceAddress(Address correspondenceAddress) {
+        this.correspondenceAddress = correspondenceAddress;
+    }
+
+    public String getHowAreYouRegisteredWithAml() {
+        return howAreYouRegisteredWithAml;
+    }
+
+    public void setHowAreYouRegisteredWithAml(String howAreYouRegisteredWithAml) {
+        this.howAreYouRegisteredWithAml = howAreYouRegisteredWithAml;
     }
 }
