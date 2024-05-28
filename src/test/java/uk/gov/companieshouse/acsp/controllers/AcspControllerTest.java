@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
+import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
 import uk.gov.companieshouse.acsp.service.TransactionService;
@@ -17,6 +18,7 @@ import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -62,14 +64,37 @@ class AcspControllerTest {
     }
 
     @Test
-    void getAcsp() throws ServiceException{
+    void getAcsp() throws ServiceException, SubmissionNotLinkedToTransactionException {
         acspDataDto = new AcspDataDto();
-      when(acspService.getAcsp(any())).thenReturn(ResponseEntity.ok().body(acspDataDto));
+        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
+        when(acspService.getAcsp(any(), any())).thenReturn(acspDataDto);
 
         var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID, REQUEST_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
+    }
+
+    @Test
+    void getAcspWhenGetAcspReturnsNull() throws ServiceException, SubmissionNotLinkedToTransactionException {
+        acspDataDto = new AcspDataDto();
+        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
+        when(acspService.getAcsp(any(), any())).thenReturn(null);
+
+        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID, REQUEST_ID);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    void getAcspWhenGetAcspThrowsException() throws ServiceException, SubmissionNotLinkedToTransactionException {
+        acspDataDto = new AcspDataDto();
+        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
+        when(acspService.getAcsp(any(), any())).thenThrow(SubmissionNotLinkedToTransactionException.class);
+
+        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID, REQUEST_ID);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test

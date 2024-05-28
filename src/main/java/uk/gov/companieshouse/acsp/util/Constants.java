@@ -18,4 +18,5 @@ public class Constants {
     public static final String RESUME_JOURNEY_URI_PATTERN = "/register-as-companies-house-authorised-agent/what-business-type?lang=en";
     public static final String LINK_SELF = "self";
     public static final String LINK_VALIDATION = "validation_status";
+    public static final String LINK_RESOURCE = "resource";
 }

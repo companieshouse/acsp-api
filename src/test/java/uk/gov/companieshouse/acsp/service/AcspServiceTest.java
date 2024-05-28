@@ -7,9 +7,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
+import uk.gov.companieshouse.acsp.util.TransactionUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +47,9 @@ class AcspServiceTest {
 
     @Mock
     private ACSPRegDataDtoDaoMapper acspRegDataDtoDaoMapper;
+
+    @Mock
+    private TransactionUtils transactionUtils;
 
     @Test
     void saveAcsp() throws Exception{
@@ -81,7 +87,7 @@ class AcspServiceTest {
     }
 
     @Test
-    void testGetSavedAcspWhenFoundSuccessfully() {
+    void testGetSavedAcspWhenFoundSuccessfully() throws SubmissionNotLinkedToTransactionException {
         var acspDataDao = new AcspDataDao();
         acspDataDao.setId(SUBMISSION_ID);
         when(acspRepository.findById(SUBMISSION_ID)
@@ -89,10 +95,10 @@ class AcspServiceTest {
         when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao)
         ).thenReturn(acspDataDto);
 
-        var response = acspService.getAcsp(SUBMISSION_ID);
-        var responseBody = response.getBody();
-        assertNotNull(responseBody);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+                .thenReturn(true);
+        var response = acspService.getAcsp(SUBMISSION_ID, transaction);
+        assertNotNull(response);
     }
 
     private Transaction buildTransaction() {

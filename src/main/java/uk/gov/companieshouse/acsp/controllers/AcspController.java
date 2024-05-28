@@ -5,9 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
+import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
 import uk.gov.companieshouse.acsp.service.TransactionService;
+import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -28,7 +30,7 @@ public class AcspController {
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
             @RequestHeader(value = ERIC_IDENTITY) String userId,
-            @RequestBody AcspDataDto acspData) throws ServiceException {
+            @RequestBody AcspDataDto acspData) throws ServiceException { //TODO should not throw the exception instead catch and return appropriate http response
         LOGGER.info("received request to save acsp data");
         var transaction = transactionService.getTransaction(requestId, transactionId);
         return acspService.saveAcspRegData(transaction, acspData, requestId, userId);
@@ -39,11 +41,19 @@ public class AcspController {
                                               @PathVariable("id") String id,
                                               @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
         LOGGER.info("received request to get acsp data");
-        var acspData = acspService.getAcsp(id);
+
+        Transaction transaction;
+        AcspDataDto acspData;
+        try {
+            transaction = transactionService.getTransaction(requestId, transactionId);
+            acspData = acspService.getAcsp(id, transaction);
+        } catch (ServiceException | SubmissionNotLinkedToTransactionException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
         if (acspData == null){
-            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }else{
-            return acspData;
+            return ResponseEntity.ok().body(acspData);
         }
     }
 

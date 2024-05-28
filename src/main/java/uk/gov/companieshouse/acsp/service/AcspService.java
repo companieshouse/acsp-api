@@ -5,12 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
+import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.ApiLogger;
+import uk.gov.companieshouse.acsp.util.TransactionUtils;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
@@ -32,12 +34,17 @@ public class AcspService {
     AcspRepository acspRepository;
     private final TransactionService transactionService;
     private final ACSPRegDataDtoDaoMapper acspRegDataDtoDaoMapper;
+    private final TransactionUtils transactionUtils;
 
     @Autowired
-    public AcspService(AcspRepository acspRepository, TransactionService transactionService, ACSPRegDataDtoDaoMapper acspRegDataDtoDaoMapper) {
+    public AcspService(AcspRepository acspRepository,
+                       TransactionService transactionService,
+                       ACSPRegDataDtoDaoMapper acspRegDataDtoDaoMapper,
+                       TransactionUtils transactionUtils) {
         this.acspRepository = acspRepository;
         this.transactionService = transactionService;
         this.acspRegDataDtoDaoMapper = acspRegDataDtoDaoMapper;
+        this.transactionUtils = transactionUtils;
     }
 
     public ResponseEntity<Object> saveAcspRegData(Transaction transaction, AcspDataDto acspData,
@@ -50,6 +57,8 @@ public class AcspService {
                                                                 String requestId,
                                                                 String userId) throws ServiceException {
 
+        //TODO similar to getAcsp check transactionUtils.isTransactionLinkedToAcspSubmission when
+        // refactored for create & update
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         String submissionId = acspDataDao.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
@@ -78,13 +87,17 @@ public class AcspService {
         acspData.setAcspDataSubmission(submission);
     }
 
+    public AcspDataDto getAcsp(String acspId, Transaction transaction) throws SubmissionNotLinkedToTransactionException {
 
+        final String submissionUri = getSubmissionUri(transaction.getId(), acspId);
+        if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, submissionUri)) {
+            throw new SubmissionNotLinkedToTransactionException(String.format(
+                    "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
+        }
 
-    public ResponseEntity<Object> getAcsp(String id) {
-        Optional<AcspDataDao> acspData = acspRepository.findById(id);
+        Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
         if(acspData.isPresent()) {
-            var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspData.get());
-            return ResponseEntity.ok().body(acspDataDto);
+            return acspRegDataDtoDaoMapper.daoToDto(acspData.get());
         } else {
             return null;
         }
