@@ -148,7 +148,7 @@ class FilingServiceTest {
     }
 
     @Test
-    public void tesGenerateAcspApplicationFiling() throws Exception {
+    void tesGenerateAcspApplicationFiling() throws Exception {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
 
