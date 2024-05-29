@@ -75,8 +75,7 @@ public class FilingsService {
   private void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId,
                                 String passThroughTokenHeader) throws ServiceException {
     if(acspService.getAcsp(acspApplicationId).isPresent()) {
-      var acspDataDto = acspService.getAcsp(acspApplicationId).isPresent()?
-              acspService.getAcsp(acspApplicationId).get() : null;
+      var acspDataDto = acspService.getAcsp(acspApplicationId).orElse(null);
       if(acspDataDto != null) {
         var data = new HashMap<String, Object>();
         var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
