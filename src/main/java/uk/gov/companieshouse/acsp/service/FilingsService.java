@@ -74,16 +74,18 @@ public class FilingsService {
 
   private void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId,
                                 String passThroughTokenHeader) throws ServiceException {
-    var acspDataDto = acspService.getAcsp(acspApplicationId).get();
-    var data = new HashMap<String, Object>();
-    var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
-    buildPresenter(data, acspDataDto);
-    buildSubmission(data, acspDataDto, transactionId);
-    buildAcspData(data, acspDataDto);
-    buildItem(data, transactionId);
-    setPaymentData(data, transaction, passThroughTokenHeader);
-    setDescriptionFields(filing);
-    buildFilingStatus(filing, data);
+    if(acspService.getAcsp(acspApplicationId).isPresent()) {
+      var acspDataDto = acspService.getAcsp(acspApplicationId).get();
+      var data = new HashMap<String, Object>();
+      var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
+      buildPresenter(data, acspDataDto);
+      buildSubmission(data, acspDataDto, transactionId);
+      buildAcspData(data, acspDataDto);
+      buildItem(data, transactionId);
+      setPaymentData(data, transaction, passThroughTokenHeader);
+      setDescriptionFields(filing);
+      buildFilingStatus(filing, data);
+    }
   }
 
   private void buildFilingStatus(FilingApi filing, HashMap<String, Object> data) {
