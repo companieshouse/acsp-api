@@ -11,7 +11,7 @@ public final class ACSP {
     private String paymentMethod;
 
     @JsonProperty("correspondence_address")
-    private Address correspondenceAddress1;
+    private Address correspondenceAddress;
     @JsonProperty("office_address")
     private Address officeAddress;
     @JsonProperty("email")
@@ -33,12 +33,12 @@ public final class ACSP {
         this.paymentMethod = paymentMethod;
     }
 
-    public Address getCorrespondenceAddress1() {
-        return correspondenceAddress1;
+    public Address getCorrespondenceAddress() {
+        return correspondenceAddress;
     }
 
-    public void setCorrespondenceAddress1(Address correspondenceAddress1) {
-        this.correspondenceAddress1 = correspondenceAddress1;
+    public void setCorrespondenceAddress(Address correspondenceAddress) {
+        this.correspondenceAddress = correspondenceAddress;
     }
 
     public Address getOfficeAddress() {

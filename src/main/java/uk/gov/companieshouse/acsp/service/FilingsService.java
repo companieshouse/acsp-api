@@ -96,9 +96,15 @@ public class FilingsService {
 
   private void buildPresenter(HashMap<String, Object>data, AcspDataDto acspDataDto) {
     var presenter = new Presenter();
-    presenter.setFirstName(acspDataDto.getFirstName().toUpperCase());
-    presenter.setLastName(acspDataDto.getLastName().toUpperCase());
-    presenter.setUserId(acspDataDto.getId().toUpperCase());
+    if (acspDataDto.getFirstName() != null) {
+      presenter.setFirstName(acspDataDto.getFirstName().toUpperCase());
+    }
+    if (acspDataDto.getLastName() != null) {
+      presenter.setLastName(acspDataDto.getLastName().toUpperCase());
+    }
+    if (acspDataDto.getId() != null) {
+      presenter.setUserId(acspDataDto.getId().toUpperCase());
+    }
     //presenter.setLanguage(); //add language in ascpDataModel
     data.put(PRESENTER, presenter);
   }
@@ -121,12 +127,13 @@ public class FilingsService {
 
   private void buildAcspData(HashMap<String, Object>data, AcspDataDto acspDataDto) {
     var acsp = new ACSP();
-    acsp.setEmail(acspDataDto.getEmail().toUpperCase());
-
-    acsp.setCorrespondenceAddress1(buildCorrespondenAddress(acspDataDto));
+    if(acspDataDto.getEmail() != null) {
+      acsp.setEmail(acspDataDto.getEmail().toUpperCase());
+    }
+    acsp.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
     acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
-    acsp.setPaymentReference(PAYMENT_REFERENCE);
-    acsp.setPaymentMethod("credit-card");
+    acsp.setPaymentReference(PAYMENT_REFERENCE.toUpperCase());
+    acsp.setPaymentMethod("credit-card".toUpperCase());
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     data.put(ACSP, acsp);
   }
@@ -183,8 +190,12 @@ public class FilingsService {
 
   private void setDescriptionFields(FilingApi filing) {
     String formattedDate = dateNow.format(formatter);
-    filing.setDescriptionIdentifier(filingDescriptionIdentifier.toUpperCase());
-    filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
+    if(filingDescriptionIdentifier != null) {
+      filing.setDescriptionIdentifier(filingDescriptionIdentifier.toUpperCase());
+    }
+    if(filingDescription != null) {
+      filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
+    }
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
   }
