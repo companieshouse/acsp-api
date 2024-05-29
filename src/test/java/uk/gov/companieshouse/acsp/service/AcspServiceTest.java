@@ -17,7 +17,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -61,6 +60,24 @@ class AcspServiceTest {
                 REQUEST_ID,
                 USER_ID);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    @Test
+    void getAcspApplicationCountGreaterThanOne() {
+        int expectedApplicationCount = 3;
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        when(acspRepository.countById(USER_ID)).thenReturn(expectedApplicationCount);
+        ResponseEntity<Object> response = acspService.getAcspApplicationCount(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void getAcspApplicationCountLessThanOne() {
+        int expectedApplicationCount = 0;
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        when(acspRepository.countById(USER_ID)).thenReturn(expectedApplicationCount);
+        ResponseEntity<Object> response = acspService.getAcspApplicationCount(USER_ID);
+        assertEquals(expectedResponse, response);
     }
 
     @Test

@@ -71,7 +71,7 @@ public class AcspDataDao {
     private AcspDataSubmissionDao acspDataSubmission;
 
     @JsonProperty("how_are_you_registered_with_aml")
-    private String howAreYouRegisteredWithAML;
+    private String howAreYouRegisteredWithAml;
 
     public String getId() {
         return id;
@@ -225,11 +225,19 @@ public class AcspDataDao {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
-    public String getHowAreYouRegisteredWithAML() {
-        return howAreYouRegisteredWithAML;
+    public Address getCorrespondenceAddress() {
+        return correspondenceAddress;
     }
 
-    public void setHowAreYouRegisteredWithAML(String howAreYouRegisteredWithAML) {
-        this.howAreYouRegisteredWithAML = howAreYouRegisteredWithAML;
+    public void setCorrespondenceAddress(Address correspondenceAddress) {
+        this.correspondenceAddress = correspondenceAddress;
+    }
+
+    public String getHowAreYouRegisteredWithAml() {
+        return howAreYouRegisteredWithAml;
+    }
+
+    public void setHowAreYouRegisteredWithAml(String howAreYouRegisteredWithAml) {
+        this.howAreYouRegisteredWithAml = howAreYouRegisteredWithAml;
     }
 }

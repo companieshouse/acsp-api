@@ -15,7 +15,6 @@ import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.*;
 
 @RestController
-@RequestMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
 public class AcspController {
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
     @Autowired
@@ -24,7 +23,7 @@ public class AcspController {
     @Autowired
     private TransactionService transactionService;
 
-    @PutMapping
+    @PutMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
     public ResponseEntity<Object> saveAcspData(
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
@@ -35,7 +34,7 @@ public class AcspController {
         return acspService.saveAcspRegData(transaction, acspData, requestId, userId);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp/{id}")
     public ResponseEntity<Object> getAcspData(@PathVariable(TRANSACTION_ID_KEY) String transactionId,
                                               @PathVariable("id") String id,
                                               @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
@@ -46,6 +45,13 @@ public class AcspController {
         }else{
             return ResponseEntity.ok().body(acspData);
         }
+    }
+
+    @GetMapping("/acsp-api/user/{id}/application")
+    public ResponseEntity<Object> checkHasApplication(@PathVariable("id") String id,
+                                                @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId){
+        LOGGER.info("received request to check for user applications");
+        return acspService.getAcspApplicationCount(id);
     }
 
 }
