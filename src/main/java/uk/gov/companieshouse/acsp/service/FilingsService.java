@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.acsp.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -41,28 +40,25 @@ public class FilingsService {
 
   private AcspService acspService;
 
-  private final ObjectMapper objectMapper;
+  private static final String PRESENTER = "presenter";
 
-  private final String PRESENTER = "presenter";
+  private static final String SUBMISSION = "submission";
 
-  private final String SUBMISSION = "submission";
+  private static final String ITEM = "item";
 
-  private final String ITEM = "item";
+  private static final String ACSP = "data";
 
-  private final String ACSP = "data";
+  private static final String PAYMENT_REFERENCE = "payment_reference";
 
-  private final String PAYMENT_REFERENCE = "payment_reference";
-
-  private final String PAYMENT_METHOD = "payment_method";
+  private static final String PAYMENT_METHOD = "payment_method";
 
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MM yyyy");
 
   @Autowired
-  public FilingsService(TransactionService transactionService, AcspService acspService, ObjectMapper objectMapper,
+  public FilingsService(TransactionService transactionService, AcspService acspService,
                         ApiClientService apiClientService) {
     this.transactionService = transactionService;
     this.acspService = acspService;
-    this.objectMapper = objectMapper;
     this.apiClientService = apiClientService;
   }
 
@@ -78,15 +74,15 @@ public class FilingsService {
 
   private void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId,
                                 String passThroughTokenHeader) throws ServiceException {
-    AcspDataDto acspDataDto = acspService.getAcsp(acspApplicationId).get();
+    var acspDataDto = acspService.getAcsp(acspApplicationId).get();
     var data = new HashMap<String, Object>();
-    Transaction transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
+    var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
     buildPresenter(data, acspDataDto);
     buildSubmission(data, acspDataDto, transactionId);
     buildAcspData(data, acspDataDto);
-    buildItem(data, acspDataDto, transactionId);
+    buildItem(data, transactionId);
     setPaymentData(data, transaction, passThroughTokenHeader);
-    //setDescriptionFields(filing);
+    setDescriptionFields(filing);
     buildFilingStatus(filing, data);
   }
 
@@ -113,7 +109,7 @@ public class FilingsService {
     data.put(SUBMISSION, submission);
   }
 
-  private void buildItem(HashMap<String, Object>data, AcspDataDto acspDataDto, String transactionId) {
+  private void buildItem(HashMap<String, Object>data, String transactionId) {
     Item item = new Item();
     item.setKind(FILING_KIND_ACSP);
     item.setSubmissionId(transactionId);

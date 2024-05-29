@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
@@ -95,7 +98,7 @@ class FilingServiceTest {
         acspDataDto.setAcspDataSubmission(dataSubmissionDto);
         acspDataDto.setCorrespondenceAddresses(buildCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildBusinessAddress());
-        filingsService = new FilingsService(transactionService, acspService, new ObjectMapper(), apiClientService);
+        filingsService = new FilingsService(transactionService, acspService, apiClientService);
     }
 
     void initTransactionPaymentLinkMocks() throws IOException, URIValidationException {
