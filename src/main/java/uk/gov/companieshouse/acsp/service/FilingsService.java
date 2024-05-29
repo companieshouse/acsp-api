@@ -154,7 +154,7 @@ public class FilingsService {
   private void setDescriptionFields(FilingApi filing) {
     String formattedDate = dateNow.format(formatter);
     filing.setDescriptionIdentifier(filingDescriptionIdentifier);
-    filing.setDescription(filingDescription.replace("{date}", formattedDate));
+    //filing.setDescription(filingDescription.replace("{date}", formattedDate));
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
   }
