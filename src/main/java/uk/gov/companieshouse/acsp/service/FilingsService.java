@@ -95,7 +95,7 @@ public class FilingsService {
   }
 
   private void buildPresenter(HashMap<String, Object>data, AcspDataDto acspDataDto) {
-    Presenter presenter = new Presenter();
+    var presenter = new Presenter();
     presenter.setFirstName(acspDataDto.getFirstName());
     presenter.setLastName(acspDataDto.getLastName());
     presenter.setUserId(acspDataDto.getId());
@@ -105,14 +105,14 @@ public class FilingsService {
 
 
   private void buildSubmission(HashMap<String, Object>data, AcspDataDto acspDataDto, String transactionId) {
-    Submission submission = new Submission();
+    var submission = new Submission();
     submission.setReceivedAt(acspDataDto.getAcspDataSubmission().getUpdatedAt());
     submission.setTransactionId(transactionId);
     data.put(SUBMISSION, submission);
   }
 
   private void buildItem(HashMap<String, Object>data, String transactionId) {
-    Item item = new Item();
+    var item = new Item();
     item.setKind(FILING_KIND_ACSP);
     item.setSubmissionId(transactionId);
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
@@ -120,7 +120,7 @@ public class FilingsService {
   }
 
   private void buildAcspData(HashMap<String, Object>data, AcspDataDto acspDataDto) {
-    ACSP acsp = new ACSP();
+    var acsp = new ACSP();
     acsp.setEmail(acspDataDto.getEmail());
 
     acsp.setCorrespondenceAddress1(buildCorrespondenAddress(acspDataDto));
@@ -132,7 +132,7 @@ public class FilingsService {
   }
 
   private Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
-    Address correspondenceAddress = new Address();
+    var correspondenceAddress = new Address();
     correspondenceAddress.setAddressLine1(acspDataDto.getCorrespondenceAddresses().getLine1());
     correspondenceAddress.setAddressLine2(acspDataDto.getCorrespondenceAddresses().getLine2());
     correspondenceAddress.setPostalCode(acspDataDto.getCorrespondenceAddresses().getPostcode());
@@ -143,7 +143,7 @@ public class FilingsService {
   }
 
   private Address buildBusinessAddress(AcspDataDto acspDataDto) {
-    Address businessAddress = new Address();
+    var businessAddress = new Address();
     businessAddress.setAddressLine1(acspDataDto.getBusinessAddress().getLine1());
     businessAddress.setAddressLine2(acspDataDto.getBusinessAddress().getLine2());
     businessAddress.setPostalCode(acspDataDto.getBusinessAddress().getPostcode());
@@ -154,7 +154,7 @@ public class FilingsService {
   }
 
   private void setDescriptionFields(FilingApi filing) {
-    String formattedDate = dateNow.format(formatter);
+    //String formattedDate = dateNow.format(formatter);
     filing.setDescriptionIdentifier(filingDescriptionIdentifier);
     //filing.setDescription(filingDescription.replace("{date}", formattedDate));
     Map<String, String> values = new HashMap<>();
