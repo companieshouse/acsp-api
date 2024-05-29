@@ -1,15 +1,12 @@
 package uk.gov.companieshouse.acsp.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
@@ -100,6 +97,10 @@ class FilingServiceTest {
         acspDataDto.setCorrespondenceAddresses(buildCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildBusinessAddress());
         filingsService = new FilingsService(transactionService, acspService, apiClientService);
+        ReflectionTestUtils.setField(filingsService,
+                "filingDescriptionIdentifier","**ACSP Application** submission made");
+        ReflectionTestUtils.setField(filingsService,
+                "filingDescription","acsp application made on {date}");
     }
 
     void initTransactionPaymentLinkMocks() throws IOException, URIValidationException {
@@ -148,6 +149,16 @@ class FilingServiceTest {
         return businessAddress;
     }
 
+    private Address buildNullCorrespondenceAddress() {
+        correspondenceAddress = new Address();
+        return correspondenceAddress;
+    }
+
+    private Address buildNullBusinessAddress() {
+        businessAddress = new Address();
+        return businessAddress;
+    }
+
     @Test
     void tesGenerateAcspApplicationFiling() throws Exception {
         initTransactionPaymentLinkMocks();
@@ -168,6 +179,53 @@ class FilingServiceTest {
         Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
 
     }
+
+    @Test
+    void tesGenerateAcspApplicationFilingWithNoCorrespondenAddress() throws Exception {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+
+        acspDataDto.setCorrespondenceAddresses(null);
+        acspDataDto.setBusinessAddress(null);
+        when(acspService.getAcsp(ACSP_ID)).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        //Assertions.assertEquals("100", response.getCost());
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
+        Assertions.assertNotNull(response.getData().get("item"));
+        Assertions.assertNotNull(response.getData().get("presenter"));
+        Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
+        Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
+        Assertions.assertNotNull(response.getData().get("submission"));
+        Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
+
+    }
+
+    @Test
+    void tesGenerateAcspApplicationFilingWithBlankAddresses() throws Exception {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+
+        acspDataDto.setCorrespondenceAddresses(buildNullCorrespondenceAddress());
+        acspDataDto.setBusinessAddress(buildNullBusinessAddress());
+        when(acspService.getAcsp(ACSP_ID)).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        //Assertions.assertEquals("100", response.getCost());
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
+        Assertions.assertNotNull(response.getData().get("item"));
+        Assertions.assertNotNull(response.getData().get("presenter"));
+        Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
+        Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
+        Assertions.assertNotNull(response.getData().get("submission"));
+        Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
+
+    }
+
 
 
 

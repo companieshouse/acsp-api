@@ -23,14 +23,14 @@ import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
 @Service
 public class FilingsService {
 
-  @Value("${ACSP01_COST:100}")
-  private String costAmount;
+  @Value("${ACSP01_COST}")
+  private static String costAmount;
 
-  @Value("${ACSP_APPLICATION_FILING_DESCRIPTION_IDENTIFIER:**ACSP Application** submission made}")
-  private String filingDescriptionIdentifier;
+  @Value("${ACSP_APPLICATION_FILING_DESCRIPTION_IDENTIFIER}")
+  private static String filingDescriptionIdentifier;
 
-  @Value("${ACSP_APPLICATION_FILING_DESCRIPTION:acsp application made on {date}}")
-  private String filingDescription;
+  @Value("${ACSP_APPLICATION_FILING_DESCRIPTION}")
+  private static String filingDescription;
 
   private LocalDate dateNow = LocalDate.now();
 
@@ -75,16 +75,19 @@ public class FilingsService {
   private void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId,
                                 String passThroughTokenHeader) throws ServiceException {
     if(acspService.getAcsp(acspApplicationId).isPresent()) {
-      var acspDataDto = acspService.getAcsp(acspApplicationId).get();
-      var data = new HashMap<String, Object>();
-      var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
-      buildPresenter(data, acspDataDto);
-      buildSubmission(data, acspDataDto, transactionId);
-      buildAcspData(data, acspDataDto);
-      buildItem(data, transactionId);
-      setPaymentData(data, transaction, passThroughTokenHeader);
-      //setDescriptionFields(filing);
-      buildFilingStatus(filing, data);
+      var acspDataDto = acspService.getAcsp(acspApplicationId).isPresent()?
+              acspService.getAcsp(acspApplicationId).get() : null;
+      if(acspDataDto != null) {
+        var data = new HashMap<String, Object>();
+        var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
+        buildPresenter(data, acspDataDto);
+        buildSubmission(data, acspDataDto, transactionId);
+        buildAcspData(data, acspDataDto);
+        buildItem(data, transactionId);
+        setPaymentData(data, transaction, passThroughTokenHeader);
+        setDescriptionFields(filing);
+        buildFilingStatus(filing, data);
+      }
     }
   }
 
