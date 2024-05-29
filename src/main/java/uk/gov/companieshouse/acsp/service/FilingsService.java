@@ -96,9 +96,9 @@ public class FilingsService {
 
   private void buildPresenter(HashMap<String, Object>data, AcspDataDto acspDataDto) {
     var presenter = new Presenter();
-    presenter.setFirstName(acspDataDto.getFirstName());
-    presenter.setLastName(acspDataDto.getLastName());
-    presenter.setUserId(acspDataDto.getId());
+    presenter.setFirstName(acspDataDto.getFirstName().toUpperCase());
+    presenter.setLastName(acspDataDto.getLastName().toUpperCase());
+    presenter.setUserId(acspDataDto.getId().toUpperCase());
     //presenter.setLanguage(); //add language in ascpDataModel
     data.put(PRESENTER, presenter);
   }
@@ -107,21 +107,21 @@ public class FilingsService {
   private void buildSubmission(HashMap<String, Object>data, AcspDataDto acspDataDto, String transactionId) {
     var submission = new Submission();
     submission.setReceivedAt(acspDataDto.getAcspDataSubmission().getUpdatedAt());
-    submission.setTransactionId(transactionId);
+    submission.setTransactionId(transactionId.toUpperCase());
     data.put(SUBMISSION, submission);
   }
 
   private void buildItem(HashMap<String, Object>data, String transactionId) {
     var item = new Item();
-    item.setKind(FILING_KIND_ACSP);
-    item.setSubmissionId(transactionId);
+    item.setKind(FILING_KIND_ACSP.toUpperCase());
+    item.setSubmissionId(transactionId.toUpperCase());
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     data.put(ITEM, item);
   }
 
   private void buildAcspData(HashMap<String, Object>data, AcspDataDto acspDataDto) {
     var acsp = new ACSP();
-    acsp.setEmail(acspDataDto.getEmail());
+    acsp.setEmail(acspDataDto.getEmail().toUpperCase());
 
     acsp.setCorrespondenceAddress1(buildCorrespondenAddress(acspDataDto));
     acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
@@ -133,30 +133,30 @@ public class FilingsService {
 
   private Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
     var correspondenceAddress = new Address();
-    correspondenceAddress.setAddressLine1(acspDataDto.getCorrespondenceAddresses().getLine1());
-    correspondenceAddress.setAddressLine2(acspDataDto.getCorrespondenceAddresses().getLine2());
-    correspondenceAddress.setPostalCode(acspDataDto.getCorrespondenceAddresses().getPostcode());
-    correspondenceAddress.setCountry(acspDataDto.getCorrespondenceAddresses().getCountry());
-    correspondenceAddress.setPremises(acspDataDto.getCorrespondenceAddresses().getPropertyDetails());
-    correspondenceAddress.setRegion(acspDataDto.getCorrespondenceAddresses().getCounty());
+    correspondenceAddress.setAddressLine1(acspDataDto.getCorrespondenceAddresses().getLine1().toUpperCase());
+    correspondenceAddress.setAddressLine2(acspDataDto.getCorrespondenceAddresses().getLine2().toUpperCase());
+    correspondenceAddress.setPostalCode(acspDataDto.getCorrespondenceAddresses().getPostcode().toUpperCase());
+    correspondenceAddress.setCountry(acspDataDto.getCorrespondenceAddresses().getCountry().toUpperCase());
+    correspondenceAddress.setPremises(acspDataDto.getCorrespondenceAddresses().getPropertyDetails().toUpperCase());
+    correspondenceAddress.setRegion(acspDataDto.getCorrespondenceAddresses().getCounty().toUpperCase());
     return correspondenceAddress;
   }
 
   private Address buildBusinessAddress(AcspDataDto acspDataDto) {
     var businessAddress = new Address();
-    businessAddress.setAddressLine1(acspDataDto.getBusinessAddress().getLine1());
-    businessAddress.setAddressLine2(acspDataDto.getBusinessAddress().getLine2());
-    businessAddress.setPostalCode(acspDataDto.getBusinessAddress().getPostcode());
-    businessAddress.setCountry(acspDataDto.getBusinessAddress().getCountry());
-    businessAddress.setPremises(acspDataDto.getBusinessAddress().getPropertyDetails());
-    businessAddress.setRegion(acspDataDto.getBusinessAddress().getCounty());
+    businessAddress.setAddressLine1(acspDataDto.getBusinessAddress().getLine1().toUpperCase());
+    businessAddress.setAddressLine2(acspDataDto.getBusinessAddress().getLine2().toUpperCase());
+    businessAddress.setPostalCode(acspDataDto.getBusinessAddress().getPostcode().toUpperCase());
+    businessAddress.setCountry(acspDataDto.getBusinessAddress().getCountry().toUpperCase());
+    businessAddress.setPremises(acspDataDto.getBusinessAddress().getPropertyDetails().toUpperCase());
+    businessAddress.setRegion(acspDataDto.getBusinessAddress().getCounty().toUpperCase());
     return businessAddress;
   }
 
   private void setDescriptionFields(FilingApi filing) {
     String formattedDate = dateNow.format(formatter);
-    filing.setDescriptionIdentifier(filingDescriptionIdentifier);
-    filing.setDescription(filingDescription.replace("{date}", formattedDate));
+    filing.setDescriptionIdentifier(filingDescriptionIdentifier.toUpperCase());
+    filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
   }
@@ -171,8 +171,8 @@ public class FilingsService {
     var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passthroughTokenHeader);
     var payment = getPayment(paymentReference, passthroughTokenHeader);
 
-    data.put(PAYMENT_REFERENCE, paymentReference);
-    data.put(PAYMENT_METHOD, payment.getPaymentMethod());
+    data.put(PAYMENT_REFERENCE, paymentReference.toUpperCase());
+    data.put(PAYMENT_METHOD, payment.getPaymentMethod().toUpperCase());
   }
 
   private PaymentApi getPayment(String paymentReference, String passthroughTokenHeader)
