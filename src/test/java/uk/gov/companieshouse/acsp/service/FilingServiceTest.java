@@ -93,6 +93,7 @@ class FilingServiceTest {
         acspDataDto.setId(ACSP_ID);
         acspDataDto.setFirstName(FIRST_NAME);
         acspDataDto.setLastName(LAST_NAME);
+        acspDataDto.setEmail("email@email.com");
         AcspDataSubmissionDto dataSubmissionDto = new AcspDataSubmissionDto();
         dataSubmissionDto.setUpdatedAt(LocalDateTime.now());
         acspDataDto.setAcspDataSubmission(dataSubmissionDto);
@@ -157,14 +158,14 @@ class FilingServiceTest {
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         //Assertions.assertEquals("100", response.getCost());
-        Assertions.assertEquals(PAYMENT_REFERENCE, response.getData().get("payment_reference"));
-        Assertions.assertEquals(PAYMENT_METHOD, response.getData().get("payment_method"));
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
         Assertions.assertNotNull(response.getData().get("item"));
         Assertions.assertNotNull(response.getData().get("presenter"));
-        Assertions.assertEquals(FIRST_NAME, ((Presenter) response.getData().get("presenter")).getFirstName());
-        Assertions.assertEquals(LAST_NAME, ((Presenter) response.getData().get("presenter")).getLastName());
+        Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
+        Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
-        Assertions.assertEquals("acsp", response.getKind());
+        Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
 
     }
 

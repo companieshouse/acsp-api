@@ -23,13 +23,13 @@ import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
 @Service
 public class FilingsService {
 
-  @Value("${ACSP01_COST}")
+  @Value("${ACSP01_COST:100}")
   private String costAmount;
 
-  @Value("${ACSP_APPLICATION_FILING_DESCRIPTION_IDENTIFIER}")
+  @Value("${ACSP_APPLICATION_FILING_DESCRIPTION_IDENTIFIER:**ACSP Application** submission made}")
   private String filingDescriptionIdentifier;
 
-  @Value("${ACSP_APPLICATION_FILING_DESCRIPTION}")
+  @Value("${ACSP_APPLICATION_FILING_DESCRIPTION:acsp application made on {date}}")
   private String filingDescription;
 
   private LocalDate dateNow = LocalDate.now();
@@ -83,13 +83,13 @@ public class FilingsService {
       buildAcspData(data, acspDataDto);
       buildItem(data, transactionId);
       setPaymentData(data, transaction, passThroughTokenHeader);
-      setDescriptionFields(filing);
+      //setDescriptionFields(filing);
       buildFilingStatus(filing, data);
     }
   }
 
   private void buildFilingStatus(FilingApi filing, HashMap<String, Object> data) {
-    filing.setKind(FILING_KIND_ACSP);
+    filing.setKind(FILING_KIND_ACSP.toUpperCase());
     filing.setData(data);
     filing.setCost(costAmount);
   }
@@ -133,23 +133,51 @@ public class FilingsService {
 
   private Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
     var correspondenceAddress = new Address();
-    correspondenceAddress.setAddressLine1(acspDataDto.getCorrespondenceAddresses().getLine1().toUpperCase());
-    correspondenceAddress.setAddressLine2(acspDataDto.getCorrespondenceAddresses().getLine2().toUpperCase());
-    correspondenceAddress.setPostalCode(acspDataDto.getCorrespondenceAddresses().getPostcode().toUpperCase());
-    correspondenceAddress.setCountry(acspDataDto.getCorrespondenceAddresses().getCountry().toUpperCase());
-    correspondenceAddress.setPremises(acspDataDto.getCorrespondenceAddresses().getPropertyDetails().toUpperCase());
-    correspondenceAddress.setRegion(acspDataDto.getCorrespondenceAddresses().getCounty().toUpperCase());
+    if(acspDataDto.getCorrespondenceAddresses() != null) {
+      if (acspDataDto.getCorrespondenceAddresses().getLine1() != null) {
+        correspondenceAddress.setAddressLine1(acspDataDto.getCorrespondenceAddresses().getLine1().toUpperCase());
+      }
+      if (acspDataDto.getCorrespondenceAddresses().getLine2() != null) {
+        correspondenceAddress.setAddressLine2(acspDataDto.getCorrespondenceAddresses().getLine2().toUpperCase());
+      }
+      if (acspDataDto.getCorrespondenceAddresses().getPostcode() != null) {
+        correspondenceAddress.setPostalCode(acspDataDto.getCorrespondenceAddresses().getPostcode().toUpperCase());
+      }
+      if (acspDataDto.getCorrespondenceAddresses().getCountry() != null) {
+        correspondenceAddress.setCountry(acspDataDto.getCorrespondenceAddresses().getCountry().toUpperCase());
+      }
+      if (acspDataDto.getCorrespondenceAddresses().getPropertyDetails() != null) {
+        correspondenceAddress.setPremises(acspDataDto.getCorrespondenceAddresses().getPropertyDetails().toUpperCase());
+      }
+      if (acspDataDto.getCorrespondenceAddresses().getCounty() != null) {
+        correspondenceAddress.setRegion(acspDataDto.getCorrespondenceAddresses().getCounty().toUpperCase());
+      }
+    }
     return correspondenceAddress;
   }
 
   private Address buildBusinessAddress(AcspDataDto acspDataDto) {
     var businessAddress = new Address();
-    businessAddress.setAddressLine1(acspDataDto.getBusinessAddress().getLine1().toUpperCase());
-    businessAddress.setAddressLine2(acspDataDto.getBusinessAddress().getLine2().toUpperCase());
-    businessAddress.setPostalCode(acspDataDto.getBusinessAddress().getPostcode().toUpperCase());
-    businessAddress.setCountry(acspDataDto.getBusinessAddress().getCountry().toUpperCase());
-    businessAddress.setPremises(acspDataDto.getBusinessAddress().getPropertyDetails().toUpperCase());
-    businessAddress.setRegion(acspDataDto.getBusinessAddress().getCounty().toUpperCase());
+    if(acspDataDto.getBusinessAddress() != null) {
+      if (acspDataDto.getBusinessAddress().getLine1() != null) {
+        businessAddress.setAddressLine1(acspDataDto.getBusinessAddress().getLine1().toUpperCase());
+      }
+      if (acspDataDto.getBusinessAddress().getLine2() != null) {
+        businessAddress.setAddressLine2(acspDataDto.getBusinessAddress().getLine2().toUpperCase());
+      }
+      if (acspDataDto.getBusinessAddress().getPostcode() != null) {
+        businessAddress.setPostalCode(acspDataDto.getBusinessAddress().getPostcode().toUpperCase());
+      }
+      if (acspDataDto.getBusinessAddress().getCountry() != null) {
+        businessAddress.setCountry(acspDataDto.getBusinessAddress().getCountry().toUpperCase());
+      }
+      if (acspDataDto.getBusinessAddress().getPropertyDetails() != null) {
+        businessAddress.setPremises(acspDataDto.getBusinessAddress().getPropertyDetails().toUpperCase());
+      }
+      if (acspDataDto.getBusinessAddress().getCounty() != null) {
+        businessAddress.setRegion(acspDataDto.getBusinessAddress().getCounty().toUpperCase());
+      }
+    }
     return businessAddress;
   }
 
