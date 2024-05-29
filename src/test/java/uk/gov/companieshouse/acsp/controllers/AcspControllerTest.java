@@ -14,6 +14,7 @@ import uk.gov.companieshouse.acsp.service.TransactionService;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 
 import java.net.URI;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -64,7 +65,7 @@ class AcspControllerTest {
     @Test
     void getAcsp() throws ServiceException{
         acspDataDto = new AcspDataDto();
-      when(acspService.getAcsp(any())).thenReturn(ResponseEntity.ok().body(acspDataDto));
+      when(acspService.getAcsp(any())).thenReturn(Optional.of(acspDataDto));
 
         var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID, REQUEST_ID);
 
