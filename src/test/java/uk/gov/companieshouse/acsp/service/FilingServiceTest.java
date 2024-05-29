@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
+import uk.gov.companieshouse.acsp.models.filing.Presenter;
 import uk.gov.companieshouse.acsp.models.type.Address;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.ApiClient;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.when;
 class FilingServiceTest {
 
     private static final String REQUEST_ID = "xyz987";
-    private static final String ASCP_ID = "abc123";
+    private static final String ACSP_ID = "abc123";
     private static final String PASS_THROUGH_HEADER = "545345345";
     private static final String FIRST_NAME = "firstName";
     private static final String LAST_NAME = "lastName";
@@ -86,7 +87,9 @@ class FilingServiceTest {
         dataSubmissionDto = new AcspDataSubmissionDto();
         dataSubmissionDto.setUpdatedAt(LocalDateTime.now());
         acspDataDto = new AcspDataDto();
-        acspDataDto.setId(ASCP_ID);
+        acspDataDto.setId(ACSP_ID);
+        acspDataDto.setFirstName(FIRST_NAME);
+        acspDataDto.setLastName(LAST_NAME);
         AcspDataSubmissionDto dataSubmissionDto = new AcspDataSubmissionDto();
         dataSubmissionDto.setUpdatedAt(LocalDateTime.now());
         acspDataDto.setAcspDataSubmission(dataSubmissionDto);
@@ -146,15 +149,17 @@ class FilingServiceTest {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
 
-        when(acspService.getAcsp(ASCP_ID)).thenReturn(Optional.of(acspDataDto));
+        when(acspService.getAcsp(ACSP_ID)).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
-        var response = filingsService.generateAcspApplicationFiling(ASCP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         //Assertions.assertEquals("100", response.getCost());
         Assertions.assertEquals(PAYMENT_REFERENCE, response.getData().get("payment_reference"));
         Assertions.assertEquals(PAYMENT_METHOD, response.getData().get("payment_method"));
         Assertions.assertNotNull(response.getData().get("item"));
         Assertions.assertNotNull(response.getData().get("presenter"));
+        Assertions.assertEquals(FIRST_NAME, ((Presenter) response.getData().get("presenter")).getFirstName());
+        Assertions.assertEquals(LAST_NAME, ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
         Assertions.assertEquals("acsp", response.getKind());
 
