@@ -90,9 +90,10 @@ class AcspServiceTest {
         ).thenReturn(acspDataDto);
 
         var response = acspService.getAcsp(SUBMISSION_ID);
-        var responseBody = response.getBody();
+
+        var responseBody = ResponseEntity.ok().body(response);
         assertNotNull(responseBody);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, responseBody.getStatusCode());
     }
 
     private Transaction buildTransaction() {

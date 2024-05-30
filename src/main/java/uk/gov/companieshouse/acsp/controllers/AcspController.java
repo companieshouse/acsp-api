@@ -40,10 +40,10 @@ public class AcspController {
                                               @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
         LOGGER.info("received request to get acsp data");
         var acspData = acspService.getAcsp(id);
-        if (acspData == null){
+        if (acspData.isEmpty()){
             return new ResponseEntity<>( HttpStatus.NOT_FOUND);
         }else{
-            return acspData;
+            return ResponseEntity.ok().body(acspData);
         }
     }
 

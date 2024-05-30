@@ -80,13 +80,13 @@ public class AcspService {
 
 
 
-    public ResponseEntity<Object> getAcsp(String id) {
+    public Optional<AcspDataDto> getAcsp(String id) {
         Optional<AcspDataDao> acspData = acspRepository.findById(id);
         if(acspData.isPresent()) {
             var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspData.get());
-            return ResponseEntity.ok().body(acspDataDto);
+            return Optional.of(acspDataDto);
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 
