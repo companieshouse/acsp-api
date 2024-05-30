@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
+import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.filing.*;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
@@ -66,18 +67,19 @@ public class FilingsService {
           String acspApplicationId,
           String transactionId,
           String passThroughTokenHeader)
-          throws ServiceException {
+          throws ServiceException, SubmissionNotLinkedToTransactionException {
     var filing = new FilingApi();
     setFilingApiData(filing, acspApplicationId, transactionId, passThroughTokenHeader);
     return filing;
   }
 
   private void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId,
-                                String passThroughTokenHeader) throws ServiceException {
-    var acspDataDto = acspService.getAcsp(acspApplicationId).orElse(null);
+                                String passThroughTokenHeader) throws ServiceException, SubmissionNotLinkedToTransactionException {
+    var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
+    var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
       var data = new HashMap<String, Object>();
-      var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
+
       buildPresenter(data, acspDataDto);
       buildSubmission(data, acspDataDto, transactionId);
       buildAcspData(data, acspDataDto);

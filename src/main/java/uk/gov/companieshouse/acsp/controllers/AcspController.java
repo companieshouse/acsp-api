@@ -13,6 +13,8 @@ import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
+import java.util.Optional;
+
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.*;
 
@@ -42,7 +44,7 @@ public class AcspController {
                                               @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
         LOGGER.info("received request to get acsp data");
         Transaction transaction;
-        AcspDataDto acspData;
+        Optional<AcspDataDto> acspData;
         try {
             transaction = transactionService.getTransaction(requestId, transactionId);
             acspData = acspService.getAcsp(id, transaction);

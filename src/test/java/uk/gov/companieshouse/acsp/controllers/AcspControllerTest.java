@@ -78,9 +78,8 @@ class AcspControllerTest {
 
     @Test
     void getAcspWhenGetAcspReturnsNull() throws ServiceException, SubmissionNotLinkedToTransactionException {
-        acspDataDto = new AcspDataDto();
         when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
-        when(acspService.getAcsp(any(), any())).thenReturn(null);
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.empty());
 
         var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID, REQUEST_ID);
 
