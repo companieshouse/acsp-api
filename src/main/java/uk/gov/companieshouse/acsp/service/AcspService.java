@@ -87,7 +87,7 @@ public class AcspService {
         acspData.setAcspDataSubmission(submission);
     }
 
-    public AcspDataDto getAcsp(String acspId, Transaction transaction) throws SubmissionNotLinkedToTransactionException {
+    public Optional<AcspDataDto> getAcsp(String acspId, Transaction transaction) throws SubmissionNotLinkedToTransactionException {
 
         final String submissionUri = getSubmissionUri(transaction.getId(), acspId);
         if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, submissionUri)) {
@@ -97,9 +97,10 @@ public class AcspService {
 
         Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
         if(acspData.isPresent()) {
-            return acspRegDataDtoDaoMapper.daoToDto(acspData.get());
+            var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspData.get());
+            return Optional.of(acspDataDto);
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 
