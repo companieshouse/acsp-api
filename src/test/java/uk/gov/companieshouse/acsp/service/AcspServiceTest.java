@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
@@ -99,6 +100,16 @@ class AcspServiceTest {
                 .thenReturn(true);
         var response = acspService.getAcsp(SUBMISSION_ID, transaction);
         assertNotNull(response);
+    }
+
+    @Test
+    void testGetSavedAcspReturnsNullWhenNoLickedTransaction() throws SubmissionNotLinkedToTransactionException {
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+                .thenReturn(false);
+        transaction.setId("1234");
+        assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
+            acspService.getAcsp(SUBMISSION_ID, transaction);
+        });
     }
 
     private Transaction buildTransaction() {
