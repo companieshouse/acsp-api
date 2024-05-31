@@ -5,3 +5,4 @@ weight: 100
 routes:
   1: ^/acsp/*
   2: ^/transactions/(.*)/acsp/(.*)
+  3: ^/acsp-api/*
