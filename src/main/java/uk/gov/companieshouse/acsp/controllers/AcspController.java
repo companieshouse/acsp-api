@@ -45,7 +45,7 @@ public class AcspController {
         LOGGER.info("received request to get acsp data");
         Optional<AcspDataDto> acspData;
         try {
-            Transaction transaction = transactionService.getTransaction(requestId, transactionId);
+            var transaction = transactionService.getTransaction(requestId, transactionId);
             acspData = acspService.getAcsp(id, transaction);
         } catch (ServiceException | SubmissionNotLinkedToTransactionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
