@@ -9,7 +9,6 @@ import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionExce
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
 import uk.gov.companieshouse.acsp.service.TransactionService;
-import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -45,7 +44,7 @@ public class AcspController {
         LOGGER.info("received request to get acsp data");
         Optional<AcspDataDto> acspData;
         try {
-            Transaction transaction = transactionService.getTransaction(requestId, transactionId);
+            var transaction = transactionService.getTransaction(requestId, transactionId);
             acspData = acspService.getAcsp(id, transaction);
         } catch (ServiceException | SubmissionNotLinkedToTransactionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
