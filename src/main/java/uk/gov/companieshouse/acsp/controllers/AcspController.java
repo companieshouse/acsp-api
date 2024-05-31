@@ -43,10 +43,9 @@ public class AcspController {
                                               @PathVariable("id") String id,
                                               @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
         LOGGER.info("received request to get acsp data");
-        Transaction transaction;
         Optional<AcspDataDto> acspData;
         try {
-            transaction = transactionService.getTransaction(requestId, transactionId);
+            Transaction transaction = transactionService.getTransaction(requestId, transactionId);
             acspData = acspService.getAcsp(id, transaction);
         } catch (ServiceException | SubmissionNotLinkedToTransactionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
