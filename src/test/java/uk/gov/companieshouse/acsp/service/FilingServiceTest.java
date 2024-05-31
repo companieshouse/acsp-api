@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
@@ -164,7 +165,7 @@ class FilingServiceTest {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
 
-        when(acspService.getAcsp(ACSP_ID)).thenReturn(Optional.of(acspDataDto));
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
@@ -187,7 +188,7 @@ class FilingServiceTest {
 
         acspDataDto.setCorrespondenceAddresses(null);
         acspDataDto.setBusinessAddress(null);
-        when(acspService.getAcsp(ACSP_ID)).thenReturn(Optional.of(acspDataDto));
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
@@ -210,7 +211,7 @@ class FilingServiceTest {
 
         acspDataDto.setCorrespondenceAddresses(buildNullCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildNullBusinessAddress());
-        when(acspService.getAcsp(ACSP_ID)).thenReturn(Optional.of(acspDataDto));
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);

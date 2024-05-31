@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
+import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.service.FilingsService;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -42,7 +43,7 @@ class FilingsControllerTest {
     }
 
     @Test
-    void testGetFilingReturnsSuccessfully() throws ServiceException {
+    void testGetFilingReturnsSuccessfully() throws ServiceException, SubmissionNotLinkedToTransactionException {
         FilingApi filing = new FilingApi();
         filing.setDescription("12345678");
         when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER)).thenReturn(filing);
@@ -53,8 +54,16 @@ class FilingsControllerTest {
     }
 
     @Test
-    void testGetFilingSubmissionNotFound() throws ServiceException {
+    void testGetFilingSubmissionNotFound() throws ServiceException , SubmissionNotLinkedToTransactionException {
         when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER)).thenThrow(ServiceException.class);
+        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER, mockHttpServletRequest);
+        Assertions.assertNull(result.getBody());
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    void testGetFilingSubmissionWhenUnexpectedException() throws ServiceException, SubmissionNotLinkedToTransactionException {
+        when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER)).thenThrow(NullPointerException.class);
         var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER, mockHttpServletRequest);
         Assertions.assertNull(result.getBody());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
