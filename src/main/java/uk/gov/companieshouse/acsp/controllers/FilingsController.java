@@ -24,7 +24,6 @@ public class FilingsController {
     public ResponseEntity<FilingApi[]> getFiling(
             @PathVariable(ACSP_APPLICATION_ID_KEY) String acspApplicationId,
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
-            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
             HttpServletRequest request) {
 
         String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
@@ -34,7 +33,6 @@ public class FilingsController {
         } catch (ServiceException | SubmissionNotLinkedToTransactionException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            ApiLogger.errorContext(requestId, e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
         }
     }
