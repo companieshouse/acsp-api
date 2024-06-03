@@ -24,7 +24,7 @@ public class FilingsController {
     public ResponseEntity<FilingApi[]> getFiling(
             @PathVariable(ACSP_APPLICATION_ID_KEY) String acspApplicationId,
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
-            @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
+            @RequestHeader(value = ERIC_REQUEST_ID_KEY) String requestId,
             HttpServletRequest request) {
 
         String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
