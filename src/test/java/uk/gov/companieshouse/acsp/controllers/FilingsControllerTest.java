@@ -23,6 +23,7 @@ class FilingsControllerTest {
     private static final String ACSP_ID = "abc123";
     private static final String TRANSACTION_ID = "def456";
     private static final String PASS_THROUGH_HEADER = "545345345";
+    private static final String ERIC_ACCESS_TOKEN = "12345678";
 
     private Transaction transaction;
 
@@ -46,8 +47,8 @@ class FilingsControllerTest {
     void testGetFilingReturnsSuccessfully() throws ServiceException, SubmissionNotLinkedToTransactionException {
         FilingApi filing = new FilingApi();
         filing.setDescription("12345678");
-        when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER)).thenReturn(filing);
-        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, mockHttpServletRequest);
+        when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, ERIC_ACCESS_TOKEN, PASS_THROUGH_HEADER)).thenReturn(filing);
+        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER, mockHttpServletRequest);
         Assertions.assertNotNull(result.getBody());
         Assertions.assertEquals(1, result.getBody().length);
         Assertions.assertEquals("12345678", result.getBody()[0].getDescription());
@@ -55,16 +56,16 @@ class FilingsControllerTest {
 
     @Test
     void testGetFilingSubmissionNotFound() throws ServiceException , SubmissionNotLinkedToTransactionException {
-        when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER)).thenThrow(ServiceException.class);
-        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, mockHttpServletRequest);
+        when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, ERIC_ACCESS_TOKEN, PASS_THROUGH_HEADER)).thenThrow(ServiceException.class);
+        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER, mockHttpServletRequest);
         Assertions.assertNull(result.getBody());
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
     void testGetFilingSubmissionWhenUnexpectedException() throws ServiceException, SubmissionNotLinkedToTransactionException {
-        when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER)).thenThrow(NullPointerException.class);
-        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, mockHttpServletRequest);
+        when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, ERIC_ACCESS_TOKEN, PASS_THROUGH_HEADER)).thenThrow(NullPointerException.class);
+        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER, mockHttpServletRequest);
         Assertions.assertNull(result.getBody());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
     }

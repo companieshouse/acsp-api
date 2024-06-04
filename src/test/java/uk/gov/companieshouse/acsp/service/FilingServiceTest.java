@@ -168,7 +168,7 @@ class FilingServiceTest {
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
-        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, REQUEST_ID, PASS_THROUGH_HEADER);
         //Assertions.assertEquals("100", response.getCost());
         Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
         Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
@@ -191,7 +191,7 @@ class FilingServiceTest {
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
-        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, REQUEST_ID, PASS_THROUGH_HEADER);
         //Assertions.assertEquals("100", response.getCost());
         Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
         Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
@@ -214,7 +214,7 @@ class FilingServiceTest {
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
-        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, REQUEST_ID, PASS_THROUGH_HEADER);
         //Assertions.assertEquals("100", response.getCost());
         Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
         Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));

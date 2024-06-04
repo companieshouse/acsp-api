@@ -66,16 +66,17 @@ public class FilingsService {
   public FilingApi generateAcspApplicationFiling(
           String acspApplicationId,
           String transactionId,
+          String requestId,
           String passThroughTokenHeader)
           throws ServiceException, SubmissionNotLinkedToTransactionException {
     var filing = new FilingApi();
-    setFilingApiData(filing, acspApplicationId, transactionId, passThroughTokenHeader);
+    setFilingApiData(filing, acspApplicationId, transactionId, requestId, passThroughTokenHeader);
     return filing;
   }
 
-  private void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId,
+  private void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId, String requestId,
                                 String passThroughTokenHeader) throws ServiceException, SubmissionNotLinkedToTransactionException {
-    var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
+    var transaction = transactionService.getTransaction(requestId, transactionId);
     var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
       var data = new HashMap<String, Object>();
