@@ -84,7 +84,7 @@ public class FilingsService {
       buildSubmission(data, acspDataDto, transactionId);
       buildAcspData(data, acspDataDto);
       buildItem(data, transactionId);
-      setPaymentData(data, transaction, passThroughTokenHeader);
+      //setPaymentData(data, transaction, passThroughTokenHeader);
       setDescriptionFields(filing);
       buildFilingStatus(filing, data);
     }
