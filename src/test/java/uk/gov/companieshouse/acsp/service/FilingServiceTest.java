@@ -11,7 +11,6 @@ import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
 import uk.gov.companieshouse.acsp.models.dto.CompanyDto;
 import uk.gov.companieshouse.acsp.models.filing.ACSP;
-import uk.gov.companieshouse.acsp.models.filing.Item;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
 import uk.gov.companieshouse.acsp.models.type.Address;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
@@ -113,6 +112,12 @@ class FilingServiceTest {
         CompanyDto companyDto = new CompanyDto();
         companyDto.setCompanyName("Company");
         companyDto.setCompanyNumber("12345678");
+        acspDataDto.setCompanyDetails(companyDto);
+    }
+
+    private void setACSPDataDtoWithCompanyDetailsButNoCompanyNumberAndName() {
+        setACSPDataDto();
+        CompanyDto companyDto = new CompanyDto();
         acspDataDto.setCompanyDetails(companyDto);
     }
 
@@ -326,6 +331,20 @@ class FilingServiceTest {
         Assertions.assertNull(((ACSP) response.getData().get("data")).getEmail());
     }
 
+
+    @Test
+    void tesGenerateAcspApplicationFilingWithCompanyDetailsWithoutCompanyNameAndNumber() throws Exception {
+        //initTransactionPaymentLinkMocks();
+        //initGetPaymentMocks();
+
+        setACSPDataDtoWithCompanyDetailsButNoCompanyNumberAndName();
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        Assertions.assertNull(((ACSP) response.getData().get("data")).getCompanyName());
+        Assertions.assertNull(((ACSP) response.getData().get("data")).getCompanyNumber());
+    }
 
 
 

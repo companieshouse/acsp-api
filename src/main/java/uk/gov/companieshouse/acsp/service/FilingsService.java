@@ -136,7 +136,7 @@ public class FilingsService {
     acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     acsp.setPaymentReference(PAYMENT_REFERENCE.toUpperCase());
     acsp.setPaymentMethod("credit-card".toUpperCase());
-    if(acspDataDto.getCompanyDetails() != null && acspDataDto.getCompanyDetails().getCompanyName() != null) {
+    if(acspDataDto.getCompanyDetails() != null) {
       if(acspDataDto.getCompanyDetails().getCompanyName() != null) {
         acsp.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName().toUpperCase());
       }
