@@ -275,6 +275,7 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData().get("submission"));
         Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
         Assertions.assertEquals("COMPANY", ((ACSP) response.getData().get("data")).getCompanyName());
+        Assertions.assertNotEquals("company", ((ACSP) response.getData().get("data")).getCompanyName());
         Assertions.assertEquals("12345678", ((ACSP) response.getData().get("data")).getCompanyNumber());
 
     }
