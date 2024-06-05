@@ -89,15 +89,16 @@ public class AcspService {
 
     public Optional<AcspDataDto> getAcsp(String acspId, Transaction transaction) throws SubmissionNotLinkedToTransactionException {
 
-        final String submissionUri = getSubmissionUri(transaction.getId(), acspId);
-        if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, submissionUri)) {
-            throw new SubmissionNotLinkedToTransactionException(String.format(
-                    "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
-        }
-
         Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
         if(acspData.isPresent()) {
             var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspData.get());
+
+            //final String submissionUri = getSubmissionUri(transaction.getId(), acspId);
+            if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
+                throw new SubmissionNotLinkedToTransactionException(String.format(
+                        "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
+            }
+
             return Optional.of(acspDataDto);
         } else {
             return Optional.empty();

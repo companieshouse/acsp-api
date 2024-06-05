@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
@@ -96,15 +95,19 @@ class AcspServiceTest {
         when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao)
         ).thenReturn(acspDataDto);
 
-        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(true);
         var response = acspService.getAcsp(SUBMISSION_ID, transaction);
         assertNotNull(response);
     }
 
     @Test
-    void testGetSavedAcspReturnsNullWhenNoLickedTransaction() throws SubmissionNotLinkedToTransactionException {
-        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+    void testGetSavedAcspReturnsNullWhenNoLickedTransaction() {
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setId(SUBMISSION_ID);
+        when(acspRepository.findById(SUBMISSION_ID)).thenReturn(Optional.of(acspDataDao));
+        when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao)).thenReturn(acspDataDto);
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(false);
         transaction.setId("1234");
         assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
