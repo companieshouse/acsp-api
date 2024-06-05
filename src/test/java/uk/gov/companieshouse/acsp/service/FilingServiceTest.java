@@ -89,10 +89,6 @@ class FilingServiceTest {
         transactionLinks.setPayment("/12345678/payment");
         transaction.setLinks(transactionLinks);
         filingsService = new FilingsService(transactionService, acspService, apiClientService);
-        ReflectionTestUtils.setField(filingsService,
-                "filingDescriptionIdentifier","**ACSP Application** submission made");
-        ReflectionTestUtils.setField(filingsService,
-                "filingDescription","acsp application made on {date}");
     }
 
     private void setACSPDataDto() {
@@ -106,6 +102,10 @@ class FilingServiceTest {
         acspDataDto.setAcspDataSubmission(dataSubmissionDto);
         acspDataDto.setCorrespondenceAddresses(buildCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildBusinessAddress());
+        ReflectionTestUtils.setField(filingsService,
+                "filingDescriptionIdentifier","**ACSP Application** submission made");
+        ReflectionTestUtils.setField(filingsService,
+                "filingDescription","acsp application made on {date}");
     }
 
     private void setACSPDataDtoWithCompanyDetails() {
@@ -121,6 +121,10 @@ class FilingServiceTest {
         acspDataDto.setFirstName(null);
         acspDataDto.setLastName(null);
         acspDataDto.setId(null);
+        ReflectionTestUtils.setField(filingsService,
+                "filingDescriptionIdentifier",null);
+        ReflectionTestUtils.setField(filingsService,
+                "filingDescription",null);
     }
 
     private void setACSPDataDtoWithoutemailaddress() {
@@ -205,6 +209,8 @@ class FilingServiceTest {
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
         Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
+        Assertions.assertNull(((ACSP) response.getData().get("data")).getCompanyName());
+        Assertions.assertNull(((ACSP) response.getData().get("data")).getCompanyNumber());
 
     }
 
@@ -303,6 +309,8 @@ class FilingServiceTest {
         Assertions.assertNull(((Presenter)response.getData().get("presenter")).getFirstName());
         Assertions.assertNull(((Presenter)response.getData().get("presenter")).getLastName());
         Assertions.assertNull(((Presenter)response.getData().get("presenter")).getUserId());
+        Assertions.assertNull(response.getDescriptionIdentifier());
+        Assertions.assertNull(response.getDescription());
     }
 
     @Test
