@@ -136,6 +136,14 @@ public class FilingsService {
     acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     acsp.setPaymentReference(PAYMENT_REFERENCE.toUpperCase());
     acsp.setPaymentMethod("credit-card".toUpperCase());
+    if(acspDataDto.getCompanyDetails() != null && acspDataDto.getCompanyDetails().getCompanyName() != null) {
+      if(acspDataDto.getCompanyDetails().getCompanyName() != null) {
+        acsp.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName().toUpperCase());
+      }
+      if(acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+        acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
+      }
+    }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     data.put(ACSP, acsp);
   }

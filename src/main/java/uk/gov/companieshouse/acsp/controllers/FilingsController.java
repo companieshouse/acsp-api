@@ -16,7 +16,7 @@ import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.*;
 
 @RestController
-@RequestMapping("/transactions/{transaction_id}/acsp/{acsp_application_id}/filings")
+@RequestMapping("/private/transactions/{transaction_id}/acsp/{acsp_application_id}/filings")
 public class FilingsController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
