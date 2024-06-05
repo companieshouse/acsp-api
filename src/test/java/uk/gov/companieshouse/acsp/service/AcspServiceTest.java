@@ -16,6 +16,7 @@ import uk.gov.companieshouse.acsp.util.TransactionUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -123,6 +124,15 @@ class AcspServiceTest {
         var acspDataDao = new AcspDataDao();
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(new AcspDataDao()));
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void deleteAcspApplicationThatDoesNotExist() {
+        var acspDataDao = new AcspDataDao();
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.empty());
         ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
         assertEquals(expectedResponse, response);
     }
