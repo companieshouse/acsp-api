@@ -9,6 +9,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
+import uk.gov.companieshouse.acsp.models.dto.CompanyDto;
+import uk.gov.companieshouse.acsp.models.filing.ACSP;
+import uk.gov.companieshouse.acsp.models.filing.Item;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
 import uk.gov.companieshouse.acsp.models.type.Address;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
@@ -85,8 +88,14 @@ class FilingServiceTest {
         var transactionLinks = new TransactionLinks();
         transactionLinks.setPayment("/12345678/payment");
         transaction.setLinks(transactionLinks);
-        dataSubmissionDto = new AcspDataSubmissionDto();
-        dataSubmissionDto.setUpdatedAt(LocalDateTime.now());
+        filingsService = new FilingsService(transactionService, acspService, apiClientService);
+        ReflectionTestUtils.setField(filingsService,
+                "filingDescriptionIdentifier","**ACSP Application** submission made");
+        ReflectionTestUtils.setField(filingsService,
+                "filingDescription","acsp application made on {date}");
+    }
+
+    private void setACSPDataDto() {
         acspDataDto = new AcspDataDto();
         acspDataDto.setId(ACSP_ID);
         acspDataDto.setFirstName(FIRST_NAME);
@@ -97,12 +106,25 @@ class FilingServiceTest {
         acspDataDto.setAcspDataSubmission(dataSubmissionDto);
         acspDataDto.setCorrespondenceAddresses(buildCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildBusinessAddress());
-        filingsService = new FilingsService(transactionService, acspService, apiClientService);
-        ReflectionTestUtils.setField(filingsService,
-                "filingDescriptionIdentifier","**ACSP Application** submission made");
-        ReflectionTestUtils.setField(filingsService,
-                "filingDescription","acsp application made on {date}");
     }
+
+    private void setACSPDataDtoWithCompanyDetails() {
+        acspDataDto = new AcspDataDto();
+        acspDataDto.setId(ACSP_ID);
+        acspDataDto.setFirstName(FIRST_NAME);
+        acspDataDto.setLastName(LAST_NAME);
+        acspDataDto.setEmail("email@email.com");
+        AcspDataSubmissionDto dataSubmissionDto = new AcspDataSubmissionDto();
+        dataSubmissionDto.setUpdatedAt(LocalDateTime.now());
+        acspDataDto.setAcspDataSubmission(dataSubmissionDto);
+        acspDataDto.setCorrespondenceAddresses(buildCorrespondenceAddress());
+        acspDataDto.setBusinessAddress(buildBusinessAddress());
+        CompanyDto companyDto = new CompanyDto();
+        companyDto.setCompanyName("Company");
+        companyDto.setCompanyNumber("12345678");
+        acspDataDto.setCompanyDetails(companyDto);
+    }
+
 
     void initTransactionPaymentLinkMocks() throws IOException, URIValidationException {
         var transactionPayment = new TransactionPayment();
@@ -165,6 +187,8 @@ class FilingServiceTest {
         //initTransactionPaymentLinkMocks();
         //initGetPaymentMocks();
 
+
+        setACSPDataDto();
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -186,6 +210,7 @@ class FilingServiceTest {
         //initTransactionPaymentLinkMocks();
         //initGetPaymentMocks();
 
+        setACSPDataDto();
         acspDataDto.setCorrespondenceAddresses(null);
         acspDataDto.setBusinessAddress(null);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
@@ -209,6 +234,7 @@ class FilingServiceTest {
         //initTransactionPaymentLinkMocks();
         //initGetPaymentMocks();
 
+        setACSPDataDto();
         acspDataDto.setCorrespondenceAddresses(buildNullCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildNullBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
@@ -226,6 +252,34 @@ class FilingServiceTest {
         Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
 
     }
+
+    @Test
+    void tesGenerateAcspApplicationFilingWithCompanyDetails() throws Exception {
+        //initTransactionPaymentLinkMocks();
+        //initGetPaymentMocks();
+
+        setACSPDataDtoWithCompanyDetails();
+        acspDataDto.setCorrespondenceAddresses(buildNullCorrespondenceAddress());
+        acspDataDto.setBusinessAddress(buildNullBusinessAddress());
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        //Assertions.assertEquals("100", response.getCost());
+        //Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        //Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
+        Assertions.assertNotNull(response.getData().get("item"));
+        Assertions.assertNotNull(response.getData().get("presenter"));
+        Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
+        Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
+        Assertions.assertNotNull(response.getData().get("submission"));
+        Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
+        Assertions.assertEquals("COMPANY", ((ACSP) response.getData().get("data")).getCompanyName());
+        Assertions.assertEquals("12345678", ((ACSP) response.getData().get("data")).getCompanyNumber());
+
+    }
+
+
 
 
 
