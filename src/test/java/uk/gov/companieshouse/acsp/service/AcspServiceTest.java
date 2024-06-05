@@ -117,4 +117,13 @@ class AcspServiceTest {
         transaction.setId(TRANSACTION_ID);
         return transaction;
     }
+
+    @Test
+    void deleteAcspApplication() {
+        var acspDataDao = new AcspDataDao();
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(new AcspDataDao()));
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
 }
