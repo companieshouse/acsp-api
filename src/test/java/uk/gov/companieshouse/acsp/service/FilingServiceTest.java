@@ -109,20 +109,23 @@ class FilingServiceTest {
     }
 
     private void setACSPDataDtoWithCompanyDetails() {
-        acspDataDto = new AcspDataDto();
-        acspDataDto.setId(ACSP_ID);
-        acspDataDto.setFirstName(FIRST_NAME);
-        acspDataDto.setLastName(LAST_NAME);
-        acspDataDto.setEmail("email@email.com");
-        AcspDataSubmissionDto dataSubmissionDto = new AcspDataSubmissionDto();
-        dataSubmissionDto.setUpdatedAt(LocalDateTime.now());
-        acspDataDto.setAcspDataSubmission(dataSubmissionDto);
-        acspDataDto.setCorrespondenceAddresses(buildCorrespondenceAddress());
-        acspDataDto.setBusinessAddress(buildBusinessAddress());
+        setACSPDataDto();
         CompanyDto companyDto = new CompanyDto();
         companyDto.setCompanyName("Company");
         companyDto.setCompanyNumber("12345678");
         acspDataDto.setCompanyDetails(companyDto);
+    }
+
+    private void setACSPDataDtoWithoutNamesandId() {
+        setACSPDataDto();
+        acspDataDto.setFirstName(null);
+        acspDataDto.setLastName(null);
+        acspDataDto.setId(null);
+    }
+
+    private void setACSPDataDtoWithoutemailaddress() {
+        setACSPDataDto();
+        acspDataDto.setEmail(null);
     }
 
 
@@ -277,7 +280,42 @@ class FilingServiceTest {
         Assertions.assertEquals("COMPANY", ((ACSP) response.getData().get("data")).getCompanyName());
         Assertions.assertNotEquals("company", ((ACSP) response.getData().get("data")).getCompanyName());
         Assertions.assertEquals("12345678", ((ACSP) response.getData().get("data")).getCompanyNumber());
+    }
 
+
+    @Test
+    void tesGenerateAcspApplicationFilingWithNoNamesAndId() throws Exception {
+        //initTransactionPaymentLinkMocks();
+        //initGetPaymentMocks();
+
+        setACSPDataDtoWithoutNamesandId();
+        acspDataDto.setCorrespondenceAddresses(buildNullCorrespondenceAddress());
+        acspDataDto.setBusinessAddress(buildNullBusinessAddress());
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        //Assertions.assertEquals("100", response.getCost());
+        //Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        //Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
+        Assertions.assertNotNull(response.getData().get("item"));
+        Assertions.assertNotNull(response.getData().get("presenter"));
+        Assertions.assertNull(((Presenter)response.getData().get("presenter")).getFirstName());
+        Assertions.assertNull(((Presenter)response.getData().get("presenter")).getLastName());
+        Assertions.assertNull(((Presenter)response.getData().get("presenter")).getUserId());
+    }
+
+    @Test
+    void tesGenerateAcspApplicationFilingWithNoEmail() throws Exception {
+        //initTransactionPaymentLinkMocks();
+        //initGetPaymentMocks();
+
+        setACSPDataDtoWithoutemailaddress();
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        Assertions.assertNull(((ACSP) response.getData().get("data")).getEmail());
     }
 
 
