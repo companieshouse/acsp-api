@@ -141,4 +141,14 @@ public class AcspService {
     private String getSubmissionUri(String transactionId, String submissionId) {
         return String.format(SUBMISSION_URI_PATTERN, transactionId, submissionId);
     }
+
+    public ResponseEntity<Object> deleteAcspApplication(String userId){
+        Optional<AcspDataDao> acspData = acspRepository.findById(userId);
+        if (acspData.isPresent()) {
+            acspRepository.deleteById(userId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
