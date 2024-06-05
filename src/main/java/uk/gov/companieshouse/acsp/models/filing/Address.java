@@ -23,10 +23,6 @@ public final class Address {
     private String  premises;
     @JsonProperty("region")
     private String  region;
-    @JsonProperty("company_number")
-    private String  companyNumber;
-    @JsonProperty("company_name")
-    private String  companyName;
 
     public String getAddressLine1() {
         return addressLine1;
@@ -90,21 +86,5 @@ public final class Address {
 
     public void setRegion(String region) {
         this.region = region;
-    }
-
-    public String getCompanyNumber() {
-        return companyNumber;
-    }
-
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 }
