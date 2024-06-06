@@ -7,16 +7,19 @@ import org.springframework.web.bind.annotation.*;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.service.FilingsService;
-import uk.gov.companieshouse.acsp.util.ApiLogger;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
+import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.*;
 
 @RestController
-@RequestMapping("/private/transactions/{transaction_id}/acsp/{acsp_application_id}/filings")
+@RequestMapping("/transactions/{transaction_id}/acsp/{acsp_application_id}/filings")
 public class FilingsController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
     @Autowired
     private FilingsService filingService;
 
@@ -24,8 +27,8 @@ public class FilingsController {
     public ResponseEntity<FilingApi[]> getFiling(
             @PathVariable(ACSP_APPLICATION_ID_KEY) String acspApplicationId,
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
-            @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
             HttpServletRequest request) {
+        LOGGER.info("received request to get filing data");
 
         String passThroughTokenHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         try {
@@ -34,7 +37,6 @@ public class FilingsController {
         } catch (ServiceException | SubmissionNotLinkedToTransactionException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            ApiLogger.errorContext(requestId, e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
         }
     }

@@ -47,7 +47,7 @@ class FilingsControllerTest {
         FilingApi filing = new FilingApi();
         filing.setDescription("12345678");
         when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER)).thenReturn(filing);
-        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER, mockHttpServletRequest);
+        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, mockHttpServletRequest);
         Assertions.assertNotNull(result.getBody());
         Assertions.assertEquals(1, result.getBody().length);
         Assertions.assertEquals("12345678", result.getBody()[0].getDescription());
@@ -56,7 +56,7 @@ class FilingsControllerTest {
     @Test
     void testGetFilingSubmissionNotFound() throws ServiceException , SubmissionNotLinkedToTransactionException {
         when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER)).thenThrow(ServiceException.class);
-        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER, mockHttpServletRequest);
+        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, mockHttpServletRequest);
         Assertions.assertNull(result.getBody());
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
@@ -64,7 +64,7 @@ class FilingsControllerTest {
     @Test
     void testGetFilingSubmissionWhenUnexpectedException() throws ServiceException, SubmissionNotLinkedToTransactionException {
         when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER)).thenThrow(NullPointerException.class);
-        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER, mockHttpServletRequest);
+        var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, mockHttpServletRequest);
         Assertions.assertNull(result.getBody());
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
     }

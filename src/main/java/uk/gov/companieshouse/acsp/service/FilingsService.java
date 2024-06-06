@@ -84,7 +84,7 @@ public class FilingsService {
       buildSubmission(data, acspDataDto, transactionId);
       buildAcspData(data, acspDataDto);
       buildItem(data, transactionId);
-      setPaymentData(data, transaction, passThroughTokenHeader);
+      //setPaymentData(data, transaction, passThroughTokenHeader);
       setDescriptionFields(filing);
       buildFilingStatus(filing, data);
     }
@@ -136,6 +136,14 @@ public class FilingsService {
     acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     acsp.setPaymentReference(PAYMENT_REFERENCE.toUpperCase());
     acsp.setPaymentMethod("credit-card".toUpperCase());
+    if(acspDataDto.getCompanyDetails() != null) {
+      if(acspDataDto.getCompanyDetails().getCompanyName() != null) {
+        acsp.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName().toUpperCase());
+      }
+      if(acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+        acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
+      }
+    }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     data.put(ACSP, acsp);
   }
@@ -201,49 +209,4 @@ public class FilingsService {
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
   }
-
-
-  private void setPaymentData(
-          Map<String, Object> data,
-          Transaction transaction,
-          String passthroughTokenHeader)
-          throws ServiceException {
-    var paymentLink = transaction.getLinks().getPayment();
-    var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passthroughTokenHeader);
-    var payment = getPayment(paymentReference, passthroughTokenHeader);
-
-    data.put(PAYMENT_REFERENCE, paymentReference.toUpperCase());
-    data.put(PAYMENT_METHOD, payment.getPaymentMethod().toUpperCase());
-  }
-
-  private PaymentApi getPayment(String paymentReference, String passthroughTokenHeader)
-          throws ServiceException {
-    try {
-      return apiClientService
-              .getApiClient(passthroughTokenHeader)
-              .payment()
-              .get("/payments/" + paymentReference)
-              .execute()
-              .getData();
-    } catch (URIValidationException | IOException e) {
-      throw new ServiceException(e.getMessage(), e);
-    }
-  }
-
-  private String getPaymentReferenceFromTransaction(String uri, String passthroughTokenHeader)
-          throws ServiceException {
-    try {
-      var transactionPaymentInfo =
-              apiClientService
-                      .getApiClient(passthroughTokenHeader)
-                      .transactions()
-                      .getPayment(uri)
-                      .execute();
-
-      return transactionPaymentInfo.getData().getPaymentReference();
-    } catch (URIValidationException | IOException e) {
-      throw new ServiceException(e.getMessage(), e);
-    }
-  }
-
 }
