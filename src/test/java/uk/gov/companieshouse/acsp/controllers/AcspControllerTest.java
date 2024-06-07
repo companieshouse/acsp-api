@@ -63,6 +63,18 @@ class AcspControllerTest {
     }
 
     @Test
+    void createAcspTransactionError() throws ServiceException {
+        ServiceException serviceException = new ServiceException("Could not find transaction");
+        when(transactionService.getTransaction(any(), any())).thenThrow(serviceException);
+
+        var response = acspController.createAcspData( TRANSACTION_ID,
+                REQUEST_ID,
+                USER_ID,
+                acspDataDto);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
     void saveAcsp() throws ServiceException {
         when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
         when(acspService.saveAcspRegData(transaction,

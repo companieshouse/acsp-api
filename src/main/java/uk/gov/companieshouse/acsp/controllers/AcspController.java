@@ -31,10 +31,17 @@ public class AcspController {
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
             @RequestHeader(value = ERIC_IDENTITY) String userId,
-            @RequestBody AcspDataDto acspData) throws ServiceException { //TODO should not throw the exception instead catch and return appropriate http response
-        LOGGER.info("received request to save acsp data");
-        var transaction = transactionService.getTransaction(requestId, transactionId);
-        return acspService.createAcspRegData(transaction, acspData, requestId, userId);
+            @RequestBody AcspDataDto acspData) {
+        LOGGER.info("received POST request to save acsp data");
+        try {
+            var transaction = transactionService.getTransaction(requestId, transactionId);
+            return acspService.createAcspRegData(transaction, acspData, requestId, userId);
+        } catch (ServiceException e) {
+            LOGGER.info("Error saving data " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+
     }
 
     @PutMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")

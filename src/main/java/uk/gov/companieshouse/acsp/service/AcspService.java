@@ -58,7 +58,7 @@ public class AcspService {
                                                                 String requestId,
                                                                 String userId) {
 
-        AcspDataDao acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
+        var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         String submissionId = acspDataDao.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
         updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);

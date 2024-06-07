@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.acsp.service;
 
 import com.mongodb.DuplicateKeyException;
+import com.mongodb.MongoSocketWriteException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -83,6 +84,22 @@ class AcspServiceTest {
                 REQUEST_ID,
                 USER_ID);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
+
+    @Test
+    void createAcspException() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.insert((AcspDataDao) any())).thenThrow(MongoSocketWriteException.class);
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspData,
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
