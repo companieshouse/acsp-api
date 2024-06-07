@@ -47,7 +47,20 @@ class AcspControllerTest {
 
     private AcspDataDto acspDataDto;
 
+    @Test
+    void createAcsp() throws ServiceException {
+        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
+        when(acspService.createAcspRegData(transaction,
+                acspDataDto,
+                REQUEST_ID,
+                USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
 
+        var response = acspController.createAcspData( TRANSACTION_ID,
+                REQUEST_ID,
+                USER_ID,
+                acspDataDto);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
 
     @Test
     void saveAcsp() throws ServiceException {

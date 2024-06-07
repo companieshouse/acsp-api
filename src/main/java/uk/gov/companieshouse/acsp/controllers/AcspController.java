@@ -26,6 +26,17 @@ public class AcspController {
     @Autowired
     private TransactionService transactionService;
 
+    @PostMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
+    public ResponseEntity<Object> createAcspData(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
+            @RequestHeader(value = ERIC_IDENTITY) String userId,
+            @RequestBody AcspDataDto acspData) throws ServiceException { //TODO should not throw the exception instead catch and return appropriate http response
+        LOGGER.info("received request to save acsp data");
+        var transaction = transactionService.getTransaction(requestId, transactionId);
+        return acspService.createAcspRegData(transaction, acspData, requestId, userId);
+    }
+
     @PutMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
     public ResponseEntity<Object> saveAcspData(
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,

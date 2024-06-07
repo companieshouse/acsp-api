@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.acsp.service;
 
+import com.mongodb.DuplicateKeyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,40 @@ public class AcspService {
         this.transactionService = transactionService;
         this.acspRegDataDtoDaoMapper = acspRegDataDtoDaoMapper;
         this.transactionUtils = transactionUtils;
+    }
+
+    public ResponseEntity<Object> createAcspRegData(Transaction transaction, AcspDataDto acspData,
+                                                  String requestId, String userId) {
+        return createDataAndUpdateTransaction(transaction, acspData, requestId, userId);
+    }
+
+    private ResponseEntity<Object> createDataAndUpdateTransaction(Transaction transaction,
+                                                                AcspDataDto acspDataDto,
+                                                                String requestId,
+                                                                String userId) {
+
+        AcspDataDao acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
+        String submissionId = acspDataDao.getId();
+        final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
+        updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
+
+        // create the Resource to be added to the Transaction (includes various links to the resource)
+        var acspTransactionResource = createAcspTransactionResource(submissionUri);
+        try {
+            var insertedSubmission = acspRepository.insert(acspDataDao);
+            updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId);
+            ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
+                    transaction.getId(), insertedSubmission.getId()));
+            acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
+            return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
+        } catch (DuplicateKeyException e) {
+            LOGGER.info("A document already exist with this id");
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            LOGGER.info("An unknown error occurred");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     public ResponseEntity<Object> saveAcspRegData(Transaction transaction, AcspDataDto acspData,
