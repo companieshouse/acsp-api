@@ -83,13 +83,7 @@ public class FilingsService {
     var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
     var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
-      var data = new HashMap<String, Object>();
-
-      filing.setData(buildData(acspDataDto, transactionId));
-      if(transaction.getStatus() != null &&
-              transaction.getStatus().equals(TransactionStatus.CLOSED)) {
-        setPaymentData(data, transaction, passThroughTokenHeader);
-      }
+      filing.setData(buildData(acspDataDto, transactionId, transaction, passThroughTokenHeader));
       setDescriptionFields(filing);
       buildFilingStatus(filing);
     }
@@ -123,24 +117,28 @@ public class FilingsService {
     data.put(SUBMISSION, submission);
   }
 
-  private HashMap<String, Object> buildData(AcspDataDto acspDataDto, String transactionId) {
+  private HashMap<String, Object> buildData(AcspDataDto acspDataDto, String transactionId, Transaction transaction,
+                                            String passThroughTokenHeader) throws ServiceException {
     HashMap<String, Object> data = new HashMap<>();
-    data.put("acsp", buildAcspData(acspDataDto));
+    data.put("acsp", buildAcspData(acspDataDto, transaction,passThroughTokenHeader));
     buildPresenter(data, acspDataDto);
     buildSubmission(data, acspDataDto, transactionId);
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     return data;
   }
 
-  private ACSP buildAcspData(AcspDataDto acspDataDto) {
+  private ACSP buildAcspData(AcspDataDto acspDataDto, Transaction transaction,
+                             String passThroughTokenHeader) throws ServiceException {
     var acsp = new ACSP();
     if(acspDataDto.getEmail() != null) {
       acsp.setEmail(acspDataDto.getEmail().toUpperCase());
     }
     acsp.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
     acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
-    acsp.setPaymentReference(PAYMENT_REFERENCE.toUpperCase());
-    acsp.setPaymentMethod("credit-card".toUpperCase());
+    if(transaction.getStatus() != null &&
+            transaction.getStatus().equals(TransactionStatus.CLOSED)) {
+      setPaymentData(acsp, transaction, passThroughTokenHeader);
+    }
     if (acspDataDto.getTypeOfBusiness() != null) {
       acsp.setAcspType(acspDataDto.getTypeOfBusiness().name().toUpperCase());
     }
@@ -269,7 +267,7 @@ public class FilingsService {
 
 
   private void setPaymentData(
-          Map<String, Object> data,
+          ACSP acsp,
           Transaction transaction,
           String passthroughTokenHeader)
           throws ServiceException {
@@ -277,8 +275,8 @@ public class FilingsService {
     var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passthroughTokenHeader);
     var payment = getPayment(paymentReference, passthroughTokenHeader);
 
-    data.put(PAYMENT_REFERENCE, paymentReference.toUpperCase());
-    data.put(PAYMENT_METHOD, payment.getPaymentMethod().toUpperCase());
+    acsp.setPaymentReference(paymentReference.toUpperCase());
+    acsp.setPaymentMethod(payment.getPaymentMethod().toUpperCase());
   }
 
   private PaymentApi getPayment(String paymentReference, String passthroughTokenHeader)

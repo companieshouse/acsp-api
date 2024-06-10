@@ -45,6 +45,7 @@ class FilingServiceTest {
     private static final String ACSP_ID = "abc123";
     private static final String PASS_THROUGH_HEADER = "545345345";
     private static final String FIRST_NAME = "firstName";
+    private static final String MIDDLE_NAME = "middleName";
     private static final String LAST_NAME = "lastName";
     private static final String PAYMENT_METHOD = "credit-card";
     private static final String PAYMENT_REFERENCE = "PAYMENT_REFERENCE";
@@ -360,9 +361,13 @@ class FilingServiceTest {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
 
+        transaction.setStatus(TransactionStatus.CLOSED);
+
         setACSPDataDto();
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.LIMITED_COMPANY);
         acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setMiddleName(MIDDLE_NAME);
+        acspDataDto.setBusinessName("businessName");
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
@@ -378,7 +383,11 @@ class FilingServiceTest {
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getAmlMemberships());
         Assertions.assertEquals("WORK SECTOR", ((ACSP) response.getData().get("acsp")).getBusinessSector());
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getAmlMemberships());
+        Assertions.assertEquals("CREDIT-CARD", ((ACSP) response.getData().get("acsp")).getPaymentMethod());
+        Assertions.assertEquals("PAYMENT_REFERENCE", ((ACSP) response.getData().get("acsp")).getPaymentReference());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
+        Assertions.assertEquals(MIDDLE_NAME.toUpperCase(), ((ACSP) response.getData().get("acsp")).getMiddleName());
+        Assertions.assertEquals("businessName".toUpperCase(), ((ACSP) response.getData().get("acsp")).getBusinessName());
         Arrays.stream(((ACSP) response.getData().get("acsp")).getAmlMemberships()).forEach(
                 amlMembership -> {
                     Assertions.assertEquals("12345678", amlMembership.getRegistrationNumber().toUpperCase());
