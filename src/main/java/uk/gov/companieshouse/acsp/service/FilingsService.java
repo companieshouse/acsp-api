@@ -147,24 +147,26 @@ public class FilingsService {
     acsp.setPaymentReference(PAYMENT_REFERENCE.toUpperCase());
     acsp.setPaymentMethod("credit-card".toUpperCase());
     if(acspDataDto.getCompanyDetails() != null) {
-      if(acspDataDto.getCompanyDetails().getCompanyName() != null) {
+      if (acspDataDto.getCompanyDetails().getCompanyName() != null) {
         acsp.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName().toUpperCase());
       }
-      switch (acspDataDto.getTypeOfBusiness()) {
-        case PARTNERSHIP:
-        case LIMITED_COMPANY:
-        case LIMITED_PARTNERSHIP:
-          if(acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
-            acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
-          }
-          break;
-        default:
-          if(acspDataDto.getBusinessName() != null) {
-            acsp.setBusinessName(acspDataDto.getBusinessName().toUpperCase());
-          }
-      }
-      if(acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
-        acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
+      if (acspDataDto.getTypeOfBusiness() != null) {
+        switch (acspDataDto.getTypeOfBusiness()) {
+          case PARTNERSHIP:
+          case LIMITED_COMPANY:
+          case LIMITED_PARTNERSHIP:
+            if (acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+              acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
+            }
+            break;
+          default:
+            if (acspDataDto.getBusinessName() != null) {
+              acsp.setBusinessName(acspDataDto.getBusinessName().toUpperCase());
+            }
+        }
+        if (acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+          acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
+        }
       }
     }
     if(acspDataDto.getTypeOfBusiness() != null) {

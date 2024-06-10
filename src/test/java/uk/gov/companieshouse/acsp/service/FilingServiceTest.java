@@ -280,6 +280,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDtoWithCompanyDetails();
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LIMITED_COMPANY);
         acspDataDto.setCorrespondenceAddresses(buildNullCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildNullBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
