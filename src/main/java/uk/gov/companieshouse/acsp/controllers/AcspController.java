@@ -26,6 +26,24 @@ public class AcspController {
     @Autowired
     private TransactionService transactionService;
 
+    @PostMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
+    public ResponseEntity<Object> createAcspData(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
+            @RequestHeader(value = ERIC_IDENTITY) String userId,
+            @RequestBody AcspDataDto acspData) {
+        LOGGER.info("received POST request to save acsp data");
+        try {
+            var transaction = transactionService.getTransaction(requestId, transactionId);
+            return acspService.createAcspRegData(transaction, acspData, requestId, userId);
+        } catch (ServiceException e) {
+            LOGGER.error("Error creating record " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+
+    }
+
     @PutMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
     public ResponseEntity<Object> saveAcspData(
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,

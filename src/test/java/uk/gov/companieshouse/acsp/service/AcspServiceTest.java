@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.acsp.service;
 
+import com.mongodb.DuplicateKeyException;
+import com.mongodb.MongoSocketWriteException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -7,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
@@ -51,6 +52,55 @@ class AcspServiceTest {
 
     @Mock
     private TransactionUtils transactionUtils;
+
+    @Test
+    void createAcspSuccess() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.insert((AcspDataDao) any())).thenReturn(acspDataDao);
+        doNothing().when(transactionService).updateTransaction(any(), any());
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspData,
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    @Test
+    void createAcspDuplicateId() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.insert((AcspDataDao) any())).thenThrow(DuplicateKeyException.class);
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspData,
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
+
+    @Test
+    void createAcspException() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.insert((AcspDataDao) any())).thenThrow(MongoSocketWriteException.class);
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspData,
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
 
     @Test
     void saveAcsp() throws Exception{
@@ -103,7 +153,7 @@ class AcspServiceTest {
     }
 
     @Test
-    void testGetSavedAcspReturnsNullWhenNoLickedTransaction() throws SubmissionNotLinkedToTransactionException {
+    void testGetSavedAcspReturnsNullWhenNoLickedTransaction() {
         when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
                 .thenReturn(false);
         transaction.setId("1234");
