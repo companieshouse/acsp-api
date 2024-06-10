@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
-import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.*;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
@@ -51,10 +50,6 @@ public class FilingsService {
   private static final String PRESENTER = "presenter";
 
   private static final String SUBMISSION = "submission";
-
-  private static final String ITEM = "items";
-
-  private static final String ACSP = "data";
 
   private static final String PAYMENT_REFERENCE = "payment_reference";
 
@@ -147,30 +142,7 @@ public class FilingsService {
     acsp.setPaymentReference(PAYMENT_REFERENCE.toUpperCase());
     acsp.setPaymentMethod("credit-card".toUpperCase());
     if(acspDataDto.getCompanyDetails() != null) {
-      if (acspDataDto.getCompanyDetails().getCompanyName() != null) {
-        acsp.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName().toUpperCase());
-      }
-      if (acspDataDto.getTypeOfBusiness() != null) {
-        switch (acspDataDto.getTypeOfBusiness()) {
-          case PARTNERSHIP:
-          case LIMITED_COMPANY:
-          case LIMITED_PARTNERSHIP:
-            if (acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
-              acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
-            }
-            break;
-          default:
-            if (acspDataDto.getBusinessName() != null) {
-              acsp.setBusinessName(acspDataDto.getBusinessName().toUpperCase());
-            }
-        }
-        if (acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
-          acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
-        }
-      }
-    }
-    if(acspDataDto.getTypeOfBusiness() != null) {
-      acsp.setAcspType(acspDataDto.getTypeOfBusiness().name().toUpperCase());
+      buildCompanyDetails(acspDataDto, acsp);
     }
     if(acspDataDto.getWorkSector() != null) {
       acsp.setBusinessSector(acspDataDto.getWorkSector().toUpperCase());
@@ -179,13 +151,13 @@ public class FilingsService {
     if(acspDataDto.getAmlSupervisoryBodies() != null) {
       var amlMemberships = new ArrayList<AmlMembership>();
       Arrays.stream(acspDataDto.getAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
-        AmlMembership membership = new AmlMembership();
+        var membership = new AmlMembership();
         membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
         membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().toUpperCase());
         amlMemberships.add(membership);
       });
-      AmlMembership[] amlMembershipsArray = new AmlMembership[amlMemberships.size()];
-      for(int counter = 0; counter < amlMemberships.size(); counter++) {
+      var amlMembershipsArray = new AmlMembership[amlMemberships.size()];
+      for(var counter = 0; counter < amlMemberships.size(); counter++) {
         amlMembershipsArray[counter] = amlMemberships.get(counter);
       }
 
@@ -203,6 +175,32 @@ public class FilingsService {
     }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     return acsp;
+  }
+
+
+  private void buildCompanyDetails(AcspDataDto acspDataDto, ACSP acsp) {
+
+    if (acspDataDto.getCompanyDetails().getCompanyName() != null) {
+      acsp.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName().toUpperCase());
+    }
+    if (acspDataDto.getTypeOfBusiness() != null) {
+      acsp.setAcspType(acspDataDto.getTypeOfBusiness().name().toUpperCase());
+      switch (acspDataDto.getTypeOfBusiness()) {
+        case PARTNERSHIP, LIMITED_COMPANY, LIMITED_PARTNERSHIP :
+          if (acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+            acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
+          }
+          break;
+        default:
+          if (acspDataDto.getBusinessName() != null) {
+            acsp.setBusinessName(acspDataDto.getBusinessName().toUpperCase());
+          }
+      }
+      if (acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+        acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
+      }
+    }
+
   }
 
   private Address buildCorrespondenAddress(AcspDataDto acspDataDto) {

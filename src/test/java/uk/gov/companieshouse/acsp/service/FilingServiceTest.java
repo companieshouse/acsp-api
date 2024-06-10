@@ -376,13 +376,13 @@ class FilingServiceTest {
         Assertions.assertEquals(((ACSP) response.getData().get("acsp")).getAcspType().toUpperCase(),
                 TypeOfBusiness.LIMITED_COMPANY.name().toUpperCase());
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getAmlMemberships());
-        Assertions.assertEquals(((ACSP) response.getData().get("acsp")).getBusinessSector(), "WORK SECTOR");
+        Assertions.assertEquals("WORK SECTOR", ((ACSP) response.getData().get("acsp")).getBusinessSector());
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getAmlMemberships());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
         Arrays.stream(((ACSP) response.getData().get("acsp")).getAmlMemberships()).forEach(
                 amlMembership -> {
-                    Assertions.assertEquals(amlMembership.getRegistrationNumber().toUpperCase(), "12345678");
-                    Assertions.assertEquals(amlMembership.getSupervisoryBody().toUpperCase(), "HMRC");
+                    Assertions.assertEquals("12345678", amlMembership.getRegistrationNumber().toUpperCase());
+                    Assertions.assertEquals("HMRC", amlMembership.getSupervisoryBody().toUpperCase());
                 }
         );
     }
