@@ -142,7 +142,7 @@ public class FilingsService {
     if (acspDataDto.getTypeOfBusiness() != null) {
       acsp.setAcspType(acspDataDto.getTypeOfBusiness().name().toUpperCase());
     }
-    if(acspDataDto.getCompanyDetails() != null) {
+    if(acspDataDto.getCompanyDetails() != null || acspDataDto.getBusinessName() != null) {
       buildCompanyDetails(acspDataDto, acsp);
     }
     if(acspDataDto.getWorkSector() != null) {
@@ -181,13 +181,13 @@ public class FilingsService {
 
   private void buildCompanyDetails(AcspDataDto acspDataDto, ACSP acsp) {
 
-    if (acspDataDto.getCompanyDetails().getCompanyName() != null) {
+    if (acspDataDto.getCompanyDetails() != null && acspDataDto.getCompanyDetails().getCompanyName() != null) {
       acsp.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName().toUpperCase());
     }
     if (acspDataDto.getTypeOfBusiness() != null) {
       switch (acspDataDto.getTypeOfBusiness()) {
         case PARTNERSHIP, LIMITED_COMPANY, LIMITED_PARTNERSHIP :
-          if (acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+          if (acspDataDto.getCompanyDetails() != null && acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
             acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
           }
           break;
@@ -196,7 +196,7 @@ public class FilingsService {
             acsp.setBusinessName(acspDataDto.getBusinessName().toUpperCase());
           }
       }
-      if (acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+      if (acspDataDto.getCompanyDetails() != null && acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
         acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
       }
     }
