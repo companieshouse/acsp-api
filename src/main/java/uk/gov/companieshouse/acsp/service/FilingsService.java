@@ -141,6 +141,9 @@ public class FilingsService {
     acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     acsp.setPaymentReference(PAYMENT_REFERENCE.toUpperCase());
     acsp.setPaymentMethod("credit-card".toUpperCase());
+    if (acspDataDto.getTypeOfBusiness() != null) {
+      acsp.setAcspType(acspDataDto.getTypeOfBusiness().name().toUpperCase());
+    }
     if(acspDataDto.getCompanyDetails() != null) {
       buildCompanyDetails(acspDataDto, acsp);
     }
@@ -184,7 +187,6 @@ public class FilingsService {
       acsp.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName().toUpperCase());
     }
     if (acspDataDto.getTypeOfBusiness() != null) {
-      acsp.setAcspType(acspDataDto.getTypeOfBusiness().name().toUpperCase());
       switch (acspDataDto.getTypeOfBusiness()) {
         case PARTNERSHIP, LIMITED_COMPANY, LIMITED_PARTNERSHIP :
           if (acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
