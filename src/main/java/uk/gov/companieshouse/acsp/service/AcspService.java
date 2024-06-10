@@ -73,10 +73,10 @@ public class AcspService {
             acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
             return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
         } catch (DuplicateKeyException e) {
-            LOGGER.info("A document already exist with this id");
+            LOGGER.error("A document already exist with this id " + acspDataDao.getId());
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (Exception e) {
-            LOGGER.info("An unknown error occurred");
+            LOGGER.error("An unknown error occurred");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

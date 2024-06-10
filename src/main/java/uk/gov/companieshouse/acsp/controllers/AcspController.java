@@ -37,7 +37,7 @@ public class AcspController {
             var transaction = transactionService.getTransaction(requestId, transactionId);
             return acspService.createAcspRegData(transaction, acspData, requestId, userId);
         } catch (ServiceException e) {
-            LOGGER.info("Error saving data " + e.getMessage());
+            LOGGER.error("Error saving data " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
