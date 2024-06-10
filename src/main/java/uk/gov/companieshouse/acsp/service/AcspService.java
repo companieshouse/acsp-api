@@ -76,7 +76,7 @@ public class AcspService {
             LOGGER.error("A document already exist with this id " + acspDataDao.getId());
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (Exception e) {
-            LOGGER.error("An unknown error occurred " + transaction.getId());
+            LOGGER.error("An unknown error occurred for transaction " + transaction.getId());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
