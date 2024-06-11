@@ -3,7 +3,10 @@ package uk.gov.companieshouse.acsp.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.service.FilingsService;
@@ -13,13 +16,16 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
-import static uk.gov.companieshouse.acsp.util.Constants.*;
+import static uk.gov.companieshouse.acsp.util.Constants.ACSP_APPLICATION_ID_KEY;
+import static uk.gov.companieshouse.acsp.util.Constants.TRANSACTION_ID_KEY;
+
 
 @RestController
 @RequestMapping("/transactions/{transaction_id}/acsp/{acsp_application_id}/filings")
 public class FilingsController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
+
     @Autowired
     private FilingsService filingService;
 

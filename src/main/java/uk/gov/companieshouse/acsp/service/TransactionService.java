@@ -38,6 +38,8 @@ public class TransactionService {
         try {
             String transactionsUri = TRANSACTIONS_URI.expand(id).toString();
             ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
+            LOGGER.info("Got the client--------");
+            // apiClient.setBasePath("https://api.cidev.aws.chdev.org"); //This is for local testing
             return apiClient.transactions().get(transactionsUri).execute().getData();
         } catch (URIValidationException | IOException e) {
             throw new ServiceException("Error Retrieving Transaction " + id, e);

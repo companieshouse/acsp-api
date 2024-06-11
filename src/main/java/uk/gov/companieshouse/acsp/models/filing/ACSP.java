@@ -20,6 +20,22 @@ public final class ACSP {
     private String  companyNumber;
     @JsonProperty("company_name")
     private String  companyName;
+    @JsonProperty("acsp_type")
+    private String acspType;
+    @JsonProperty("business_sector")
+    private String businessSector;
+    @JsonProperty("amlmemberships")
+    private AmlMembership[] amlMemberships;
+    @JsonProperty("first_name")
+    private String firstName;
+    @JsonProperty("last_name")
+    private String lastName;
+    @JsonProperty("middle_name")
+    private String middleName;
+    @JsonProperty("business_name")
+    private String businessName;
+
+
     public String getPaymentReference() {
         return paymentReference;
     }
@@ -74,5 +90,61 @@ public final class ACSP {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public String getAcspType() {
+        return acspType;
+    }
+
+    public void setAcspType(String acspType) {
+        this.acspType = acspType;
+    }
+
+    public String getBusinessSector() {
+        return businessSector;
+    }
+
+    public void setBusinessSector(String businessSector) {
+        this.businessSector = businessSector;
+    }
+
+    public AmlMembership[] getAmlMemberships() {
+        return amlMemberships;
+    }
+
+    public void setAmlMemberships(AmlMembership[] amlMemberships) {
+        this.amlMemberships = amlMemberships;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getBusinessName() {
+        return businessName;
+    }
+
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
     }
 }
