@@ -168,7 +168,7 @@ public class AcspService {
                                             Resource resource,
                                             String requestId) throws ServiceException {
         transaction.setResources(Collections.singletonMap(submissionUri, resource));
-        var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId); //fix the RESUME_JOURNEY_URI_PATTERN
+        var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
         transaction.setResumeJourneyUri(resumeJourneyUri);
         transactionService.updateTransaction(requestId,transaction);
     }
