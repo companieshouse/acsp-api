@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.acsp.service;
 
-import com.mongodb.DuplicateKeyException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -76,7 +76,7 @@ public class AcspService {
             LOGGER.error("A document already exist with this id " + acspDataDao.getId());
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (Exception e) {
-            LOGGER.error("An unknown error occurred for transaction " + transaction.getId());
+            LOGGER.error("An error occurred for transaction " + transaction.getId() + ", " + e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
