@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.acsp.service;
 
+import com.mongodb.MongoSocketReadException;
 import com.mongodb.MongoSocketWriteException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,14 +17,12 @@ import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AcspServiceTest {
@@ -166,5 +165,29 @@ class AcspServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
         return transaction;
+    }
+
+    @Test
+    void deleteSavedApplicationSuccess() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(new AcspDataDao()));
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void deleteSavedApplicationNoApplicationFound() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.empty());
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void deleteSavedApplicationErrorReadingFromDB() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        when(acspRepository.findById(USER_ID)).thenThrow(MongoSocketReadException.class);
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        assertEquals(expectedResponse, response);
     }
 }

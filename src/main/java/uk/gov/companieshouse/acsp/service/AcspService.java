@@ -176,4 +176,19 @@ public class AcspService {
     private String getSubmissionUri(String transactionId, String submissionId) {
         return String.format(SUBMISSION_URI_PATTERN, transactionId, submissionId);
     }
+
+    public ResponseEntity<Object> deleteAcspApplication(String id) {
+        try {
+            Optional<AcspDataDao> acspData = acspRepository.findById(id);
+            if (acspData.isPresent()) {
+                acspRepository.deleteById(id);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error deleting document with id " + id, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
