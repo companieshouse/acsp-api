@@ -142,7 +142,7 @@ class AcspControllerTest {
     void deleteApplicationSuccess() {
         when(acspService.deleteAcspApplication(any())).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
 
-        var response = acspController.deleteApplication(USER_ID, REQUEST_ID);
+        var response = acspController.deleteApplication(USER_ID);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
@@ -150,7 +150,7 @@ class AcspControllerTest {
     void deleteApplicationDoesNotExist() {
         when(acspService.deleteAcspApplication(any())).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
-        var response = acspController.deleteApplication(USER_ID, REQUEST_ID);
+        var response = acspController.deleteApplication(USER_ID);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -158,7 +158,7 @@ class AcspControllerTest {
     void deleteApplicationError() {
         when(acspService.deleteAcspApplication(any())).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        var response = acspController.deleteApplication(USER_ID, REQUEST_ID);
+        var response = acspController.deleteApplication(USER_ID);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }
