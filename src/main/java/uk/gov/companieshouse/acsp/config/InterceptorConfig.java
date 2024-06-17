@@ -12,7 +12,7 @@ import uk.gov.companieshouse.acsp.interceptor.TransactionInterceptor;
 @ComponentScan("uk.gov.companieshouse.acsp.interceptor")
 public class InterceptorConfig implements WebMvcConfigurer {
 
-    static final String TRANSACTIONS = "/transactions/**";
+    public static final String TRANSACTIONS = "/transactions/**";
 
     @Autowired
     private TransactionInterceptor transactionInterceptor;
