@@ -34,6 +34,7 @@ class InterceptorConfigTest {
     void addInterceptorsTest() {
         when(interceptorRegistry.addInterceptor(any())).thenReturn(interceptorRegistration);
         when(interceptorRegistration.addPathPatterns(any(String.class))).thenReturn(interceptorRegistration);
+        interceptorConfig.addInterceptors(interceptorRegistry);
 
         InOrder inOrder = inOrder(interceptorRegistry, interceptorRegistration);
 
