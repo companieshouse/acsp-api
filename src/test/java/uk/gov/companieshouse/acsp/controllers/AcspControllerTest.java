@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
@@ -75,9 +76,9 @@ class AcspControllerTest {
     }
 
     @Test
-    void saveAcsp() throws ServiceException {
+    void updateAcsp() throws ServiceException, SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
         when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
-        when(acspService.saveAcspRegData(transaction,
+        when(acspService.updateACSPDetails(transaction,
                 acspDataDto,
                 REQUEST_ID,
                 USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);

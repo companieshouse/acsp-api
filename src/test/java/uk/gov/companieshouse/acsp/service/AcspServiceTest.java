@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
@@ -16,6 +17,7 @@ import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
+import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 
 import java.util.Optional;
 
@@ -103,20 +105,39 @@ class AcspServiceTest {
     }
 
     @Test
-    void saveAcsp() throws Exception{
+    void updateAcsp() throws Exception{
         AcspDataDto acspData = new AcspDataDto();
         acspData.setId("demo@ch.gov.uk");
 
         AcspDataDao acspDataDao = new AcspDataDao();
         acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+                .thenReturn(true);
         when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
         when(acspRepository.save(any())).thenReturn(acspDataDao);
-        doNothing().when(transactionService).updateTransaction(any(), any());
-        ResponseEntity<Object> response = acspService.saveAcspRegData(transaction,
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
                 acspData,
                 REQUEST_ID,
                 USER_ID);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void updateAcspFailWhenTransactionStatusIsNotOpen() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+                .thenReturn(true);
+        when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED);
+
+        assertThrows(InvalidTransactionStatusException.class, () -> {
+            acspService.updateACSPDetails(transaction,
+                    acspData,
+                    REQUEST_ID,
+                    USER_ID);
+        });
     }
 
     @Test
