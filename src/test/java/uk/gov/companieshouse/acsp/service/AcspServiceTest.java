@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.acsp.service;
 
-import com.mongodb.MongoSocketReadException;
 import com.mongodb.MongoSocketWriteException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -174,23 +176,15 @@ class AcspServiceTest {
     @Test
     void deleteSavedApplicationSuccess() {
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(new AcspDataDao()));
         ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
-    void deleteSavedApplicationNoApplicationFound() {
-        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        when(acspRepository.findById(USER_ID)).thenReturn(Optional.empty());
-        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        verify(acspRepository, times(1)).deleteById(USER_ID);
         assertEquals(expectedResponse, response);
     }
 
     @Test
     void deleteSavedApplicationErrorReadingFromDB() {
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        when(acspRepository.findById(USER_ID)).thenThrow(MongoSocketReadException.class);
+        doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(USER_ID);
         ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
         assertEquals(expectedResponse, response);
     }

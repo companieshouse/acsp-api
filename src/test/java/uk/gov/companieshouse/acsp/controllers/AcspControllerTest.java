@@ -147,14 +147,6 @@ class AcspControllerTest {
     }
 
     @Test
-    void deleteApplicationDoesNotExist() {
-        when(acspService.deleteAcspApplication(any())).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
-        var response = acspController.deleteApplication(USER_ID);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
     void deleteApplicationError() {
         when(acspService.deleteAcspApplication(any())).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 
