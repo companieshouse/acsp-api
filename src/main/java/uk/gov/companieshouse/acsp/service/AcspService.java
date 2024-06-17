@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.acsp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,40 @@ public class AcspService {
         this.transactionService = transactionService;
         this.acspRegDataDtoDaoMapper = acspRegDataDtoDaoMapper;
         this.transactionUtils = transactionUtils;
+    }
+
+    public ResponseEntity<Object> createAcspRegData(Transaction transaction, AcspDataDto acspData,
+                                                  String requestId, String userId) {
+        return createDataAndUpdateTransaction(transaction, acspData, requestId, userId);
+    }
+
+    private ResponseEntity<Object> createDataAndUpdateTransaction(Transaction transaction,
+                                                                AcspDataDto acspDataDto,
+                                                                String requestId,
+                                                                String userId) {
+
+        var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
+        String submissionId = acspDataDao.getId();
+        final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
+        updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
+
+        // create the Resource to be added to the Transaction (includes various links to the resource)
+        var acspTransactionResource = createAcspTransactionResource(submissionUri);
+        try {
+            var insertedSubmission = acspRepository.insert(acspDataDao);
+            updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId);
+            ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
+                    transaction.getId(), insertedSubmission.getId()));
+            acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
+            return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
+        } catch (DuplicateKeyException e) {
+            LOGGER.error("A document already exist with this id " + acspDataDao.getId());
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            LOGGER.error("An error occurred for transaction " + transaction.getId() + ", " + e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     public ResponseEntity<Object> saveAcspRegData(Transaction transaction, AcspDataDto acspData,
@@ -134,12 +169,22 @@ public class AcspService {
                                             Resource resource,
                                             String requestId) throws ServiceException {
         transaction.setResources(Collections.singletonMap(submissionUri, resource));
-        var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId); //fix the RESUME_JOURNEY_URI_PATTERN
+        var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
         transaction.setResumeJourneyUri(resumeJourneyUri);
         transactionService.updateTransaction(requestId,transaction);
     }
 
     private String getSubmissionUri(String transactionId, String submissionId) {
         return String.format(SUBMISSION_URI_PATTERN, transactionId, submissionId);
+    }
+
+    public ResponseEntity<Object> deleteAcspApplication(String id) {
+        try {
+            acspRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            LOGGER.error("Error deleting document with id " + id, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

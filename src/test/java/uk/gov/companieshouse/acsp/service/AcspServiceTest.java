@@ -1,10 +1,12 @@
 package uk.gov.companieshouse.acsp.service;
 
+import com.mongodb.MongoSocketWriteException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
@@ -17,11 +19,17 @@ import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+
 
 @ExtendWith(MockitoExtension.class)
 class AcspServiceTest {
@@ -50,6 +58,55 @@ class AcspServiceTest {
 
     @Mock
     private TransactionUtils transactionUtils;
+
+    @Test
+    void createAcspSuccess() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.insert((AcspDataDao) any())).thenReturn(acspDataDao);
+        doNothing().when(transactionService).updateTransaction(any(), any());
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspData,
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    @Test
+    void createAcspDuplicateId() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.insert((AcspDataDao) any())).thenThrow(DuplicateKeyException.class);
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspData,
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
+
+    @Test
+    void createAcspException() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.insert((AcspDataDao) any())).thenThrow(MongoSocketWriteException.class);
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspData,
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
 
     @Test
     void saveAcsp() throws Exception{
@@ -119,5 +176,21 @@ class AcspServiceTest {
         Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
         return transaction;
+    }
+
+    @Test
+    void deleteSavedApplicationSuccess() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        verify(acspRepository, times(1)).deleteById(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void deleteSavedApplicationErrorReadingFromDB() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(USER_ID);
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        assertEquals(expectedResponse, response);
     }
 }

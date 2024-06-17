@@ -12,26 +12,32 @@ import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.payment.PaymentApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
 
 @Service
 public class FilingsService {
 
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
+
   @Value("${ACSP01_COST}")
-  private static String costAmount;
+  private String costAmount;
 
   @Value("${ACSP_APPLICATION_FILING_DESCRIPTION_IDENTIFIER}")
-  private static String filingDescriptionIdentifier;
+  private String filingDescriptionIdentifier;
 
   @Value("${ACSP_APPLICATION_FILING_DESCRIPTION}")
-  private static String filingDescription;
+  private String filingDescription;
 
   private LocalDate dateNow = LocalDate.now();
 
@@ -45,15 +51,13 @@ public class FilingsService {
 
   private static final String SUBMISSION = "submission";
 
-  private static final String ITEM = "item";
-
-  private static final String ACSP = "data";
-
   private static final String PAYMENT_REFERENCE = "payment_reference";
 
   private static final String PAYMENT_METHOD = "payment_method";
 
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MM yyyy");
+
+
 
   @Autowired
   public FilingsService(TransactionService transactionService, AcspService acspService,
@@ -68,6 +72,7 @@ public class FilingsService {
           String transactionId,
           String passThroughTokenHeader)
           throws ServiceException, SubmissionNotLinkedToTransactionException {
+    LOGGER.info("starting generateAcspApplicationFiling--------------");
     var filing = new FilingApi();
     setFilingApiData(filing, acspApplicationId, transactionId, passThroughTokenHeader);
     return filing;
@@ -78,21 +83,14 @@ public class FilingsService {
     var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
     var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
-      var data = new HashMap<String, Object>();
-
-      buildPresenter(data, acspDataDto);
-      buildSubmission(data, acspDataDto, transactionId);
-      buildAcspData(data, acspDataDto);
-      buildItem(data, transactionId);
-      //setPaymentData(data, transaction, passThroughTokenHeader);
+      filing.setData(buildData(acspDataDto, transactionId, transaction, passThroughTokenHeader));
       setDescriptionFields(filing);
-      buildFilingStatus(filing, data);
+      buildFilingStatus(filing);
     }
   }
 
-  private void buildFilingStatus(FilingApi filing, HashMap<String, Object> data) {
+  private void buildFilingStatus(FilingApi filing) {
     filing.setKind(FILING_KIND_ACSP.toUpperCase());
-    filing.setData(data);
     filing.setCost(costAmount);
   }
 
@@ -119,33 +117,90 @@ public class FilingsService {
     data.put(SUBMISSION, submission);
   }
 
-  private void buildItem(HashMap<String, Object>data, String transactionId) {
-    var item = new Item();
-    item.setKind(FILING_KIND_ACSP.toUpperCase());
-    item.setSubmissionId(transactionId.toUpperCase());
+  private HashMap<String, Object> buildData(AcspDataDto acspDataDto, String transactionId, Transaction transaction,
+                                            String passThroughTokenHeader) throws ServiceException {
+    HashMap<String, Object> data = new HashMap<>();
+    data.put("acsp", buildAcspData(acspDataDto, transaction,passThroughTokenHeader));
+    buildPresenter(data, acspDataDto);
+    buildSubmission(data, acspDataDto, transactionId);
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
-    data.put(ITEM, item);
+    return data;
   }
 
-  private void buildAcspData(HashMap<String, Object>data, AcspDataDto acspDataDto) {
+  private ACSP buildAcspData(AcspDataDto acspDataDto, Transaction transaction,
+                             String passThroughTokenHeader) throws ServiceException {
     var acsp = new ACSP();
     if(acspDataDto.getEmail() != null) {
       acsp.setEmail(acspDataDto.getEmail().toUpperCase());
     }
     acsp.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
     acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
-    acsp.setPaymentReference(PAYMENT_REFERENCE.toUpperCase());
-    acsp.setPaymentMethod("credit-card".toUpperCase());
-    if(acspDataDto.getCompanyDetails() != null) {
-      if(acspDataDto.getCompanyDetails().getCompanyName() != null) {
-        acsp.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName().toUpperCase());
+    if(transaction.getStatus() != null &&
+            transaction.getStatus().equals(TransactionStatus.CLOSED)) {
+      setPaymentData(acsp, transaction, passThroughTokenHeader);
+    }
+    if (acspDataDto.getTypeOfBusiness() != null) {
+      acsp.setAcspType(acspDataDto.getTypeOfBusiness().name().toUpperCase());
+    }
+    if(acspDataDto.getCompanyDetails() != null || acspDataDto.getBusinessName() != null) {
+      buildCompanyDetails(acspDataDto, acsp);
+    }
+    if(acspDataDto.getWorkSector() != null) {
+      acsp.setBusinessSector(acspDataDto.getWorkSector().toUpperCase());
+    }
+
+    if(acspDataDto.getAmlSupervisoryBodies() != null) {
+      var amlMemberships = new ArrayList<AmlMembership>();
+      Arrays.stream(acspDataDto.getAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
+        var membership = new AmlMembership();
+        membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
+        membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().toUpperCase());
+        amlMemberships.add(membership);
+      });
+      var amlMembershipsArray = new AmlMembership[amlMemberships.size()];
+      for(var counter = 0; counter < amlMemberships.size(); counter++) {
+        amlMembershipsArray[counter] = amlMemberships.get(counter);
       }
-      if(acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+
+      acsp.setAmlMemberships(amlMembershipsArray);
+    }
+
+    if(acspDataDto.getFirstName() != null) {
+      acsp.setFirstName(acspDataDto.getFirstName().toUpperCase());
+    }
+    if(acspDataDto.getLastName() != null) {
+      acsp.setLastName(acspDataDto.getLastName().toUpperCase());
+    }
+    if(acspDataDto.getMiddleName() != null) {
+      acsp.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
+    }
+    //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
+    return acsp;
+  }
+
+
+  private void buildCompanyDetails(AcspDataDto acspDataDto, ACSP acsp) {
+
+    if (acspDataDto.getCompanyDetails() != null && acspDataDto.getCompanyDetails().getCompanyName() != null) {
+      acsp.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName().toUpperCase());
+    }
+    if (acspDataDto.getTypeOfBusiness() != null) {
+      switch (acspDataDto.getTypeOfBusiness()) {
+        case PARTNERSHIP, LIMITED_COMPANY, LIMITED_PARTNERSHIP :
+          if (acspDataDto.getCompanyDetails() != null && acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+            acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
+          }
+          break;
+        default:
+          if (acspDataDto.getBusinessName() != null) {
+            acsp.setBusinessName(acspDataDto.getBusinessName().toUpperCase());
+          }
+      }
+      if (acspDataDto.getCompanyDetails() != null && acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
         acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
       }
     }
-    //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
-    data.put(ACSP, acsp);
+
   }
 
   private Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
@@ -209,4 +264,49 @@ public class FilingsService {
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
   }
+
+
+  private void setPaymentData(
+          ACSP acsp,
+          Transaction transaction,
+          String passthroughTokenHeader)
+          throws ServiceException {
+    var paymentLink = transaction.getLinks().getPayment();
+    var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passthroughTokenHeader);
+    var payment = getPayment(paymentReference, passthroughTokenHeader);
+
+    acsp.setPaymentReference(paymentReference.toUpperCase());
+    acsp.setPaymentMethod(payment.getPaymentMethod().toUpperCase());
+  }
+
+  private PaymentApi getPayment(String paymentReference, String passthroughTokenHeader)
+          throws ServiceException {
+    try {
+      return apiClientService
+              .getApiClient(passthroughTokenHeader)
+              .payment()
+              .get("/payments/" + paymentReference)
+              .execute()
+              .getData();
+    } catch (URIValidationException | IOException e) {
+      throw new ServiceException(e.getMessage(), e);
+    }
+  }
+
+  private String getPaymentReferenceFromTransaction(String uri, String passthroughTokenHeader)
+          throws ServiceException {
+    try {
+      var transactionPaymentInfo =
+              apiClientService
+                      .getApiClient(passthroughTokenHeader)
+                      .transactions()
+                      .getPayment(uri)
+                      .execute();
+
+      return transactionPaymentInfo.getData().getPaymentReference();
+    } catch (URIValidationException | IOException e) {
+      throw new ServiceException(e.getMessage(), e);
+    }
+  }
+
 }

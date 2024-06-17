@@ -47,7 +47,32 @@ class AcspControllerTest {
 
     private AcspDataDto acspDataDto;
 
+    @Test
+    void createAcsp() throws ServiceException {
+        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
+        when(acspService.createAcspRegData(transaction,
+                acspDataDto,
+                REQUEST_ID,
+                USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
 
+        var response = acspController.createAcspData( TRANSACTION_ID,
+                REQUEST_ID,
+                USER_ID,
+                acspDataDto);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    @Test
+    void createAcspTransactionError() throws ServiceException {
+        ServiceException serviceException = new ServiceException("Could not find transaction");
+        when(transactionService.getTransaction(any(), any())).thenThrow(serviceException);
+
+        var response = acspController.createAcspData( TRANSACTION_ID,
+                REQUEST_ID,
+                USER_ID,
+                acspDataDto);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
 
     @Test
     void saveAcsp() throws ServiceException {
@@ -111,5 +136,21 @@ class AcspControllerTest {
 
         var response = acspController.checkHasApplication(USER_ID, REQUEST_ID);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void deleteApplicationSuccess() {
+        when(acspService.deleteAcspApplication(any())).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+
+        var response = acspController.deleteApplication(USER_ID);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void deleteApplicationError() {
+        when(acspService.deleteAcspApplication(any())).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        var response = acspController.deleteApplication(USER_ID);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }

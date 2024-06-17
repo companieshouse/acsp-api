@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Item {
 
     @JsonProperty("data")
-    private String data;
+    private ACSP data;
     @JsonProperty("kind")
     private String kind;
     @JsonProperty("submission_language")
@@ -13,11 +13,11 @@ public class Item {
     @JsonProperty("submission_id")
     private String submissionId;
 
-    public String getData() {
+    public ACSP getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(ACSP data) {
         this.data = data;
     }
 

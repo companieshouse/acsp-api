@@ -26,6 +26,24 @@ public class AcspController {
     @Autowired
     private TransactionService transactionService;
 
+    @PostMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
+    public ResponseEntity<Object> createAcspData(
+            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
+            @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
+            @RequestHeader(value = ERIC_IDENTITY) String userId,
+            @RequestBody AcspDataDto acspData) {
+        LOGGER.info("received POST request to save acsp data");
+        try {
+            var transaction = transactionService.getTransaction(requestId, transactionId);
+            return acspService.createAcspRegData(transaction, acspData, requestId, userId);
+        } catch (ServiceException e) {
+            LOGGER.error("Error creating record " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+
+    }
+
     @PutMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
     public ResponseEntity<Object> saveAcspData(
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
@@ -61,6 +79,12 @@ public class AcspController {
                                                 @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId){
         LOGGER.info("received request to check for user applications");
         return acspService.getAcspApplicationCount(id);
+    }
+
+    @DeleteMapping("/acsp-api/user/{id}/application")
+    public ResponseEntity<Object> deleteApplication(@PathVariable("id") String id) {
+        LOGGER.info("received request to delete application for id: " + id);
+        return acspService.deleteAcspApplication(id);
     }
 
 }

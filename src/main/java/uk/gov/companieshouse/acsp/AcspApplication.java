@@ -3,10 +3,12 @@ package uk.gov.companieshouse.acsp;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.util.TimeZone;
 
 @SpringBootApplication
+@ComponentScan("uk.gov.companieshouse.acsp.*")
 public class AcspApplication {
 
 	public static final String APP_NAMESPACE = "acsp-api";
