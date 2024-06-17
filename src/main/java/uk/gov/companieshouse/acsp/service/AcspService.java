@@ -179,12 +179,8 @@ public class AcspService {
 
     public ResponseEntity<Object> deleteAcspApplication(String id) {
         try {
-            if (acspRepository.existsById(id)) {
-                acspRepository.deleteById(id);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            acspRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOGGER.error("Error deleting document with id " + id, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
