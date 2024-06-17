@@ -81,4 +81,10 @@ public class AcspController {
         return acspService.getAcspApplicationCount(id);
     }
 
+    @DeleteMapping("/acsp-api/user/{id}/application")
+    public ResponseEntity<Object> deleteApplication(@PathVariable("id") String id) {
+        LOGGER.info("received request to delete application for id: " + id);
+        return acspService.deleteAcspApplication(id);
+    }
+
 }
