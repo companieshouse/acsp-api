@@ -179,8 +179,7 @@ public class AcspService {
 
     public ResponseEntity<Object> deleteAcspApplication(String id) {
         try {
-            Optional<AcspDataDao> acspData = acspRepository.findById(id);
-            if (acspData.isPresent()) {
+            if (acspRepository.existsById(id)) {
                 acspRepository.deleteById(id);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } else {
