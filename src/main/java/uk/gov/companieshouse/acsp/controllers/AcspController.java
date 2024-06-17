@@ -9,6 +9,7 @@ import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionExce
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
 import uk.gov.companieshouse.acsp.service.TransactionService;
+import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -31,12 +32,12 @@ public class AcspController {
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
             @RequestHeader(value = ERIC_IDENTITY) String userId,
+            @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
             @RequestBody AcspDataDto acspData) {
         LOGGER.info("received POST request to save acsp data");
         try {
-            var transaction = transactionService.getTransaction(requestId, transactionId);
             return acspService.createAcspRegData(transaction, acspData, requestId, userId);
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             LOGGER.error("Error creating record " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -49,22 +50,22 @@ public class AcspController {
             @PathVariable(TRANSACTION_ID_KEY) String transactionId,
             @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
             @RequestHeader(value = ERIC_IDENTITY) String userId,
+            @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
             @RequestBody AcspDataDto acspData) throws ServiceException { //TODO should not throw the exception instead catch and return appropriate http response
         LOGGER.info("received request to save acsp data");
-        var transaction = transactionService.getTransaction(requestId, transactionId);
         return acspService.saveAcspRegData(transaction, acspData, requestId, userId);
     }
 
     @GetMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp/{id}")
     public ResponseEntity<Object> getAcspData(@PathVariable(TRANSACTION_ID_KEY) String transactionId,
                                               @PathVariable("id") String id,
+                                              @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
                                               @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
         LOGGER.info("received request to get acsp data");
         Optional<AcspDataDto> acspData;
         try {
-            var transaction = transactionService.getTransaction(requestId, transactionId);
             acspData = acspService.getAcsp(id, transaction);
-        } catch (ServiceException | SubmissionNotLinkedToTransactionException e) {
+        } catch (SubmissionNotLinkedToTransactionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         if (acspData.isEmpty()){
