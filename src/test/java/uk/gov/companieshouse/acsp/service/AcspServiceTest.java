@@ -144,6 +144,21 @@ class AcspServiceTest {
     }
 
     @Test
+    void testUpdateAcspFailsWhenNoLickedTransaction() {
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+                .thenReturn(false);
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
+            acspService.updateACSPDetails(transaction,
+                    acspData,
+                    REQUEST_ID,
+                    USER_ID);
+        });
+    }
+
+    @Test
     void getAcspApplicationCountGreaterThanOne() {
         int expectedApplicationCount = 3;
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -186,9 +201,4 @@ class AcspServiceTest {
         });
     }
 
-    private Transaction buildTransaction() {
-        Transaction transaction = new Transaction();
-        transaction.setId(TRANSACTION_ID);
-        return transaction;
-    }
 }

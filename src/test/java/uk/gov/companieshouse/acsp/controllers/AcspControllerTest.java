@@ -89,6 +89,20 @@ class AcspControllerTest {
                 acspDataDto);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
+    @Test
+    void updateAcspThrowsException() throws ServiceException, SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
+        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
+        when(acspService.updateACSPDetails(transaction,
+                acspDataDto,
+                REQUEST_ID,
+                USER_ID)).thenThrow(SubmissionNotLinkedToTransactionException.class);
+
+        var response = acspController.saveAcspData( TRANSACTION_ID,
+                REQUEST_ID,
+                USER_ID,
+                acspDataDto);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
 
     @Test
     void getAcsp() throws ServiceException, SubmissionNotLinkedToTransactionException {
