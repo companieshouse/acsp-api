@@ -5,6 +5,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
@@ -16,6 +17,7 @@ import uk.gov.companieshouse.acsp.util.ApiLogger;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -82,31 +84,26 @@ public class AcspService {
 
     }
 
-    public ResponseEntity<Object> saveAcspRegData(Transaction transaction, AcspDataDto acspData,
-                                                  String requestId, String userId) throws ServiceException {
-        return saveDataAndUpdateTransaction(transaction, acspData, requestId, userId);
-    }
-
-    private ResponseEntity<Object> saveDataAndUpdateTransaction(Transaction transaction,
+    public ResponseEntity<Object> updateACSPDetails(Transaction transaction,
                                                                 AcspDataDto acspDataDto,
                                                                 String requestId,
-                                                                String userId) throws ServiceException {
-
-        //TODO similar to getAcsp check transactionUtils.isTransactionLinkedToAcspSubmission when
-        // refactored for create & update
+                                                                String acspId) throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
+        if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
+            throw new SubmissionNotLinkedToTransactionException(String.format(
+                    "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
+        }
+        //check for browser back etc.
+        if (TransactionStatus.OPEN != transaction.getStatus()){
+            throw new InvalidTransactionStatusException(String.format(
+                    "Can't update transaction with stastus: %s ", transaction.getStatus().toString()));
+        }
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
-        String submissionId = acspDataDao.getId();
-        final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
-        updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
 
-        // create the Resource to be added to the Transaction (includes various links to the resource)
-        var acspTransactionResource = createAcspTransactionResource(submissionUri);
-        var insertedSubmission = acspRepository.save(acspDataDao);
-        updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId);
+        var updatedSubmission = acspRepository.save(acspDataDao);
         ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
-                transaction.getId(), insertedSubmission.getId()));
+                transaction.getId(), updatedSubmission.getId()));
         acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
-        return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
+        return ResponseEntity.ok().body(acspDataDto);
     }
 
 

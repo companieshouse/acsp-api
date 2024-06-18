@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
@@ -41,8 +42,6 @@ public class AcspController {
             LOGGER.error("Error creating record " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-
     }
 
     @PutMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
@@ -51,9 +50,14 @@ public class AcspController {
             @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
-            @RequestBody AcspDataDto acspData) throws ServiceException { //TODO should not throw the exception instead catch and return appropriate http response
-        LOGGER.info("received request to save acsp data");
-        return acspService.saveAcspRegData(transaction, acspData, requestId, userId);
+            @RequestBody AcspDataDto acspData) {
+        LOGGER.info("received request to PUT acsp data");
+        try {
+            return acspService.updateACSPDetails(transaction, acspData, requestId, userId);
+        } catch (SubmissionNotLinkedToTransactionException | InvalidTransactionStatusException e) {
+            LOGGER.error("Error updating record " + e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp/{id}")
