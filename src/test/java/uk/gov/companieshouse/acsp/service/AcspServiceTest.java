@@ -117,7 +117,7 @@ class AcspServiceTest {
 
         AcspDataDao acspDataDao = new AcspDataDao();
         acspDataDao.setId("demo@ch.gov.uk");
-        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(true);
         when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
         when(acspRepository.save(any())).thenReturn(acspDataDao);
@@ -134,7 +134,7 @@ class AcspServiceTest {
     void updateAcspFailWhenTransactionStatusIsNotOpen() {
         AcspDataDto acspData = new AcspDataDto();
         acspData.setId("demo@ch.gov.uk");
-        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(true);
         when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED);
 
@@ -148,7 +148,7 @@ class AcspServiceTest {
 
     @Test
     void testUpdateAcspFailsWhenNoLickedTransaction() {
-        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(false);
         AcspDataDto acspData = new AcspDataDto();
         acspData.setId("demo@ch.gov.uk");

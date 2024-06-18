@@ -88,9 +88,7 @@ public class AcspService {
                                                                 AcspDataDto acspDataDto,
                                                                 String requestId,
                                                                 String acspId) throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
-
-        final String submissionUri = getSubmissionUri(transaction.getId(), acspId);
-        if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, submissionUri)) {
+        if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
             throw new SubmissionNotLinkedToTransactionException(String.format(
                     "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
         }

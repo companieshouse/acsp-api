@@ -54,7 +54,7 @@ public class AcspController {
         LOGGER.info("received request to PUT acsp data");
         try {
             return acspService.updateACSPDetails(transaction, acspData, requestId, userId);
-        } catch (ServiceException | SubmissionNotLinkedToTransactionException | InvalidTransactionStatusException e) {
+        } catch (SubmissionNotLinkedToTransactionException | InvalidTransactionStatusException e) {
             LOGGER.error("Error updating record " + e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }

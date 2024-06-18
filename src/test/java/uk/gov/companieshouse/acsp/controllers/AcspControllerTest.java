@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
-import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
@@ -38,9 +37,6 @@ class AcspControllerTest {
     private AcspService acspService;
 
     @Mock
-    private TransactionService transactionService;
-
-    @Mock
     private Transaction transaction;
 
     @InjectMocks
@@ -49,7 +45,7 @@ class AcspControllerTest {
     private AcspDataDto acspDataDto;
 
     @Test
-    void createAcsp() throws ServiceException {
+    void createAcsp() {
         when(acspService.createAcspRegData(transaction,
                 acspDataDto,
                 REQUEST_ID,
@@ -64,7 +60,7 @@ class AcspControllerTest {
     }
 
     @Test
-    void updateAcsp() throws ServiceException, SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
+    void updateAcsp() throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
         when(acspService.updateACSPDetails(transaction,
                 acspDataDto,
                 REQUEST_ID,
@@ -79,8 +75,7 @@ class AcspControllerTest {
     }
 
     @Test
-    void updateAcspThrowsException() throws ServiceException, SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
-        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
+    void updateAcspThrowsException() throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
         when(acspService.updateACSPDetails(transaction,
                 acspDataDto,
                 REQUEST_ID,
@@ -89,12 +84,13 @@ class AcspControllerTest {
         var response = acspController.saveAcspData( TRANSACTION_ID,
                 REQUEST_ID,
                 USER_ID,
+                transaction,
                 acspDataDto);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    void getAcsp() throws ServiceException, SubmissionNotLinkedToTransactionException {
+    void getAcsp() throws SubmissionNotLinkedToTransactionException {
         acspDataDto = new AcspDataDto();
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
 
@@ -106,7 +102,7 @@ class AcspControllerTest {
     }
 
     @Test
-    void getAcspWhenGetAcspReturnsNull() throws ServiceException, SubmissionNotLinkedToTransactionException {
+    void getAcspWhenGetAcspReturnsNull() throws SubmissionNotLinkedToTransactionException {
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.empty());
 
         var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID,
@@ -117,7 +113,7 @@ class AcspControllerTest {
     }
 
     @Test
-    void getAcspWhenGetAcspThrowsException() throws ServiceException, SubmissionNotLinkedToTransactionException {
+    void getAcspWhenGetAcspThrowsException() throws SubmissionNotLinkedToTransactionException {
         acspDataDto = new AcspDataDto();
         when(acspService.getAcsp(any(), any())).thenThrow(SubmissionNotLinkedToTransactionException.class);
 
