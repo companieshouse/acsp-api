@@ -1,9 +1,12 @@
 package uk.gov.companieshouse.acsp.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 
+import java.util.Map;
 import java.util.Objects;
 
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
@@ -12,7 +15,14 @@ import static uk.gov.companieshouse.acsp.util.Constants.LINK_RESOURCE;
 @Component
 public class TransactionUtils {
 
-    public boolean isTransactionLinkedToAcspSubmission(Transaction transaction, String acspSubmissionSelfLink) {
+    public boolean isTransactionLinkedToAcspSubmission(Transaction transaction, AcspDataDto acspDataDto) {
+        Map<String, String> links;
+        if(ObjectUtils.isNotEmpty(acspDataDto) && ObjectUtils.isNotEmpty(acspDataDto.getAcspDataSubmission())){
+            links = acspDataDto.getAcspDataSubmission().getLinks();
+        }else {
+            return false;
+        }
+        String acspSubmissionSelfLink = links.get("self");
         if (StringUtils.isBlank(acspSubmissionSelfLink)) {
             return false;
         }

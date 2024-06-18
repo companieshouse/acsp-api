@@ -16,6 +16,7 @@ import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -151,7 +152,7 @@ class AcspServiceTest {
         when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao)
         ).thenReturn(acspDataDto);
 
-        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(true);
         var response = acspService.getAcsp(SUBMISSION_ID, transaction);
         assertNotNull(response);
@@ -159,7 +160,11 @@ class AcspServiceTest {
 
     @Test
     void testGetSavedAcspReturnsNullWhenNoLickedTransaction() {
-        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setId(SUBMISSION_ID);
+        when(acspRepository.findById(SUBMISSION_ID)).thenReturn(Optional.of(acspDataDao));
+        when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao)).thenReturn(acspDataDto);
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(false);
         transaction.setId("1234");
         assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
