@@ -50,7 +50,6 @@ class AcspControllerTest {
 
     @Test
     void createAcsp() throws ServiceException {
-        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
         when(acspService.createAcspRegData(transaction,
                 acspDataDto,
                 REQUEST_ID,
@@ -59,25 +58,13 @@ class AcspControllerTest {
         var response = acspController.createAcspData( TRANSACTION_ID,
                 REQUEST_ID,
                 USER_ID,
+                transaction,
                 acspDataDto);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
-    void createAcspTransactionError() throws ServiceException {
-        ServiceException serviceException = new ServiceException("Could not find transaction");
-        when(transactionService.getTransaction(any(), any())).thenThrow(serviceException);
-
-        var response = acspController.createAcspData( TRANSACTION_ID,
-                REQUEST_ID,
-                USER_ID,
-                acspDataDto);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
     void updateAcsp() throws ServiceException, SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
-        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
         when(acspService.updateACSPDetails(transaction,
                 acspDataDto,
                 REQUEST_ID,
@@ -86,9 +73,11 @@ class AcspControllerTest {
         var response = acspController.saveAcspData( TRANSACTION_ID,
                 REQUEST_ID,
                 USER_ID,
+                transaction,
                 acspDataDto);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
+
     @Test
     void updateAcspThrowsException() throws ServiceException, SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
         when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
@@ -107,10 +96,10 @@ class AcspControllerTest {
     @Test
     void getAcsp() throws ServiceException, SubmissionNotLinkedToTransactionException {
         acspDataDto = new AcspDataDto();
-        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
 
-        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID, REQUEST_ID);
+        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID,
+                transaction, REQUEST_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -118,10 +107,10 @@ class AcspControllerTest {
 
     @Test
     void getAcspWhenGetAcspReturnsNull() throws ServiceException, SubmissionNotLinkedToTransactionException {
-        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.empty());
 
-        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID, REQUEST_ID);
+        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID,
+                transaction, REQUEST_ID);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
@@ -130,10 +119,10 @@ class AcspControllerTest {
     @Test
     void getAcspWhenGetAcspThrowsException() throws ServiceException, SubmissionNotLinkedToTransactionException {
         acspDataDto = new AcspDataDto();
-        when(transactionService.getTransaction(any(), any())).thenReturn(transaction);
         when(acspService.getAcsp(any(), any())).thenThrow(SubmissionNotLinkedToTransactionException.class);
 
-        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID, REQUEST_ID);
+        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID,
+                transaction, REQUEST_ID);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 

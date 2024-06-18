@@ -26,8 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -185,7 +188,7 @@ class AcspServiceTest {
         when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao)
         ).thenReturn(acspDataDto);
 
-        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(true);
         var response = acspService.getAcsp(SUBMISSION_ID, transaction);
         assertNotNull(response);
@@ -193,7 +196,11 @@ class AcspServiceTest {
 
     @Test
     void testGetSavedAcspReturnsNullWhenNoLickedTransaction() {
-        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(String.class)))
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setId(SUBMISSION_ID);
+        when(acspRepository.findById(SUBMISSION_ID)).thenReturn(Optional.of(acspDataDao));
+        when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao)).thenReturn(acspDataDto);
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(false);
         transaction.setId("1234");
         assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
@@ -201,4 +208,25 @@ class AcspServiceTest {
         });
     }
 
+    private Transaction buildTransaction() {
+        Transaction transaction = new Transaction();
+        transaction.setId(TRANSACTION_ID);
+        return transaction;
+    }
+
+    @Test
+    void deleteSavedApplicationSuccess() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        verify(acspRepository, times(1)).deleteById(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void deleteSavedApplicationErrorReadingFromDB() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(USER_ID);
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
 }

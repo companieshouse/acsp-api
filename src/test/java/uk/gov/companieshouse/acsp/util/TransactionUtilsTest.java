@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 
@@ -20,10 +22,15 @@ import static uk.gov.companieshouse.acsp.util.Constants.LINK_RESOURCE;
 class TransactionUtilsTest {
 
     private static final String ACSP_SELF_LINK = "/transaction/1234/acsp/1234";
+    private static final String ACSP_ID = "abc123";
+    private static final String FIRST_NAME = "firstName";
+    private static final String LAST_NAME = "lastName";
 
     @Mock
     private Transaction transaction;
 
+
+    private AcspDataDto acspDataDto;
     private final TransactionUtils transactionUtils = new TransactionUtils();
 
     @Test
@@ -34,7 +41,7 @@ class TransactionUtilsTest {
 
     @Test
     void testIsTransactionLinkedToAcspSubmissionReturnsFalseWhenTransactionIsNull() {
-        var result = transactionUtils.isTransactionLinkedToAcspSubmission(null, ACSP_SELF_LINK);
+        var result = transactionUtils.isTransactionLinkedToAcspSubmission(null, getAcspDataDto());
         assertFalse(result);
     }
 
@@ -42,7 +49,7 @@ class TransactionUtilsTest {
     void testIsTransactionLinkedToAcspSubmissionReturnsFalseIfTransactionResourcesIsNull() {
         when(transaction.getResources()).thenReturn(null);
 
-        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, ACSP_SELF_LINK);
+        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, getAcspDataDto());
         assertFalse(result);
     }
 
@@ -53,7 +60,7 @@ class TransactionUtilsTest {
         accountsResource.setKind("Accounts");
         when(transaction.getResources()).thenReturn(transactionResources);
 
-        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, ACSP_SELF_LINK);
+        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, getAcspDataDto());
         assertFalse(result);
     }
 
@@ -69,7 +76,7 @@ class TransactionUtilsTest {
         transactionResources.put(nonMatchingResourceLink, acspResource);
         when(transaction.getResources()).thenReturn(transactionResources);
 
-        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, ACSP_SELF_LINK);
+        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, getAcspDataDto());
         assertFalse(result);
     }
 
@@ -84,7 +91,22 @@ class TransactionUtilsTest {
         transactionResources.put(ACSP_SELF_LINK, acspResource);
         when(transaction.getResources()).thenReturn(transactionResources);
 
-        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, ACSP_SELF_LINK);
+        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, getAcspDataDto());
         assertTrue(result);
     }
+
+
+    private AcspDataDto getAcspDataDto() {
+        acspDataDto = new AcspDataDto();
+        acspDataDto.setId(ACSP_ID);
+        acspDataDto.setFirstName(FIRST_NAME);
+        acspDataDto.setLastName(LAST_NAME);
+        acspDataDto.setEmail("email@email.com");
+        AcspDataSubmissionDto dataSubmissionDto = new AcspDataSubmissionDto();
+        Map<String, String> linksMap = Map.of("self", ACSP_SELF_LINK);
+        dataSubmissionDto.setLinks(linksMap);
+        acspDataDto.setAcspDataSubmission(dataSubmissionDto);
+        return acspDataDto;
+    }
+
 }
