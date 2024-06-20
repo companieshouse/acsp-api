@@ -130,13 +130,51 @@ class AcspServiceTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+
     @Test
-    void updateAcspFailWhenTransactionStatusIsNotOpen() {
+    void updateAcspWhenTransactionisPendingPayment() throws Exception{
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+        when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED_PENDING_PAYMENT);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void updateAcspFailWhenTransactionStatusIsClosed() {
         AcspDataDto acspData = new AcspDataDto();
         acspData.setId("demo@ch.gov.uk");
         when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(true);
         when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED);
+
+        assertThrows(InvalidTransactionStatusException.class, () -> {
+            acspService.updateACSPDetails(transaction,
+                    acspData,
+                    REQUEST_ID,
+                    USER_ID);
+        });
+    }
+
+    @Test
+    void updateAcspFailWhenTransactionStatusIsDeleted() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(transaction.getStatus()).thenReturn(TransactionStatus.DELETED);
 
         assertThrows(InvalidTransactionStatusException.class, () -> {
             acspService.updateACSPDetails(transaction,

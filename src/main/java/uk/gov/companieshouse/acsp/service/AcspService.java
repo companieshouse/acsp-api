@@ -93,7 +93,8 @@ public class AcspService {
                     "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
         }
         //check for browser back etc.
-        if (TransactionStatus.OPEN != transaction.getStatus()){
+        if (TransactionStatus.CLOSED == transaction.getStatus()
+                || TransactionStatus.DELETED == transaction.getStatus()){
             throw new InvalidTransactionStatusException(String.format(
                     "Can't update transaction with stastus: %s ", transaction.getStatus().toString()));
         }
