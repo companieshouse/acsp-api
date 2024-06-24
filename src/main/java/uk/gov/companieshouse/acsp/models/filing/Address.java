@@ -2,6 +2,8 @@ package uk.gov.companieshouse.acsp.models.filing;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 /**
  * Class to hold the data for the address objects
  */
@@ -86,5 +88,26 @@ public final class Address {
 
     public void setRegion(String region) {
         this.region = region;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return Objects.equals(addressLine1, address.addressLine1)
+                && Objects.equals(addressLine2, address.addressLine2)
+                && Objects.equals(country, address.country)
+                && Objects.equals(locality, address.locality)
+                && Objects.equals(poBox, address.poBox)
+                && Objects.equals(postalCode, address.postalCode)
+                && Objects.equals(premises, address.premises)
+                && Objects.equals(region, address.region);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(addressLine1, addressLine2, country, locality, poBox, postalCode, premises, region);
     }
 }

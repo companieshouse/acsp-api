@@ -34,6 +34,10 @@ public final class ACSP {
     private String middleName;
     @JsonProperty("business_name")
     private String businessName;
+    @JsonProperty("appointments")
+    private Appointements appointements;
+    @JsonProperty("isServiceAddressROA")
+    private boolean isServiceAddressROA;
 
 
     public String getPaymentReference() {
@@ -146,5 +150,21 @@ public final class ACSP {
 
     public void setBusinessName(String businessName) {
         this.businessName = businessName;
+    }
+
+    public Appointements getAppointements() {
+        return appointements;
+    }
+
+    public void setAppointements(Appointements appointements) {
+        this.appointements = appointements;
+    }
+
+    public boolean isServiceAddressROA() {
+        return isServiceAddressROA;
+    }
+
+    public void setServiceAddressROA(boolean serviceAddressROA) {
+        isServiceAddressROA = serviceAddressROA;
     }
 }

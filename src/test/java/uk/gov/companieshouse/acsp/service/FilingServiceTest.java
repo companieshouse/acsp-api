@@ -234,7 +234,7 @@ class FilingServiceTest {
 
         setACSPDataDto();
         acspDataDto.setCorrespondenceAddresses(null);
-        acspDataDto.setBusinessAddress(null);
+        acspDataDto.setBusinessAddress(buildBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 

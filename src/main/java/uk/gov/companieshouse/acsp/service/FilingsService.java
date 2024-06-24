@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.*;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
@@ -17,6 +18,7 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -133,8 +135,17 @@ public class FilingsService {
     if(acspDataDto.getEmail() != null) {
       acsp.setEmail(acspDataDto.getEmail().toUpperCase());
     }
-    acsp.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
-    acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
+    if(acspDataDto.getTypeOfBusiness() == TypeOfBusiness.CORPORATE_BODY ||
+        acspDataDto.getTypeOfBusiness() == TypeOfBusiness.PARTNERSHIP ||
+        acspDataDto.getTypeOfBusiness() == TypeOfBusiness.UNINCORPORATED_ENTITY) {
+      acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
+    }
+    if(acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
+      acsp.setServiceAddressROA(true);
+    } else {
+      acsp.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
+      acsp.setServiceAddressROA(false);
+    }
     if(transaction.getStatus() != null &&
             transaction.getStatus().equals(TransactionStatus.CLOSED)) {
       setPaymentData(acsp, transaction, passThroughTokenHeader);
@@ -161,7 +172,6 @@ public class FilingsService {
       for(var counter = 0; counter < amlMemberships.size(); counter++) {
         amlMembershipsArray[counter] = amlMemberships.get(counter);
       }
-
       acsp.setAmlMemberships(amlMembershipsArray);
     }
 
@@ -173,6 +183,35 @@ public class FilingsService {
     }
     if(acspDataDto.getMiddleName() != null) {
       acsp.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
+    }
+
+    if(acspDataDto.getTypeOfBusiness() != null && acspDataDto.getTypeOfBusiness().equals(TypeOfBusiness.SOLE_TRADER)) {
+      Appointements appointements = new Appointements();
+      Officers officers = new Officers();
+
+      if(acspDataDto.getFirstName() != null) {
+        officers.setFirstName(acspDataDto.getFirstName().toUpperCase());
+      }
+      if(acspDataDto.getLastName() != null) {
+        officers.setLastName(acspDataDto.getLastName().toUpperCase());
+      }
+      if(acspDataDto.getMiddleName() != null) {
+        officers.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
+      }
+      if(acspDataDto.getDateOfBirth() != null) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-mm-DD");
+        officers.setBirthDate(simpleDateFormat.format(acspDataDto.getDateOfBirth()));
+      }
+      if(acspDataDto.getNationality() != null) {
+        officers.setNationalityOther(
+                (Optional.ofNullable(acspDataDto.getNationality().getFirstNationality())) +
+                        String.valueOf(Optional.ofNullable(acspDataDto.getNationality().getSecondNationality())) +
+                        (Optional.ofNullable(acspDataDto.getNationality().getThirdNationality())));
+      }
+
+      if(acspDataDto.getCountryOfResidence() != null) {
+        officers.setUsualResidence(acspDataDto.getCountryOfResidence().toUpperCase());
+      }
     }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     return acsp;
