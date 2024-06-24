@@ -8,6 +8,7 @@ import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.type.Address;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Document(collection = "applications")
@@ -41,7 +42,7 @@ public class AcspDataDao {
     private RoleType roleType;
 
     @Field("date_of_birth")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Field("verified")
     private Boolean verified;
@@ -145,11 +146,11 @@ public class AcspDataDao {
         this.roleType = roleType;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

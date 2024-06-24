@@ -22,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
@@ -199,19 +201,25 @@ public class FilingsService {
         officers.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
       }
       if(acspDataDto.getDateOfBirth() != null) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-mm-DD");
-        officers.setBirthDate(simpleDateFormat.format(acspDataDto.getDateOfBirth()));
+        officers.setBirthDate(acspDataDto.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
       }
+      String nationalities[] = {acspDataDto.
+              getNationality().getFirstNationality(), acspDataDto.getNationality().getSecondNationality(),
+              acspDataDto.getNationality().getThirdNationality()};
       if(acspDataDto.getNationality() != null) {
-        officers.setNationalityOther(
-                (Optional.ofNullable(acspDataDto.getNationality().getFirstNationality())) +
-                        String.valueOf(Optional.ofNullable(acspDataDto.getNationality().getSecondNationality())) +
-                        (Optional.ofNullable(acspDataDto.getNationality().getThirdNationality())));
+        var nationality = Stream.of(nationalities).filter
+                          (value -> null != value).collect(Collectors.joining(","));
+        if(nationality != null) {
+          officers.setNationalityOther(nationality.toUpperCase());
+        }
       }
 
       if(acspDataDto.getCountryOfResidence() != null) {
         officers.setUsualResidence(acspDataDto.getCountryOfResidence().toUpperCase());
       }
+
+      appointements.setOfficers(officers);
+      acsp.setAppointements(appointements);
     }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     return acsp;

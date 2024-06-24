@@ -7,10 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.companieshouse.acsp.models.dto.AMLSupervisoryBodiesDto;
-import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
-import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
-import uk.gov.companieshouse.acsp.models.dto.CompanyDto;
+import uk.gov.companieshouse.acsp.models.dto.*;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.ACSP;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
@@ -31,8 +28,11 @@ import uk.gov.companieshouse.api.model.transaction.TransactionPayment;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -394,11 +394,49 @@ class FilingServiceTest {
                 }
         );
 
+    }
+
+
+    @Test
+    void tesGenerateAcspApplicationForSoleTrader() throws Exception {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+
+        transaction.setStatus(TransactionStatus.CLOSED);
+
+        setACSPDataDto();
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LIMITED_COMPANY);
+        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setMiddleName(MIDDLE_NAME);
+        acspDataDto.setBusinessName("businessName");
+        LocalDate localDate = LocalDate.parse("1984-10-31");
+        acspDataDto.setDateOfBirth(localDate);
+        NationalityDto nationalityDto = new NationalityDto();
+        nationalityDto.setFirstNationality("British");
+        nationalityDto.setThirdNationality("Canadian");
+        acspDataDto.setNationality(nationalityDto);
+
+
+        AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
+        amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setMembershipId("12345678");
+        AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
+        acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
         var response2 = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertEquals("businessName".toUpperCase(), ((ACSP) response2.getData().get("acsp")).getBusinessName());
-
+        Assertions.assertNull(((ACSP) response2.getData().get("acsp")).getOfficeAddress());
+        Assertions.assertEquals(FIRST_NAME.toUpperCase(),
+                ((ACSP) response2.getData().get("acsp")).getAppointements().getOfficers().getFirstName());
+        Assertions.assertEquals("1984-10-31",
+                ((ACSP) response2.getData().get("acsp")).getAppointements().getOfficers().getBirthDate());
+        Assertions.assertEquals("BRITISH,CANADIAN",
+                ((ACSP) response2.getData().get("acsp")).getAppointements().getOfficers().getNationalityOther());
     }
+
+
 
 
 
