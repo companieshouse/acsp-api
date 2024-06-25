@@ -494,6 +494,7 @@ class FilingServiceTest {
         acspDataDto.setLastName(null);
         acspDataDto.setMiddleName(null);
         acspDataDto.setDateOfBirth(null);
+        acspDataDto.setCountryOfResidence(null);
 
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
