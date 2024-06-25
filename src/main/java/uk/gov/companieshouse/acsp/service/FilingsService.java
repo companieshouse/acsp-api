@@ -18,12 +18,12 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
@@ -98,7 +98,7 @@ public class FilingsService {
     filing.setCost(costAmount);
   }
 
-  private void buildPresenter(HashMap<String, Object>data, AcspDataDto acspDataDto) {
+  private void buildPresenter(Map<String, Object>data, AcspDataDto acspDataDto) {
     var presenter = new Presenter();
     if (acspDataDto.getFirstName() != null) {
       presenter.setFirstName(acspDataDto.getFirstName().toUpperCase());
@@ -114,16 +114,16 @@ public class FilingsService {
   }
 
 
-  private void buildSubmission(HashMap<String, Object>data, AcspDataDto acspDataDto, String transactionId) {
+  private void buildSubmission(Map<String, Object>data, AcspDataDto acspDataDto, String transactionId) {
     var submission = new Submission();
     submission.setReceivedAt(acspDataDto.getAcspDataSubmission().getUpdatedAt());
     submission.setTransactionId(transactionId.toUpperCase());
     data.put(SUBMISSION, submission);
   }
 
-  private HashMap<String, Object> buildData(AcspDataDto acspDataDto, String transactionId, Transaction transaction,
+  private Map<String, Object> buildData(AcspDataDto acspDataDto, String transactionId, Transaction transaction,
                                             String passThroughTokenHeader) throws ServiceException {
-    HashMap<String, Object> data = new HashMap<>();
+    Map<String, Object> data = new HashMap<>();
     data.put("acsp", buildAcspData(acspDataDto, transaction,passThroughTokenHeader));
     buildPresenter(data, acspDataDto);
     buildSubmission(data, acspDataDto, transactionId);
@@ -188,8 +188,8 @@ public class FilingsService {
     }
 
     if(acspDataDto.getTypeOfBusiness() != null && acspDataDto.getTypeOfBusiness().equals(TypeOfBusiness.SOLE_TRADER)) {
-      Appointements appointements = new Appointements();
-      Officers officers = new Officers();
+      var appointements = new Appointements();
+      var officers = new Officers();
 
       if(acspDataDto.getFirstName() != null) {
         officers.setFirstName(acspDataDto.getFirstName().toUpperCase());
@@ -203,16 +203,22 @@ public class FilingsService {
       if(acspDataDto.getDateOfBirth() != null) {
         officers.setBirthDate(acspDataDto.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
       }
-      String nationalities[] = {acspDataDto.
-              getNationality().getFirstNationality(), acspDataDto.getNationality().getSecondNationality(),
-              acspDataDto.getNationality().getThirdNationality()};
+
       if(acspDataDto.getNationality() != null) {
-        var nationality = Stream.of(nationalities).filter
-                          (value -> null != value).collect(Collectors.joining(","));
-        if(nationality != null) {
-          officers.setNationalityOther(nationality.toUpperCase());
+        var nationalities = new ArrayList<String>();
+
+        if (acspDataDto.getNationality().getFirstNationality() != null) {
+          nationalities.add(acspDataDto.getNationality().getFirstNationality());
         }
+        if (acspDataDto.getNationality().getSecondNationality() != null) {
+          nationalities.add(acspDataDto.getNationality().getSecondNationality());
+        }
+        if (acspDataDto.getNationality().getThirdNationality() != null) {
+          nationalities.add(acspDataDto.getNationality().getThirdNationality());
+        }
+        officers.setNationalityOther(String.join(",", nationalities).toUpperCase());
       }
+
 
       if(acspDataDto.getCountryOfResidence() != null) {
         officers.setUsualResidence(acspDataDto.getCountryOfResidence().toUpperCase());
