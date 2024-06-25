@@ -193,6 +193,12 @@ class FilingServiceTest {
         return businessAddress;
     }
 
+    private Address buildBusinessAddressWithOnlyCountry() {
+        businessAddress = new Address();
+        businessAddress.setCountry("Country");
+        return businessAddress;
+    }
+
     private Address buildNullCorrespondenceAddress() {
         correspondenceAddress = new Address();
         return correspondenceAddress;
@@ -267,6 +273,7 @@ class FilingServiceTest {
         Assertions.assertEquals("100", response.getCost());
         Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentReference());
         Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentMethod());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
         Assertions.assertNotNull(response.getData().get("acsp"));
         Assertions.assertNotNull(response.getData().get("presenter"));
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
@@ -491,6 +498,7 @@ class FilingServiceTest {
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
+        acspDataDto.setBusinessAddress(buildBusinessAddress());
 
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
@@ -503,6 +511,36 @@ class FilingServiceTest {
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
         var response2 = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNotNull(((ACSP) response2.getData().get("acsp")).getOfficeAddress());
+
+    }
+
+    @Test
+    void tesGenerateAcspApplicationBusinessAddressWithOnlyCountry() throws Exception {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+
+        transaction.setStatus(TransactionStatus.CLOSED);
+
+        setACSPDataDto();
+        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setMiddleName(MIDDLE_NAME);
+        acspDataDto.setBusinessName("businessName");
+        LocalDate localDate = LocalDate.parse("1984-10-31");
+        acspDataDto.setDateOfBirth(localDate);
+        acspDataDto.setBusinessAddress(buildBusinessAddressWithOnlyCountry());
+
+
+        AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
+        amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setMembershipId("12345678");
+        AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
+        acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
+        Assertions.assertEquals("COUNTRY", ((ACSP) response.getData().get("acsp")).getOfficeAddress().getCountry());
 
     }
 
