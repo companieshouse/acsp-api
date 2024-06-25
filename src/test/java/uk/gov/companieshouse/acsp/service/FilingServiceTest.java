@@ -172,7 +172,7 @@ class FilingServiceTest {
         correspondenceAddress.setCountry("Country");
         correspondenceAddress.setCounty("County");
         correspondenceAddress.setLine1("Line1");
-        correspondenceAddress.setPostcode("postcode");
+        correspondenceAddress.setPostcode("postcode1");
         correspondenceAddress.setTown("town");
         correspondenceAddress.setLine2("line2");
         correspondenceAddress.setPropertyDetails("propertyDetails");

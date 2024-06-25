@@ -2,8 +2,6 @@ package uk.gov.companieshouse.acsp.models.filing;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Objects;
-
 /**
  * Class to hold the data for the address objects
  */
