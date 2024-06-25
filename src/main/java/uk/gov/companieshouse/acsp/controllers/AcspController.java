@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
-import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
@@ -90,6 +89,13 @@ public class AcspController {
     public ResponseEntity<Object> deleteApplication(@PathVariable("id") String id) {
         LOGGER.info("received request to delete application for id: " + id);
         return acspService.deleteAcspApplication(id);
+    }
+
+    @PostMapping("/acsp-api/user/{id}/application-submit/{application-reference}")
+    public ResponseEntity<Object> sendConfirmationEmail(@PathVariable("id") String id,
+                                                @PathVariable("application-reference") String applicationReference) {
+        LOGGER.info("received request to send confirmation email for id " + id);
+        return acspService.sendConfirmationEmail(id, applicationReference);
     }
 
 }

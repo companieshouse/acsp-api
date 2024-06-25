@@ -13,11 +13,13 @@ import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
+import uk.gov.companieshouse.email_producer.EmailSendingException;
 
 import java.util.Optional;
 
@@ -60,6 +62,9 @@ class AcspServiceTest {
 
     @Mock
     private TransactionUtils transactionUtils;
+
+    @Mock
+    private EmailService emailService;
 
     @Test
     void createAcspSuccess() throws Exception {
@@ -265,6 +270,48 @@ class AcspServiceTest {
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(USER_ID);
         ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void sendConfirmationEmailLimitedCompanySuccess() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.OK);
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setTypeOfBusiness(TypeOfBusiness.LIMITED_COMPANY);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(acspDataDao));
+        ResponseEntity<Object> response = acspService.sendConfirmationEmail(USER_ID, TRANSACTION_ID);
+        verify(emailService, times(1)).sendLimitedConfirmationEmail(any(), any(), any());
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void sendConfirmationEmailNonLimitedCompanySuccess() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.OK);
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(acspDataDao));
+        ResponseEntity<Object> response = acspService.sendConfirmationEmail(USER_ID, TRANSACTION_ID);
+        verify(emailService, times(1)).sendConfirmationEmail(any(), any(), any());
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void sendConfirmationEmailUserNotFound() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.empty());
+        ResponseEntity<Object> response = acspService.sendConfirmationEmail(USER_ID, TRANSACTION_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void sendConfirmationEmailError() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(acspDataDao));
+        doThrow(EmailSendingException.class).when(emailService).sendConfirmationEmail(any(), any(), any());
+        ResponseEntity<Object> response = acspService.sendConfirmationEmail(USER_ID, TRANSACTION_ID);
+        verify(emailService, times(1)).sendConfirmationEmail(any(), any(), any());
         assertEquals(expectedResponse, response);
     }
 }

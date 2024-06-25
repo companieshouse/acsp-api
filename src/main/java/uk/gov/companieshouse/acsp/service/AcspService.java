@@ -12,6 +12,7 @@ import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.ApiLogger;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
@@ -39,15 +40,19 @@ public class AcspService {
     private final ACSPRegDataDtoDaoMapper acspRegDataDtoDaoMapper;
     private final TransactionUtils transactionUtils;
 
+    private final EmailService emailService;
+
     @Autowired
     public AcspService(AcspRepository acspRepository,
                        TransactionService transactionService,
                        ACSPRegDataDtoDaoMapper acspRegDataDtoDaoMapper,
-                       TransactionUtils transactionUtils) {
+                       TransactionUtils transactionUtils,
+                       EmailService emailService) {
         this.acspRepository = acspRepository;
         this.transactionService = transactionService;
         this.acspRegDataDtoDaoMapper = acspRegDataDtoDaoMapper;
         this.transactionUtils = transactionUtils;
+        this.emailService = emailService;
     }
 
     public ResponseEntity<Object> createAcspRegData(Transaction transaction, AcspDataDto acspData,
@@ -182,6 +187,26 @@ public class AcspService {
         } catch (Exception e) {
             LOGGER.error("Error deleting document with id " + id, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<Object> sendConfirmationEmail(String id, String applicationReference) {
+        try{
+            Optional<AcspDataDao> acspDataDao = acspRepository.findById(id);
+            if( acspDataDao.isPresent()){
+                AcspDataDao acspData = acspDataDao.get();
+                if (acspData.getTypeOfBusiness().equals(TypeOfBusiness.LIMITED_COMPANY) ||
+                        acspData.getTypeOfBusiness().equals(TypeOfBusiness.LIMITED_PARTNERSHIP) ||
+                        acspData.getTypeOfBusiness().equals(TypeOfBusiness.LIMITED_LIABILITY_PARTNERSHIP)) {
+                    emailService.sendLimitedConfirmationEmail(acspData.getEmail(), acspData.getCompanyDetails(), applicationReference);
+                } else {
+                    emailService.sendConfirmationEmail(acspData.getEmail(), acspData.getBusinessName(), applicationReference);
+                }
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

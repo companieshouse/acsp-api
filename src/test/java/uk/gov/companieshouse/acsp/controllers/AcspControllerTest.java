@@ -11,7 +11,6 @@ import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
-import uk.gov.companieshouse.acsp.service.TransactionService;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 
 import java.net.URI;
@@ -152,5 +151,13 @@ class AcspControllerTest {
 
         var response = acspController.deleteApplication(USER_ID);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    void sendConfirmationEmail() {
+        when(acspService.sendConfirmationEmail(any(), any())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
+
+        var response = acspController.sendConfirmationEmail(any(), any());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
