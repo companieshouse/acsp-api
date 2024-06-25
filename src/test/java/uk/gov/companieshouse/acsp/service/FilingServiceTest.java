@@ -30,9 +30,7 @@ import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -204,12 +202,12 @@ class FilingServiceTest {
         return correspondenceAddress;
     }
 
-    private Address buildNullCorrespondenceAddress() {
+    private Address buildBlankCorrespondenceAddress() {
         correspondenceAddress = new Address();
         return correspondenceAddress;
     }
 
-    private Address buildNullBusinessAddress() {
+    private Address buildBlankBusinessAddress() {
         businessAddress = new Address();
         return businessAddress;
     }
@@ -256,6 +254,33 @@ class FilingServiceTest {
         Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentMethod());
         Assertions.assertNotNull(response.getData().get("acsp"));
         Assertions.assertNotNull(response.getData().get("presenter"));
+        Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getCorrespondenceAddress());
+        Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
+        Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
+        Assertions.assertNotNull(response.getData().get("submission"));
+        Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
+
+    }
+
+
+    @Test
+    void tesGenerateAcspApplicationFilingWithOnlyCountryCorrespondenAddress() throws Exception {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+
+        setACSPDataDto();
+        acspDataDto.setCorrespondenceAddresses(buildCorrespondenceAddressWithOnlyCountry());
+        acspDataDto.setBusinessAddress(buildBusinessAddress());
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        Assertions.assertEquals("100", response.getCost());
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentReference());
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentMethod());
+        Assertions.assertNotNull(response.getData().get("acsp"));
+        Assertions.assertNotNull(response.getData().get("presenter"));
+        Assertions.assertEquals("COUNTRY", ((ACSP) response.getData().get("acsp")).getCorrespondenceAddress().getCountry());
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
@@ -269,8 +294,8 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDto();
-        acspDataDto.setCorrespondenceAddresses(buildNullCorrespondenceAddress());
-        acspDataDto.setBusinessAddress(buildNullBusinessAddress());
+        acspDataDto.setCorrespondenceAddresses(buildBlankCorrespondenceAddress());
+        acspDataDto.setBusinessAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -295,8 +320,8 @@ class FilingServiceTest {
 
         setACSPDataDtoWithCompanyDetails();
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.LIMITED_COMPANY);
-        acspDataDto.setCorrespondenceAddresses(buildNullCorrespondenceAddress());
-        acspDataDto.setBusinessAddress(buildNullBusinessAddress());
+        acspDataDto.setCorrespondenceAddresses(buildBlankCorrespondenceAddress());
+        acspDataDto.setBusinessAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -322,8 +347,8 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDtoWithoutNamesandId();
-        acspDataDto.setCorrespondenceAddresses(buildNullCorrespondenceAddress());
-        acspDataDto.setBusinessAddress(buildNullBusinessAddress());
+        acspDataDto.setCorrespondenceAddresses(buildBlankCorrespondenceAddress());
+        acspDataDto.setBusinessAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -449,6 +474,44 @@ class FilingServiceTest {
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
         Assertions.assertEquals(COUNTRY_OF_RESIDENCE.toUpperCase(),
                 ((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getUsualResidence());
+    }
+
+    @Test
+    void tesGenerateAcspApplicationForSoleTraderNoOfficersName() throws Exception {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+
+        transaction.setStatus(TransactionStatus.CLOSED);
+
+        setACSPDataDto();
+        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setMiddleName(MIDDLE_NAME);
+        LocalDate localDate = LocalDate.parse("1984-10-31");
+        acspDataDto.setDateOfBirth(localDate);
+        NationalityDto nationalityDto = new NationalityDto();
+        acspDataDto.setNationality(nationalityDto);
+        acspDataDto.setFirstName(null);
+        acspDataDto.setLastName(null);
+        acspDataDto.setMiddleName(null);
+        acspDataDto.setDateOfBirth(null);
+
+
+        AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
+        amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setMembershipId("12345678");
+        AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
+        acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getFirstName());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getLastName());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getMiddleName());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getBirthDate());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getUsualResidence());
     }
 
     @Test
