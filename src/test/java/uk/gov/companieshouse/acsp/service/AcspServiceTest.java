@@ -283,6 +283,27 @@ class AcspServiceTest {
         verify(emailService, times(1)).sendLimitedConfirmationEmail(any(), any(), any());
         assertEquals(expectedResponse, response);
     }
+    @Test
+    void sendConfirmationEmailLimitedPartnershipSuccess() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.OK);
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setTypeOfBusiness(TypeOfBusiness.LIMITED_PARTNERSHIP);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(acspDataDao));
+        ResponseEntity<Object> response = acspService.sendConfirmationEmail(USER_ID, TRANSACTION_ID);
+        verify(emailService, times(1)).sendLimitedConfirmationEmail(any(), any(), any());
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void sendConfirmationEmailLimitedLiabilityPartnershipSuccess() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.OK);
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setTypeOfBusiness(TypeOfBusiness.LIMITED_LIABILITY_PARTNERSHIP);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(acspDataDao));
+        ResponseEntity<Object> response = acspService.sendConfirmationEmail(USER_ID, TRANSACTION_ID);
+        verify(emailService, times(1)).sendLimitedConfirmationEmail(any(), any(), any());
+        assertEquals(expectedResponse, response);
+    }
 
     @Test
     void sendConfirmationEmailNonLimitedCompanySuccess() {

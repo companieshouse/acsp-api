@@ -194,7 +194,7 @@ public class AcspService {
         try{
             Optional<AcspDataDao> acspDataDao = acspRepository.findById(id);
             if( acspDataDao.isPresent()){
-                AcspDataDao acspData = acspDataDao.get();
+                var acspData = acspDataDao.get();
                 if (acspData.getTypeOfBusiness().equals(TypeOfBusiness.LIMITED_COMPANY) ||
                         acspData.getTypeOfBusiness().equals(TypeOfBusiness.LIMITED_PARTNERSHIP) ||
                         acspData.getTypeOfBusiness().equals(TypeOfBusiness.LIMITED_LIABILITY_PARTNERSHIP)) {
