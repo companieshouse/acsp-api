@@ -177,7 +177,7 @@ public class FilingsService {
       acsp.setAmlMemberships(amlMembershipsArray);
     }
     if(acspDataDto.getFirstName() != null || acspDataDto.getLastName() != null || acspDataDto.getMiddleName() != null) {
-      PersonName personName = new PersonName();
+      var personName = new PersonName();
       if(acspDataDto.getFirstName() != null) {
         personName.setFirstName(acspDataDto.getFirstName().toUpperCase());
       }

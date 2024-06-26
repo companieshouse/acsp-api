@@ -453,6 +453,7 @@ class FilingServiceTest {
         NationalityDto nationalityDto = new NationalityDto();
         nationalityDto.setFirstNationality("British");
         nationalityDto.setThirdNationality("Canadian");
+        nationalityDto.setSecondNationality("Irish");
         acspDataDto.setNationality(nationalityDto);
 
 
@@ -471,7 +472,7 @@ class FilingServiceTest {
                 ((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getFirstName());
         Assertions.assertEquals("1984-10-31",
                 ((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getBirthDate());
-        Assertions.assertEquals("BRITISH,CANADIAN",
+        Assertions.assertEquals("BRITISH,IRISH,CANADIAN",
                 ((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getNationalityOther());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
         Assertions.assertEquals(COUNTRY_OF_RESIDENCE.toUpperCase(),
@@ -686,6 +687,8 @@ class FilingServiceTest {
         setACSPDataDto();
         acspDataDto.setWorkSector("Work Sector");
         acspDataDto.setMiddleName(MIDDLE_NAME);
+        acspDataDto.setFirstName(null);
+        acspDataDto.setLastName(null);
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
@@ -703,6 +706,9 @@ class FilingServiceTest {
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
         Assertions.assertEquals(true, ((ACSP) response.getData().get("acsp")).isServiceAddressROA());
+        Assertions.assertEquals(MIDDLE_NAME.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPersonName().getMiddleName());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getPersonName().getFirstName());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getPersonName().getLastName());
 
     }
 
