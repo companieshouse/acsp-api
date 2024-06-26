@@ -18,7 +18,7 @@ locals {
   use_set_environment_files  = var.use_set_environment_files
   s3_config_bucket           = data.vault_generic_secret.shared_s3.data["config_bucket_name"]
   app_environment_filename   = "acsp-api.env"
-  vpc_name                   = data.aws_ssm_parameter.secret[format("/%s/%s", local.name_prefix, "vpc-name")].value
+  vpc_name                   = local.stack_secrets["vpc_name"]
 
   # Enable Eric
   use_eric_reverse_proxy    = true

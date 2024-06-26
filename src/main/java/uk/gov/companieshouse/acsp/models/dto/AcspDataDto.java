@@ -5,6 +5,7 @@ import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.type.Address;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -38,7 +39,7 @@ public class AcspDataDto {
     private RoleType roleType;
 
     @JsonProperty("dateOfBirth")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @JsonProperty("verified")
     private Boolean verified;
@@ -142,11 +143,11 @@ public class AcspDataDto {
         this.roleType = roleType;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
