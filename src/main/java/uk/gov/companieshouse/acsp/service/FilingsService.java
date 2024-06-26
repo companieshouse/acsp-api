@@ -139,7 +139,7 @@ public class FilingsService {
     }
     if(acspDataDto.getTypeOfBusiness() == TypeOfBusiness.CORPORATE_BODY ||
         acspDataDto.getTypeOfBusiness() == TypeOfBusiness.PARTNERSHIP ||
-        acspDataDto.getTypeOfBusiness() == TypeOfBusiness.UNINCORPORATED_ENTITY) {
+        acspDataDto.getTypeOfBusiness() == TypeOfBusiness.UNINCORPORATED) {
       acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     }
     if(acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
