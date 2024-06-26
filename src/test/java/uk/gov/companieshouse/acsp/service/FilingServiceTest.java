@@ -281,7 +281,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDtoWithCompanyDetails();
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LIMITED_COMPANY);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
         acspDataDto.setCorrespondenceAddresses(buildNullCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildNullBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
@@ -364,7 +364,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LIMITED_COMPANY);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
         acspDataDto.setWorkSector("Work Sector");
         acspDataDto.setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
@@ -379,7 +379,7 @@ class FilingServiceTest {
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertEquals(((ACSP) response.getData().get("acsp")).getAcspType().toUpperCase(),
-                TypeOfBusiness.LIMITED_COMPANY.name().toUpperCase());
+                TypeOfBusiness.LC.name().toUpperCase());
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getAmlMemberships());
         Assertions.assertEquals("WORK SECTOR", ((ACSP) response.getData().get("acsp")).getBusinessSector());
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getAmlMemberships());
