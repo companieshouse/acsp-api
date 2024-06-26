@@ -8,9 +8,6 @@ public class AcspEmailData extends EmailData {
     private String companyNumber;
     private String applicationReference;
 
-    public AcspEmailData() {
-    }
-
     public String getCompanyName() {
         return companyName;
     }

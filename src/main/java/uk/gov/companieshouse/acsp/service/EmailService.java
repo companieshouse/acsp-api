@@ -37,7 +37,7 @@ public class EmailService {
     }
 
     public void sendLimitedConfirmationEmail(String recipientEmail, CompanyDao companyDao, String applicationReference) {
-        AcspEmailData emailData =  new AcspEmailData();
+        var emailData =  new AcspEmailData();
         emailData.setTo(recipientEmail);
         emailData.setSubject("Register as a Companies House authorised agent: application received");
         emailData.setCompanyNumber(companyDao.getCompanyNumber());
@@ -48,7 +48,7 @@ public class EmailService {
     }
 
     public void sendConfirmationEmail(String recipientEmail, String businessName, String applicationReference) {
-        AcspEmailData emailData =  new AcspEmailData();
+        var emailData =  new AcspEmailData();
         emailData.setTo(recipientEmail);
         emailData.setSubject("Register as a Companies House authorised agent: application received");
         emailData.setCompanyName(businessName);

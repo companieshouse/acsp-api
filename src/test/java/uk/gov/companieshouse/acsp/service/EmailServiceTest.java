@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailServiceTest {
+class EmailServiceTest {
 
     private static final String APPLICATION_REFERENCE = "43462387648";
     private static final String EMAIL_ADDRESS = "test@email.com";
