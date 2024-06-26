@@ -424,7 +424,9 @@ class FilingServiceTest {
         Assertions.assertEquals("CREDIT-CARD", ((ACSP) response.getData().get("acsp")).getPaymentMethod());
         Assertions.assertEquals("PAYMENT_REFERENCE", ((ACSP) response.getData().get("acsp")).getPaymentReference());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
-        Assertions.assertEquals(MIDDLE_NAME.toUpperCase(), ((ACSP) response.getData().get("acsp")).getMiddleName());
+        Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPersonName().getFirstName());
+        Assertions.assertEquals(MIDDLE_NAME.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPersonName().getMiddleName());
+        Assertions.assertEquals(LAST_NAME.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPersonName().getLastName());
         Arrays.stream(((ACSP) response.getData().get("acsp")).getAmlMemberships()).forEach(
                 amlMembership -> {
                     Assertions.assertEquals("12345678", amlMembership.getRegistrationNumber().toUpperCase());
@@ -508,6 +510,7 @@ class FilingServiceTest {
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getPersonName());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getFirstName());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getLastName());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getAppointements().getOfficers().getMiddleName());

@@ -176,16 +176,20 @@ public class FilingsService {
       }
       acsp.setAmlMemberships(amlMembershipsArray);
     }
+    if(acspDataDto.getFirstName() != null || acspDataDto.getLastName() != null || acspDataDto.getMiddleName() != null) {
+      PersonName personName = new PersonName();
+      if(acspDataDto.getFirstName() != null) {
+        personName.setFirstName(acspDataDto.getFirstName().toUpperCase());
+      }
+      if(acspDataDto.getLastName() != null) {
+        personName.setLastName(acspDataDto.getLastName().toUpperCase());
+      }
+      if(acspDataDto.getMiddleName() != null) {
+        personName.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
+      }
+      acsp.setPersonName(personName);
+    }
 
-    if(acspDataDto.getFirstName() != null) {
-      acsp.setFirstName(acspDataDto.getFirstName().toUpperCase());
-    }
-    if(acspDataDto.getLastName() != null) {
-      acsp.setLastName(acspDataDto.getLastName().toUpperCase());
-    }
-    if(acspDataDto.getMiddleName() != null) {
-      acsp.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
-    }
 
     if(acspDataDto.getTypeOfBusiness() != null && acspDataDto.getTypeOfBusiness().equals(TypeOfBusiness.SOLE_TRADER)) {
       var appointements = new Appointements();
