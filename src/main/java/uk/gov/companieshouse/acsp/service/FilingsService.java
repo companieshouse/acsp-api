@@ -142,7 +142,7 @@ public class FilingsService {
         acspDataDto.getTypeOfBusiness() == TypeOfBusiness.UNINCORPORATED_ENTITY) {
       acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     }
-    if(acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
+    if(acspDataDto.getBusinessAddress() != null && acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
       acsp.setServiceAddressROA(true);
     } else {
       acsp.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
