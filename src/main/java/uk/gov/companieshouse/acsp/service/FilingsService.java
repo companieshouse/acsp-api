@@ -142,7 +142,7 @@ public class FilingsService {
         acspDataDto.getTypeOfBusiness() == TypeOfBusiness.UNINCORPORATED) {
       acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     }
-    if(acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
+    if(acspDataDto.getBusinessAddress() != null && acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
       acsp.setServiceAddressROA(true);
     } else {
       acsp.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
@@ -176,16 +176,20 @@ public class FilingsService {
       }
       acsp.setAmlMemberships(amlMembershipsArray);
     }
+    if(acspDataDto.getFirstName() != null || acspDataDto.getLastName() != null || acspDataDto.getMiddleName() != null) {
+      var personName = new PersonName();
+      if(acspDataDto.getFirstName() != null) {
+        personName.setFirstName(acspDataDto.getFirstName().toUpperCase());
+      }
+      if(acspDataDto.getLastName() != null) {
+        personName.setLastName(acspDataDto.getLastName().toUpperCase());
+      }
+      if(acspDataDto.getMiddleName() != null) {
+        personName.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
+      }
+      acsp.setPersonName(personName);
+    }
 
-    if(acspDataDto.getFirstName() != null) {
-      acsp.setFirstName(acspDataDto.getFirstName().toUpperCase());
-    }
-    if(acspDataDto.getLastName() != null) {
-      acsp.setLastName(acspDataDto.getLastName().toUpperCase());
-    }
-    if(acspDataDto.getMiddleName() != null) {
-      acsp.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
-    }
 
     if(acspDataDto.getTypeOfBusiness() != null && acspDataDto.getTypeOfBusiness().equals(TypeOfBusiness.SOLE_TRADER)) {
       var appointements = new Appointements();

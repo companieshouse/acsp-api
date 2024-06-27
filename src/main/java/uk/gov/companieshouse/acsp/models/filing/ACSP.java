@@ -26,12 +26,8 @@ public final class ACSP {
     private String businessSector;
     @JsonProperty("amlmemberships")
     private AmlMembership[] amlMemberships;
-    @JsonProperty("first_name")
-    private String firstName;
-    @JsonProperty("last_name")
-    private String lastName;
-    @JsonProperty("middle_name")
-    private String middleName;
+    @JsonProperty("person_name")
+    private PersonName personName;
     @JsonProperty("business_name")
     private String businessName;
     @JsonProperty("appointments")
@@ -120,30 +116,6 @@ public final class ACSP {
         this.amlMemberships = amlMemberships;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
     public String getBusinessName() {
         return businessName;
     }
@@ -166,5 +138,13 @@ public final class ACSP {
 
     public void setServiceAddressROA(boolean serviceAddressROA) {
         isServiceAddressROA = serviceAddressROA;
+    }
+
+    public PersonName getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(PersonName personName) {
+        this.personName = personName;
     }
 }
