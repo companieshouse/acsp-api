@@ -139,7 +139,7 @@ public class FilingsService {
     }
     if(acspDataDto.getTypeOfBusiness() == TypeOfBusiness.CORPORATE_BODY ||
         acspDataDto.getTypeOfBusiness() == TypeOfBusiness.PARTNERSHIP ||
-        acspDataDto.getTypeOfBusiness() == TypeOfBusiness.UNINCORPORATED_ENTITY) {
+        acspDataDto.getTypeOfBusiness() == TypeOfBusiness.UNINCORPORATED) {
       acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     }
     if(acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
@@ -239,7 +239,7 @@ public class FilingsService {
     }
     if (acspDataDto.getTypeOfBusiness() != null) {
       switch (acspDataDto.getTypeOfBusiness()) {
-        case PARTNERSHIP, LIMITED_COMPANY, LIMITED_PARTNERSHIP :
+        case PARTNERSHIP, LC, LP:
           if (acspDataDto.getCompanyDetails() != null && acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
             acsp.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber().toUpperCase());
           }
