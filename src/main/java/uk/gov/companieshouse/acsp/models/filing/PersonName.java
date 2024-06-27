@@ -6,9 +6,9 @@ public class PersonName {
 
     @JsonProperty("forename")
     private String firstName;
-    @JsonProperty("other_forenames")
-    private String lastName;
     @JsonProperty("surname")
+    private String lastName;
+    @JsonProperty("other_forenames")
     private String middleName;
 
     public String getFirstName() {
