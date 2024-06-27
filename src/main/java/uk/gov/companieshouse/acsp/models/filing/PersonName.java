@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PersonName {
 
-    @JsonProperty("first_name")
+    @JsonProperty("forename")
     private String firstName;
-    @JsonProperty("last_name")
+    @JsonProperty("other_forenames")
     private String lastName;
-    @JsonProperty("middle_name")
+    @JsonProperty("surname")
     private String middleName;
 
     public String getFirstName() {
