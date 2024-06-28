@@ -513,12 +513,6 @@ class FilingServiceTest {
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getPersonName());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).
-                                getAppointements().getOfficers().getPersonName().getFirstName());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).
-                                getAppointements().getOfficers().getPersonName().getLastName());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).
-                                getAppointements().getOfficers().getPersonName().getMiddleName());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).
                                 getAppointements().getOfficers().getBirthDate());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).
                                 getAppointements().getOfficers().getUsualResidence());

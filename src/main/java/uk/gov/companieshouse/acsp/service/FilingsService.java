@@ -137,9 +137,9 @@ public class FilingsService {
     if(acspDataDto.getEmail() != null) {
       acsp.setEmail(acspDataDto.getEmail().toUpperCase());
     }
-    if(acspDataDto.getTypeOfBusiness() == TypeOfBusiness.CORPORATE_BODY ||
-        acspDataDto.getTypeOfBusiness() == TypeOfBusiness.PARTNERSHIP ||
-        acspDataDto.getTypeOfBusiness() == TypeOfBusiness.UNINCORPORATED_ENTITY) {
+    if(TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness()) ||
+            TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
+            TypeOfBusiness.UNINCORPORATED_ENTITY.equals(acspDataDto.getTypeOfBusiness())) {
       acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     }
     if(acspDataDto.getBusinessAddress() != null && acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
@@ -149,7 +149,7 @@ public class FilingsService {
       acsp.setServiceAddressROA(false);
     }
     if(transaction.getStatus() != null &&
-            transaction.getStatus().equals(TransactionStatus.CLOSED)) {
+            TransactionStatus.CLOSED.equals(transaction.getStatus())) {
       setPaymentData(acsp, transaction, passThroughTokenHeader);
     }
     if (acspDataDto.getTypeOfBusiness() != null) {
@@ -176,11 +176,11 @@ public class FilingsService {
       }
       acsp.setAmlMemberships(amlMembershipsArray);
     }
-    if(!acspDataDto.getTypeOfBusiness().equals(TypeOfBusiness.SOLE_TRADER)) {
+    if(!TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
       acsp.setPersonName(buildPersonName(acspDataDto));
     }
 
-    if(acspDataDto.getTypeOfBusiness() != null && acspDataDto.getTypeOfBusiness().equals(TypeOfBusiness.SOLE_TRADER)) {
+    if(acspDataDto.getTypeOfBusiness() != null && TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
       buildAppointments(acspDataDto, acsp);
     }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
