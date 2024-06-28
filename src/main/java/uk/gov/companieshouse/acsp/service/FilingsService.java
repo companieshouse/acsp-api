@@ -137,19 +137,19 @@ public class FilingsService {
     if(acspDataDto.getEmail() != null) {
       acsp.setEmail(acspDataDto.getEmail().toUpperCase());
     }
-    if(acspDataDto.getTypeOfBusiness() == TypeOfBusiness.CORPORATE_BODY ||
-        acspDataDto.getTypeOfBusiness() == TypeOfBusiness.PARTNERSHIP ||
-        acspDataDto.getTypeOfBusiness() == TypeOfBusiness.UNINCORPORATED) {
+    if(TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness()) ||
+            TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
+            TypeOfBusiness.UNINCORPORATED.equals(acspDataDto.getTypeOfBusiness())) {
       acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     }
-    if(acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
+    if(acspDataDto.getBusinessAddress() != null && acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
       acsp.setServiceAddressROA(true);
     } else {
       acsp.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
       acsp.setServiceAddressROA(false);
     }
     if(transaction.getStatus() != null &&
-            transaction.getStatus().equals(TransactionStatus.CLOSED)) {
+            TransactionStatus.CLOSED.equals(transaction.getStatus())) {
       setPaymentData(acsp, transaction, passThroughTokenHeader);
     }
     if (acspDataDto.getTypeOfBusiness() != null) {
@@ -176,61 +176,65 @@ public class FilingsService {
       }
       acsp.setAmlMemberships(amlMembershipsArray);
     }
-
-    if(acspDataDto.getFirstName() != null) {
-      acsp.setFirstName(acspDataDto.getFirstName().toUpperCase());
-    }
-    if(acspDataDto.getLastName() != null) {
-      acsp.setLastName(acspDataDto.getLastName().toUpperCase());
-    }
-    if(acspDataDto.getMiddleName() != null) {
-      acsp.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
+    if(!TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
+      acsp.setPersonName(buildPersonName(acspDataDto));
     }
 
-    if(acspDataDto.getTypeOfBusiness() != null && acspDataDto.getTypeOfBusiness().equals(TypeOfBusiness.SOLE_TRADER)) {
-      var appointements = new Appointements();
-      var officers = new Officers();
-
-      if(acspDataDto.getFirstName() != null) {
-        officers.setFirstName(acspDataDto.getFirstName().toUpperCase());
-      }
-      if(acspDataDto.getLastName() != null) {
-        officers.setLastName(acspDataDto.getLastName().toUpperCase());
-      }
-      if(acspDataDto.getMiddleName() != null) {
-        officers.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
-      }
-      if(acspDataDto.getDateOfBirth() != null) {
-        officers.setBirthDate(acspDataDto.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-      }
-
-      if(acspDataDto.getNationality() != null) {
-        var nationalities = new ArrayList<String>();
-
-        if (acspDataDto.getNationality().getFirstNationality() != null) {
-          nationalities.add(acspDataDto.getNationality().getFirstNationality());
-        }
-        if (acspDataDto.getNationality().getSecondNationality() != null) {
-          nationalities.add(acspDataDto.getNationality().getSecondNationality());
-        }
-        if (acspDataDto.getNationality().getThirdNationality() != null) {
-          nationalities.add(acspDataDto.getNationality().getThirdNationality());
-        }
-        officers.setNationalityOther(String.join(",", nationalities).toUpperCase());
-      }
-
-
-      if(acspDataDto.getCountryOfResidence() != null) {
-        officers.setUsualResidence(acspDataDto.getCountryOfResidence().toUpperCase());
-      }
-
-      appointements.setOfficers(officers);
-      acsp.setAppointements(appointements);
+    if(acspDataDto.getTypeOfBusiness() != null && TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
+      buildAppointments(acspDataDto, acsp);
     }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     return acsp;
   }
 
+  private PersonName buildPersonName(AcspDataDto acspDataDto) {
+    var personName = new PersonName();
+    if (acspDataDto.getFirstName() != null || acspDataDto.getLastName() != null || acspDataDto.getMiddleName() != null) {
+      if (acspDataDto.getFirstName() != null) {
+        personName.setFirstName(acspDataDto.getFirstName().toUpperCase());
+      }
+      if (acspDataDto.getLastName() != null) {
+        personName.setLastName(acspDataDto.getLastName().toUpperCase());
+      }
+      if (acspDataDto.getMiddleName() != null) {
+        personName.setMiddleName(acspDataDto.getMiddleName().toUpperCase());
+      }
+      return personName;
+    }
+    return null;
+  }
+  private void buildAppointments(AcspDataDto acspDataDto, ACSP acsp) {
+    var appointements = new Appointements();
+    var officers = new Officers();
+    officers.setPersonName(buildPersonName(acspDataDto));
+
+    if(acspDataDto.getDateOfBirth() != null) {
+      officers.setBirthDate(acspDataDto.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    }
+
+    if(acspDataDto.getNationality() != null) {
+      var nationalities = new ArrayList<String>();
+
+      if (acspDataDto.getNationality().getFirstNationality() != null) {
+        nationalities.add(acspDataDto.getNationality().getFirstNationality());
+      }
+      if (acspDataDto.getNationality().getSecondNationality() != null) {
+        nationalities.add(acspDataDto.getNationality().getSecondNationality());
+      }
+      if (acspDataDto.getNationality().getThirdNationality() != null) {
+        nationalities.add(acspDataDto.getNationality().getThirdNationality());
+      }
+      officers.setNationalityOther(String.join(",", nationalities).toUpperCase());
+    }
+
+
+    if(acspDataDto.getCountryOfResidence() != null) {
+      officers.setUsualResidence(acspDataDto.getCountryOfResidence().toUpperCase());
+    }
+
+    appointements.setOfficers(officers);
+    acsp.setAppointements(appointements);
+  }
 
   private void buildCompanyDetails(AcspDataDto acspDataDto, ACSP acsp) {
 
