@@ -1,12 +1,12 @@
 package uk.gov.companieshouse.acsp.models.enums;
 
 public enum TypeOfBusiness {
-    LIMITED_COMPANY("Limited company"),
-    LIMITED_PARTNERSHIP("Limited partnership"),
-    LIMITED_LIABILITY_PARTNERSHIP("Limited Liability Partnership"),
+    LC("Limited company"),
+    LP("Limited partnership"),
+    LLP("Limited Liability Partnership"),
     PARTNERSHIP("Non registered partnership"),
     SOLE_TRADER("Sole trader"),
-    UNINCORPORATED_ENTITY("Unincorporated entity"),
+    UNINCORPORATED("Unincorporated entity"),
     CORPORATE_BODY("Corporate body");
 
     public final String label;
