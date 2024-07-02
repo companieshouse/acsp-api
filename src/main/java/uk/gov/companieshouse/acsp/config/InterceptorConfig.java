@@ -13,6 +13,7 @@ import uk.gov.companieshouse.acsp.interceptor.TransactionInterceptor;
 public class InterceptorConfig implements WebMvcConfigurer {
 
     public static final String TRANSACTIONS = "/transactions/**";
+    public static final String PRIVATE_TRANSACTIONS = "/private/transactions/**";
 
     @Autowired
     private TransactionInterceptor transactionInterceptor;
@@ -32,6 +33,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
      */
     private void addTransactionInterceptor(InterceptorRegistry registry) {
         registry.addInterceptor(transactionInterceptor)
-                .addPathPatterns(TRANSACTIONS);
+                .addPathPatterns(TRANSACTIONS).addPathPatterns(PRIVATE_TRANSACTIONS);
     }
 }
