@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.acsp.util.Constants.PAYMENT_REQUIRED_HEADER;
 
 @ExtendWith(MockitoExtension.class)
-public class TransactionServiceTest {
+class TransactionServiceTest {
 
     @Mock
     private ApiClientService apiClientService;

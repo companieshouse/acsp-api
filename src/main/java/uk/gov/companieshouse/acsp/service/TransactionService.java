@@ -36,10 +36,9 @@ public class TransactionService {
 
     public Transaction getTransaction(String passThroughHeader, String id) throws ServiceException {
         try {
-            String transactionsUri = TRANSACTIONS_URI.expand(id).toString();
-            ApiClient apiClient = apiClientService.getApiClient(passThroughHeader);
-            LOGGER.info("Got the client--------");
-            // apiClient.setBasePath("https://api.cidev.aws.chdev.org"); //This is for local testing
+            var transactionsUri = TRANSACTIONS_URI.expand(id).toString();
+            var apiClient = apiClientService.getApiClient(passThroughHeader);
+            //apiClient.setBasePath("https://api.cidev.aws.chdev.org"); //This is for local testing
             return apiClient.transactions().get(transactionsUri).execute().getData();
         } catch (URIValidationException | IOException e) {
             throw new ServiceException("Error Retrieving Transaction " + id, e);
@@ -68,7 +67,7 @@ public class TransactionService {
                             .transactions().update(uri, transaction)
                             .execute().getHeaders();
 
-            boolean paymentRequired = false;
+            var paymentRequired = false;
             List<String> paymentRequiredHeaders = (ArrayList) headers.get(PAYMENT_REQUIRED_HEADER);
             if (paymentRequiredHeaders != null) {
                 paymentRequired = true;

@@ -1,4 +1,4 @@
 package uk.gov.companieshouse.acsp.constants;
 
-public class ACSPConstants {
+public interface ACSPConstants {
 }
