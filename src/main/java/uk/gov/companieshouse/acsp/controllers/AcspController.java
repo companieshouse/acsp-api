@@ -73,13 +73,13 @@ public class AcspController {
 
     @GetMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp/{acsp_id}")
     public ResponseEntity<Object> getAcspData(@PathVariable(TRANSACTION_ID_KEY) String transactionId,
-                                              @PathVariable("acsp_id") String acsp_id,
+                                              @PathVariable("acsp_id") String acspId,
                                               @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
                                               @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
         LOGGER.info("received request to get acsp data");
         Optional<AcspDataDto> acspData;
         try {
-            acspData = acspService.getAcsp(acsp_id, transaction);
+            acspData = acspService.getAcsp(acspId, transaction);
         } catch (SubmissionNotLinkedToTransactionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -91,16 +91,16 @@ public class AcspController {
     }
 
     @GetMapping("/acsp-api/user/{acsp_id}/application")
-    public ResponseEntity<Object> checkHasApplication(@PathVariable("acsp_id") String acsp_id,
+    public ResponseEntity<Object> checkHasApplication(@PathVariable("acsp_id") String acspId,
                                                 @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId){
         LOGGER.info("received request to check for user applications");
-        return acspService.getAcspApplicationCount(acsp_id);
+        return acspService.getAcspApplicationCount(acspId);
     }
 
     @DeleteMapping("/acsp-api/user/{acsp_id}/application")
-    public ResponseEntity<Object> deleteApplication(@PathVariable("acsp_id") String acsp_id) {
-        LOGGER.info("received request to delete application for id: " + acsp_id);
-        return acspService.deleteAcspApplication(acsp_id);
+    public ResponseEntity<Object> deleteApplication(@PathVariable("acsp_id") String acspId) {
+        LOGGER.info("received request to delete application for id: " + acspId);
+        return acspService.deleteAcspApplication(acspId);
     }
 
 }
