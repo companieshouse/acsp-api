@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.acsp.models.dao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.acsp.models.enums.AMLSupervisoryBodies;
 
 public class AMLSupervisoryBodiesDao {
     @JsonProperty("aml_supervisory_body")
