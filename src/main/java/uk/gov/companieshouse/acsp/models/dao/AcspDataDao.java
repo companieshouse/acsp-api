@@ -9,7 +9,6 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.type.Address;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Document(collection = "applications")
 public class AcspDataDao {
@@ -112,14 +111,6 @@ public class AcspDataDao {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Address getCorrespondenceAddresses() {
-        return correspondenceAddress;
-    }
-
-    public void setCorrespondenceAddresses(Address correspondenceAddresses) {
-        this.correspondenceAddress = correspondenceAddresses;
     }
 
     public Address getBusinessAddress() {
