@@ -302,10 +302,13 @@ public class FilingsService {
   }
 
   private void setDescriptionFields(FilingApi filing, Transaction transaction) {
-    LocalDate datofCreation = LocalDate.parse(
-                            transaction.getClosedAt().substring(0,
-                                      transaction.getClosedAt().indexOf("T")));
-    String formattedDate = datofCreation.format(formatter);
+    String formattedDate = "";
+    if(transaction.getClosedAt() != null) {
+      LocalDate datofCreation = LocalDate.parse(
+              transaction.getClosedAt().substring(0,
+                      transaction.getClosedAt().indexOf("T")));
+      formattedDate = datofCreation.format(formatter);
+    }
     if(filingDescriptionIdentifier != null) {
       filing.setDescriptionIdentifier(filingDescriptionIdentifier.toUpperCase());
     }
