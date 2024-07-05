@@ -302,9 +302,9 @@ public class FilingsService {
   }
 
   private void setDescriptionFields(FilingApi filing, Transaction transaction) {
-    String formattedDate = "";
+    var formattedDate = "";
     if(transaction.getClosedAt() != null) {
-      LocalDate datofCreation = LocalDate.parse(
+      var datofCreation = LocalDate.parse(
               transaction.getClosedAt().substring(0,
                       transaction.getClosedAt().indexOf("T")));
       formattedDate = datofCreation.format(formatter);
