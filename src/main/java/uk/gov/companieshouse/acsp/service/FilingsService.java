@@ -239,7 +239,7 @@ public class FilingsService {
     }
     if (acspDataDto.getTypeOfBusiness() != null) {
       switch (acspDataDto.getTypeOfBusiness()) {
-        case PARTNERSHIP, LC, LP, LLP:
+        case LC, LP, LLP:
           if (acspDataDto.getCompanyDetails() != null) {
             acsp.setCompanyNumber(Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyNumber())
                     .map(String::toUpperCase).orElse(null));
