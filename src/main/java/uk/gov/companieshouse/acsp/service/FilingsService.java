@@ -51,8 +51,6 @@ public class FilingsService {
   @Value("${ACSP_APPLICATION_FILING_DESCRIPTION}")
   private String filingDescription;
 
-  private LocalDate dateNow = LocalDate.now();
-
   private TransactionService transactionService;
 
   private final ApiClientService apiClientService;
@@ -63,7 +61,7 @@ public class FilingsService {
 
   private static final String SUBMISSION = "submission";
 
-  private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MM yyyy");
+  private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
   @Autowired
   public FilingsService(TransactionService transactionService, AcspService acspService,
@@ -90,7 +88,7 @@ public class FilingsService {
     var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
       filing.setData(buildData(acspDataDto, transactionId, transaction, passThroughTokenHeader));
-      setDescriptionFields(filing);
+      setDescriptionFields(filing, transaction);
       buildFilingStatus(filing);
     }
   }
@@ -303,8 +301,14 @@ public class FilingsService {
     return businessAddress;
   }
 
-  private void setDescriptionFields(FilingApi filing) {
-    String formattedDate = dateNow.format(formatter);
+  private void setDescriptionFields(FilingApi filing, Transaction transaction) {
+    var formattedDate = "";
+    if(transaction.getClosedAt() != null) {
+      var datofCreation = LocalDate.parse(
+              transaction.getClosedAt().substring(0,
+                      transaction.getClosedAt().indexOf("T")));
+      formattedDate = datofCreation.format(formatter);
+    }
     if(filingDescriptionIdentifier != null) {
       filing.setDescriptionIdentifier(filingDescriptionIdentifier.toUpperCase());
     }
