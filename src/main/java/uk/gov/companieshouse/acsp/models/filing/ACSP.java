@@ -16,9 +16,9 @@ public final class ACSP {
     private Address officeAddress;
     @JsonProperty("email")
     private String email;
-    @JsonProperty("company_number")
+    @JsonProperty("CompanyNumber")
     private String  companyNumber;
-    @JsonProperty("company_name")
+    @JsonProperty("CompanyName")
     private String  companyName;
     @JsonProperty("acsp_type")
     private String acspType;
