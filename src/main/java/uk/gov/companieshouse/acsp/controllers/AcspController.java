@@ -94,7 +94,7 @@ public class AcspController {
     public ResponseEntity<Object> checkHasApplication(@PathVariable("acsp_id") String acspId,
                                                 @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId){
         LOGGER.info("received request to check for user applications");
-        return acspService.getAcspApplicationCount(acspId);
+        return acspService.getAcspApplicationStatus(acspId, requestId);
     }
 
     @DeleteMapping("/acsp-api/user/{acsp_id}/application")

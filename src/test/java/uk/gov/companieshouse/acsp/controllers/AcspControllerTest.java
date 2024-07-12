@@ -11,7 +11,6 @@ import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
-import uk.gov.companieshouse.acsp.service.TransactionService;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 
 import java.net.URI;
@@ -124,7 +123,7 @@ class AcspControllerTest {
 
     @Test
     void checkHasApplicationTrue() {
-        when(acspService.getAcspApplicationCount(any())).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        when(acspService.getAcspApplicationStatus(any(), any())).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
 
         var response = acspController.checkHasApplication(USER_ID, REQUEST_ID);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
@@ -132,7 +131,7 @@ class AcspControllerTest {
 
     @Test
     void checkHasApplicationFalse() {
-        when(acspService.getAcspApplicationCount(any())).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        when(acspService.getAcspApplicationStatus(any(), any())).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         var response = acspController.checkHasApplication(USER_ID, REQUEST_ID);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
