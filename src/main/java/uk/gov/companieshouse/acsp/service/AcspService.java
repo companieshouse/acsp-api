@@ -145,7 +145,7 @@ public class AcspService {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             String transactionId = application.get().getAcspDataSubmission().getLinks().get("self").split("/")[2];
-            Transaction transaction = transactionService.getTransaction(requestId, transactionId);
+            var transaction = transactionService.getTransaction(requestId, transactionId);
             if(!TransactionStatus.CLOSED.equals(transaction.getStatus())) {
                 LOGGER.info("Open application found for userId: " + userId);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
