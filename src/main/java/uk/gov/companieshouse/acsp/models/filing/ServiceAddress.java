@@ -9,7 +9,7 @@ public final class ServiceAddress {
 
     @JsonProperty("serviceAddressROA")
     private boolean isServiceAddressROA;
-    @JsonProperty("correspondence_address")
+    @JsonProperty("address")
     private Address correspondenceAddress;
 
     public boolean isServiceAddressROA() {

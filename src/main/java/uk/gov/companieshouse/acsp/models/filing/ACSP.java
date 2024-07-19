@@ -10,7 +10,7 @@ public final class ACSP {
     @JsonProperty("payment_method")
     private String paymentMethod;
 
-    @JsonProperty("service_address")
+    @JsonProperty("registered_office_address")
     private ServiceAddress serviceAddress;
     @JsonProperty("office_address")
     private Address officeAddress;
