@@ -6,11 +6,11 @@ public class STPersonalInformation {
 
     @JsonProperty("person_name")
     private PersonName personName;
-    @JsonProperty("birthDate")
+    @JsonProperty("date_of_birth")
     private String birthDate;
-    @JsonProperty("usualResidence")
+    @JsonProperty("country_of_residence")
     private String usualResidence;
-    @JsonProperty("nationalityOther")
+    @JsonProperty("nationalities")
     private String nationalityOther;
 
     public String getBirthDate() {

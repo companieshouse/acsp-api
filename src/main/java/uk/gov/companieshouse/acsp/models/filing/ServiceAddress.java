@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public final class ServiceAddress {
 
-    @JsonProperty("isServiceAddressROA")
+    @JsonProperty("serviceAddressROA")
     private boolean isServiceAddressROA;
     @JsonProperty("correspondence_address")
     private Address correspondenceAddress;

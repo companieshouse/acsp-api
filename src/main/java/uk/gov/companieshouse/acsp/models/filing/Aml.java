@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Aml {
 
-    @JsonProperty("amlmemberships")
+    @JsonProperty("aml_memberships")
     private AmlMembership[] amlMemberships;
     @JsonProperty("person_name")
     private PersonName personName;
