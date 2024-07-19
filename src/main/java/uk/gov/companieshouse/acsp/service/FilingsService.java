@@ -7,7 +7,15 @@ import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
-import uk.gov.companieshouse.acsp.models.filing.*;
+import uk.gov.companieshouse.acsp.models.filing.ACSP;
+import uk.gov.companieshouse.acsp.models.filing.Presenter;
+import uk.gov.companieshouse.acsp.models.filing.Aml;
+import uk.gov.companieshouse.acsp.models.filing.ServiceAddress;
+import uk.gov.companieshouse.acsp.models.filing.STPersonalInformation;
+import uk.gov.companieshouse.acsp.models.filing.Address;
+import uk.gov.companieshouse.acsp.models.filing.AmlMembership;
+import uk.gov.companieshouse.acsp.models.filing.PersonName;
+import uk.gov.companieshouse.acsp.models.filing.Submission;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
@@ -137,7 +145,6 @@ public class FilingsService {
       acsp.setServiceAddress(buildServiceAddress(null, true));
     } else {
       acsp.setServiceAddress(buildServiceAddress(acspDataDto, false));
-      acsp.setServiceAddressROA(false);
     }
     if(transaction.getStatus() != null &&
             TransactionStatus.CLOSED.equals(transaction.getStatus())) {

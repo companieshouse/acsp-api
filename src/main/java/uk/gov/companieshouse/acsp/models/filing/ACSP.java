@@ -10,7 +10,7 @@ public final class ACSP {
     @JsonProperty("payment_method")
     private String paymentMethod;
 
-    @JsonProperty("correspondence_address")
+    @JsonProperty("service_address")
     private ServiceAddress serviceAddress;
     @JsonProperty("office_address")
     private Address officeAddress;
@@ -24,14 +24,12 @@ public final class ACSP {
     private String acspType;
     @JsonProperty("business_sector")
     private String businessSector;
-    @JsonProperty("amlmemberships")
+    @JsonProperty("aml")
     private Aml aml;
     @JsonProperty("business_name")
     private String businessName;
     @JsonProperty("st_personal_information")
     private STPersonalInformation stPersonalInformation;
-    @JsonProperty("isServiceAddressROA")
-    private boolean isServiceAddressROA;
 
 
     public String getPaymentReference() {
@@ -128,13 +126,5 @@ public final class ACSP {
 
     public void setStPersonalInformation(STPersonalInformation stPersonalInformation) {
         this.stPersonalInformation = stPersonalInformation;
-    }
-
-    public boolean isServiceAddressROA() {
-        return isServiceAddressROA;
-    }
-
-    public void setServiceAddressROA(boolean serviceAddressROA) {
-        isServiceAddressROA = serviceAddressROA;
     }
 }

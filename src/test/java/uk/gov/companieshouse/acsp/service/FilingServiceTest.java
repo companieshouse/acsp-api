@@ -14,7 +14,6 @@ import uk.gov.companieshouse.acsp.models.dto.AMLSupervisoryBodiesDto;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.ACSP;
-import uk.gov.companieshouse.acsp.models.filing.Aml;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
 import uk.gov.companieshouse.acsp.models.type.Address;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
@@ -731,7 +730,7 @@ class FilingServiceTest {
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
-        Assertions.assertFalse(((ACSP) response.getData().get("acsp")).isServiceAddressROA());
+        Assertions.assertFalse(((ACSP) response.getData().get("acsp")).getServiceAddress().isServiceAddressROA());
 
     }
 
