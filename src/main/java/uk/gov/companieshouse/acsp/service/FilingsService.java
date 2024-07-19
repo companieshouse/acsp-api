@@ -251,7 +251,7 @@ public class FilingsService {
   }
 
   private ServiceAddress buildServiceAddress(AcspDataDto acspDataDto, boolean isServiceAddressROA) {
-    ServiceAddress serviceAddress = new ServiceAddress();
+    var serviceAddress = new ServiceAddress();
     if(acspDataDto != null) {
       serviceAddress.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
     }
