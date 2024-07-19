@@ -10,8 +10,8 @@ public final class ACSP {
     @JsonProperty("payment_method")
     private String paymentMethod;
 
-    @JsonProperty("correspondence_address")
-    private Address correspondenceAddress;
+    @JsonProperty("registered_office_address")
+    private ServiceAddress serviceAddress;
     @JsonProperty("office_address")
     private Address officeAddress;
     @JsonProperty("email")
@@ -24,16 +24,12 @@ public final class ACSP {
     private String acspType;
     @JsonProperty("business_sector")
     private String businessSector;
-    @JsonProperty("amlmemberships")
-    private AmlMembership[] amlMemberships;
-    @JsonProperty("person_name")
-    private PersonName personName;
+    @JsonProperty("aml")
+    private Aml aml;
     @JsonProperty("business_name")
     private String businessName;
-    @JsonProperty("appointments")
-    private Appointements appointements;
-    @JsonProperty("isServiceAddressROA")
-    private boolean isServiceAddressROA;
+    @JsonProperty("st_personal_information")
+    private STPersonalInformation stPersonalInformation;
 
 
     public String getPaymentReference() {
@@ -52,12 +48,12 @@ public final class ACSP {
         this.paymentMethod = paymentMethod;
     }
 
-    public Address getCorrespondenceAddress() {
-        return correspondenceAddress;
+    public ServiceAddress getServiceAddress() {
+        return serviceAddress;
     }
 
-    public void setCorrespondenceAddress(Address correspondenceAddress) {
-        this.correspondenceAddress = correspondenceAddress;
+    public void setServiceAddress(ServiceAddress serviceAddress) {
+        this.serviceAddress = serviceAddress;
     }
 
     public Address getOfficeAddress() {
@@ -108,12 +104,12 @@ public final class ACSP {
         this.businessSector = businessSector;
     }
 
-    public AmlMembership[] getAmlMemberships() {
-        return amlMemberships;
+    public Aml getAml() {
+        return aml;
     }
 
-    public void setAmlMemberships(AmlMembership[] amlMemberships) {
-        this.amlMemberships = amlMemberships;
+    public void setAml(Aml aml) {
+        this.aml = aml;
     }
 
     public String getBusinessName() {
@@ -124,27 +120,11 @@ public final class ACSP {
         this.businessName = businessName;
     }
 
-    public Appointements getAppointements() {
-        return appointements;
+    public STPersonalInformation getStPersonalInformation() {
+        return stPersonalInformation;
     }
 
-    public void setAppointements(Appointements appointements) {
-        this.appointements = appointements;
-    }
-
-    public boolean isServiceAddressROA() {
-        return isServiceAddressROA;
-    }
-
-    public void setServiceAddressROA(boolean serviceAddressROA) {
-        isServiceAddressROA = serviceAddressROA;
-    }
-
-    public PersonName getPersonName() {
-        return personName;
-    }
-
-    public void setPersonName(PersonName personName) {
-        this.personName = personName;
+    public void setStPersonalInformation(STPersonalInformation stPersonalInformation) {
+        this.stPersonalInformation = stPersonalInformation;
     }
 }
