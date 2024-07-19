@@ -2,7 +2,6 @@ package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.acsp.models.type.Address;
-import uk.gov.companieshouse.api.appointment.ServiceAddress;
 
 public class CompanyDto {
 

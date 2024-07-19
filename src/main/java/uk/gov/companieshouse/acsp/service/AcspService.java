@@ -137,16 +137,30 @@ public class AcspService {
         }
     }
 
-    public ResponseEntity<Object> getAcspApplicationCount(String userId){
-
-        int acspCount = acspRepository.countById(userId);
-        if (acspCount < 1){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Object> getAcspApplicationStatus(String userId, String requestId){
+        try{
+            var application = acspRepository.findById(userId);
+            if (application.isEmpty()){
+                LOGGER.info("No application found for userId: " + userId);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            String transactionId = application.get().getAcspDataSubmission().getLinks().get("self").split("/")[2];
+            var transaction = transactionService.getTransaction(requestId, transactionId);
+            if(!TransactionStatus.CLOSED.equals(transaction.getStatus())) {
+                LOGGER.info("Open application found for userId: " + userId);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            if(transaction.getFilings().get(transactionId + "-1").getStatus().equals("rejected")){
+                LOGGER.info("Rejected application found for userId: " + userId);
+                acspRepository.delete(application.get());
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            LOGGER.info("Application for " + userId + " is closed and not rejected");
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (Exception exception) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     private Resource createAcspTransactionResource(String submissionUri) {
         var acspResource = new Resource();

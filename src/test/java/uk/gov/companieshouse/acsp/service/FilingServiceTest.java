@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 import uk.gov.companieshouse.acsp.models.dto.*;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.ACSP;
@@ -103,7 +104,7 @@ class FilingServiceTest {
         AcspDataSubmissionDto dataSubmissionDto = new AcspDataSubmissionDto();
         dataSubmissionDto.setUpdatedAt(LocalDateTime.now());
         acspDataDto.setAcspDataSubmission(dataSubmissionDto);
-        acspDataDto.setCorrespondenceAddresses(buildCorrespondenceAddress());
+        acspDataDto.setCorrespondenceAddress(buildCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildBusinessAddress());
         acspDataDto.setCountryOfResidence("United Kingdom");
         ReflectionTestUtils.setField(filingsService,
@@ -243,7 +244,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDto();
-        acspDataDto.setCorrespondenceAddresses(null);
+        acspDataDto.setCorrespondenceAddress(null);
         acspDataDto.setBusinessAddress(buildBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
@@ -269,7 +270,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDto();
-        acspDataDto.setCorrespondenceAddresses(buildCorrespondenceAddressWithOnlyCountry());
+        acspDataDto.setCorrespondenceAddress(buildCorrespondenceAddressWithOnlyCountry());
         acspDataDto.setBusinessAddress(buildBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
@@ -294,7 +295,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDto();
-        acspDataDto.setCorrespondenceAddresses(buildBlankCorrespondenceAddress());
+        acspDataDto.setCorrespondenceAddress(buildBlankCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
@@ -320,7 +321,7 @@ class FilingServiceTest {
 
         setACSPDataDtoWithCompanyDetails();
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
-        acspDataDto.setCorrespondenceAddresses(buildBlankCorrespondenceAddress());
+        acspDataDto.setCorrespondenceAddress(buildBlankCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
@@ -347,7 +348,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDtoWithoutNamesandId();
-        acspDataDto.setCorrespondenceAddresses(buildBlankCorrespondenceAddress());
+        acspDataDto.setCorrespondenceAddress(buildBlankCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
@@ -743,6 +744,21 @@ class FilingServiceTest {
     }
 
 
+    @Test
+    void tesDescriptionDate() throws Exception {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+
+        transaction.setStatus(TransactionStatus.CLOSED);
+        transaction.setClosedAt("2024-07-01T12:53Z");
+
+        setACSPDataDto();
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        Assertions.assertTrue(response.getDescription().contains("01-07-2024"));
+
+    }
 
 
 

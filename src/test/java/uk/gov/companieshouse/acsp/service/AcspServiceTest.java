@@ -10,15 +10,20 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
+import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
+import uk.gov.companieshouse.acsp.models.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
+import uk.gov.companieshouse.api.model.transaction.Filing;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -200,20 +205,91 @@ class AcspServiceTest {
     }
 
     @Test
-    void getAcspApplicationCountGreaterThanOne() {
-        int expectedApplicationCount = 3;
-        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        when(acspRepository.countById(USER_ID)).thenReturn(expectedApplicationCount);
-        ResponseEntity<Object> response = acspService.getAcspApplicationCount(USER_ID);
+    void getAcspApplicationStatusNoApplication() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.empty());
+        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
         assertEquals(expectedResponse, response);
     }
 
     @Test
-    void getAcspApplicationCountLessThanOne() {
-        int expectedApplicationCount = 0;
+    void getAcspApplicationStatusOpenTransaction() throws ServiceException {
+        var application = new AcspDataDao();
+        var submissionData = new AcspDataSubmissionDao();
+        Map<String, String> links = new HashMap<>();
+        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
+        submissionData.setLinks(links);
+        application.setAcspDataSubmission(submissionData);
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Transaction transaction = new Transaction();
+        transaction.setStatus(TransactionStatus.OPEN);
+
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
+        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
+        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void getAcspApplicationStatusTransactionClosedAndRejected() throws ServiceException {
+        var application = new AcspDataDao();
+        var submissionData = new AcspDataSubmissionDao();
+        Map<String, String> links = new HashMap<>();
+        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
+        submissionData.setLinks(links);
+        application.setAcspDataSubmission(submissionData);
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        when(acspRepository.countById(USER_ID)).thenReturn(expectedApplicationCount);
-        ResponseEntity<Object> response = acspService.getAcspApplicationCount(USER_ID);
+        Transaction transaction = new Transaction();
+        transaction.setStatus(TransactionStatus.CLOSED);
+        Map<String, Filing> filingsMap = new HashMap<>();
+        Filing filing = new Filing();
+        filing.setStatus("rejected");
+        filingsMap.put(TRANSACTION_ID + "-1", filing);
+        transaction.setFilings(filingsMap);
+
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
+        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
+        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
+        assertEquals(expectedResponse, response);
+        verify(acspRepository, times(1)).delete(application);
+    }
+
+    @Test
+    void getAcspApplicationStatusTransactionClosedAndProcessing() throws ServiceException {
+        var application = new AcspDataDao();
+        var submissionData = new AcspDataSubmissionDao();
+        Map<String, String> links = new HashMap<>();
+        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
+        submissionData.setLinks(links);
+        application.setAcspDataSubmission(submissionData);
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        Transaction transaction = new Transaction();
+        transaction.setStatus(TransactionStatus.CLOSED);
+        Map<String, Filing> filingsMap = new HashMap<>();
+        Filing filing = new Filing();
+        filing.setStatus("processing");
+        filingsMap.put(TRANSACTION_ID + "-1", filing);
+        transaction.setFilings(filingsMap);
+
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
+        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
+        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void getAcspApplicationStatusError() throws ServiceException {
+        var application = new AcspDataDao();
+        var submissionData = new AcspDataSubmissionDao();
+        Map<String, String> links = new HashMap<>();
+        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
+        submissionData.setLinks(links);
+        application.setAcspDataSubmission(submissionData);
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
+        doThrow(ServiceException.class).when(transactionService).getTransaction(REQUEST_ID, TRANSACTION_ID);
+        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
         assertEquals(expectedResponse, response);
     }
 

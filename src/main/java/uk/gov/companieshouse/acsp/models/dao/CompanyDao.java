@@ -2,7 +2,6 @@ package uk.gov.companieshouse.acsp.models.dao;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.acsp.models.type.Address;
-import uk.gov.companieshouse.api.appointment.ServiceAddress;
 
 public class CompanyDao {
 
