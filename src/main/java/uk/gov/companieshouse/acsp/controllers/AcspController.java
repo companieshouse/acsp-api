@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
+import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
@@ -29,10 +30,10 @@ import static uk.gov.companieshouse.acsp.util.Constants.ERIC_ACCESS_TOKEN;
 import static uk.gov.companieshouse.acsp.util.Constants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.acsp.util.Constants.TRANSACTION_KEY;
 
-
 @RestController
 public class AcspController {
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
+
     @Autowired
     private AcspService acspService;
 
@@ -46,11 +47,16 @@ public class AcspController {
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
             @RequestBody AcspDataDto acspData) {
-        LOGGER.info("received POST request to save acsp data");
+        LOGGER.info("Received POST request to save ACSP data.");
+        LOGGER.debug("Request details: Transaction ID: " + transactionId +
+                ", Request ID: " + requestId +
+                ", User ID: " + userId +
+                ", Transaction: " + transaction +
+                ", ACSP Data: " + acspData);
         try {
             return acspService.createAcspRegData(transaction, acspData, requestId, userId);
         } catch (Exception e) {
-            LOGGER.error("Error creating record " + e.getMessage());
+            LOGGER.error("Error creating ACSP record. Exception: " + e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -61,12 +67,17 @@ public class AcspController {
             @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
-            @RequestBody AcspDataDto acspData) {
-        LOGGER.info("received request to PUT acsp data");
+            @RequestBody AcspDataDto acspData) throws ServiceException {
+        LOGGER.info("Received PUT request to update ACSP data.");
+        LOGGER.debug("Request details: Transaction ID: " + transactionId +
+                ", Request ID: " + requestId +
+                ", User ID: " + userId +
+                ", Transaction: " + transaction +
+                ", ACSP Data: " + acspData);
         try {
             return acspService.updateACSPDetails(transaction, acspData, requestId, userId);
         } catch (SubmissionNotLinkedToTransactionException | InvalidTransactionStatusException e) {
-            LOGGER.error("Error updating record " + e.getMessage());
+            LOGGER.error("Error updating ACSP record. Exception: " + e.getMessage(), e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -76,31 +87,44 @@ public class AcspController {
                                               @PathVariable("acsp_id") String acspId,
                                               @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
                                               @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
-        LOGGER.info("received request to get acsp data");
+        LOGGER.info("Received GET request to retrieve ACSP data.");
+        LOGGER.debug("Request details: Transaction ID: " + transactionId +
+                ", ACSP ID: " + acspId +
+                ", Request ID: " + requestId +
+                ", Transaction: " + transaction);
         Optional<AcspDataDto> acspData;
         try {
             acspData = acspService.getAcsp(acspId, transaction);
         } catch (SubmissionNotLinkedToTransactionException e) {
+            LOGGER.error("Error retrieving ACSP data. Exception: " + e.getMessage(), e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-        if (acspData.isEmpty()){
-            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
-        }else{
+        if (acspData.isEmpty()) {
+            LOGGER.info("No ACSP data found for ACSP ID: " + acspId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            LOGGER.debug("Found ACSP data: " + acspData);
             return ResponseEntity.ok().body(acspData);
         }
     }
 
     @GetMapping("/acsp-api/user/{acsp_id}/application")
     public ResponseEntity<Object> checkHasApplication(@PathVariable("acsp_id") String acspId,
-                                                @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId){
-        LOGGER.info("received request to check for user applications");
+                                                      @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
+        LOGGER.info("Received GET request to check for user applications.");
+        LOGGER.debug("Request details: ACSP ID: " + acspId +
+                ", Request ID: " + requestId);
         return acspService.getAcspApplicationStatus(acspId, requestId);
     }
 
     @DeleteMapping("/acsp-api/user/{acsp_id}/application")
     public ResponseEntity<Object> deleteApplication(@PathVariable("acsp_id") String acspId) {
-        LOGGER.info("received request to delete application for id: " + acspId);
-        return acspService.deleteAcspApplication(acspId);
+        LOGGER.info("Received DELETE request to delete application for ID: " + acspId);
+        try {
+            return acspService.deleteAcspApplication(acspId);
+        } catch (Exception e) {
+            LOGGER.error("Error deleting application. Exception: " + e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-
 }

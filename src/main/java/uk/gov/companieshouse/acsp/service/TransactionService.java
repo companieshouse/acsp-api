@@ -47,6 +47,10 @@ public class TransactionService {
 
     public void updateTransaction(String passThroughHeader, Transaction transaction) throws ServiceException {
         try {
+            LOGGER.debug("Updating transaction with ID: " + transaction.getId() +
+                    " with company name: " + transaction.getCompanyName() +
+                    " and company number: " + transaction.getCompanyNumber());
+
             var uri = "/private/transactions/" + transaction.getId();
             var resp = apiClientService.getInternalApiClient(passThroughHeader).privateTransaction().patch(uri, transaction).execute();
             if (resp.getStatusCode() != 204) {
