@@ -216,13 +216,16 @@ public class FilingsService {
     if(acspDataDto.getNationality() != null) {
       var nationalities = new ArrayList<String>();
 
-      if (acspDataDto.getNationality().getFirstNationality() != null) {
+      if (acspDataDto.getNationality().getFirstNationality() != null &&
+              !acspDataDto.getNationality().getFirstNationality().isEmpty()) {
         nationalities.add(acspDataDto.getNationality().getFirstNationality());
       }
-      if (acspDataDto.getNationality().getSecondNationality() != null) {
+      if (acspDataDto.getNationality().getSecondNationality() != null &&
+              !acspDataDto.getNationality().getSecondNationality().isEmpty()) {
         nationalities.add(acspDataDto.getNationality().getSecondNationality());
       }
-      if (acspDataDto.getNationality().getThirdNationality() != null) {
+      if (acspDataDto.getNationality().getThirdNationality() != null &&
+              !acspDataDto.getNationality().getThirdNationality().isEmpty()) {
         nationalities.add(acspDataDto.getNationality().getThirdNationality());
       }
       stPersonalInformation.setNationalityOther(String.join(",", nationalities).toUpperCase());
