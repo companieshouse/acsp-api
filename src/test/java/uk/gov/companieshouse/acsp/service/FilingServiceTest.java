@@ -116,6 +116,11 @@ class FilingServiceTest {
                 "filingDescription","acsp application made on {date}");
         ReflectionTestUtils.setField(filingsService,
                 "costAmount","100");
+        NationalityDto nationalityDto = new NationalityDto();
+        nationalityDto.setFirstNationality("British");
+        nationalityDto.setThirdNationality("Canadian");
+        nationalityDto.setSecondNationality("Irish");
+        acspDataDto.setNationality(nationalityDto);
     }
 
     private void setACSPDataDtoWithCompanyDetails() {
@@ -451,11 +456,7 @@ class FilingServiceTest {
         acspDataDto.setMiddleName(MIDDLE_NAME);
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
-        NationalityDto nationalityDto = new NationalityDto();
-        nationalityDto.setFirstNationality("British");
-        nationalityDto.setThirdNationality("Canadian");
-        nationalityDto.setSecondNationality("Irish");
-        acspDataDto.setNationality(nationalityDto);
+
 
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
@@ -530,6 +531,8 @@ class FilingServiceTest {
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
         acspDataDto.setCountryOfResidence(null);
+        acspDataDto.getNationality().setThirdNationality("");
+        acspDataDto.getNationality().setSecondNationality("");
 
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
@@ -547,9 +550,10 @@ class FilingServiceTest {
                 ((ACSP) response.getData().get("acsp")).getStPersonalInformation().getPersonName().getFirstName());
         Assertions.assertEquals("1984-10-31",
                 ((ACSP) response.getData().get("acsp")).getStPersonalInformation().getBirthDate());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getStPersonalInformation().getNationalityOther());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getStPersonalInformation().getUsualResidence());
+        Assertions.assertEquals("BRITISH",
+                ((ACSP) response.getData().get("acsp")).getStPersonalInformation().getNationalityOther());
     }
 
 
@@ -567,6 +571,9 @@ class FilingServiceTest {
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
         acspDataDto.setBusinessAddress(buildBusinessAddress());
+        acspDataDto.getNationality().setThirdNationality("");
+        acspDataDto.getNationality().setSecondNationality("");
+        acspDataDto.getNationality().setFirstNationality("");
 
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
@@ -577,8 +584,9 @@ class FilingServiceTest {
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
-        var response2 = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNotNull(((ACSP) response2.getData().get("acsp")).getOfficeAddress());
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
+        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getStPersonalInformation());
 
     }
 
