@@ -9,12 +9,13 @@ import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.ACSP;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
+import uk.gov.companieshouse.acsp.models.filing.Aml;
+import uk.gov.companieshouse.acsp.models.filing.ServiceAddress;
+import uk.gov.companieshouse.acsp.models.filing.STPersonalInformation;
 import uk.gov.companieshouse.acsp.models.filing.Address;
-import uk.gov.companieshouse.acsp.models.filing.PersonName;
 import uk.gov.companieshouse.acsp.models.filing.AmlMembership;
-import uk.gov.companieshouse.acsp.models.filing.Officers;
+import uk.gov.companieshouse.acsp.models.filing.PersonName;
 import uk.gov.companieshouse.acsp.models.filing.Submission;
-import uk.gov.companieshouse.acsp.models.filing.Appointements;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
@@ -141,10 +142,9 @@ public class FilingsService {
     }
     if(acspDataDto.getBusinessAddress() != null &&
             acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
-      acsp.setServiceAddressROA(true);
+      acsp.setServiceAddress(buildServiceAddress(null, true));
     } else {
-      acsp.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
-      acsp.setServiceAddressROA(false);
+      acsp.setServiceAddress(buildServiceAddress(acspDataDto, false));
     }
     if(transaction.getStatus() != null &&
             TransactionStatus.CLOSED.equals(transaction.getStatus())) {
@@ -159,29 +159,37 @@ public class FilingsService {
     acsp.setBusinessSector(Optional.ofNullable(acspDataDto.getWorkSector()).map((String::toUpperCase)).orElse(null));
 
     if(acspDataDto.getAmlSupervisoryBodies() != null) {
-      var amlMemberships = new ArrayList<AmlMembership>();
-      Arrays.stream(acspDataDto.getAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
-        var membership = new AmlMembership();
-        membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
-        membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().toUpperCase());
-        amlMemberships.add(membership);
-      });
-      var amlMembershipsArray = new AmlMembership[amlMemberships.size()];
-      for(var counter = 0; counter < amlMemberships.size(); counter++) {
-        amlMembershipsArray[counter] = amlMemberships.get(counter);
-      }
-      acsp.setAmlMemberships(amlMembershipsArray);
-    }
-    if(!TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
-      acsp.setPersonName(buildPersonName(acspDataDto));
+      acsp.setAml(buildAml(acspDataDto));
     }
 
     if(acspDataDto.getTypeOfBusiness() != null &&
             TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
-      buildAppointments(acspDataDto, acsp);
+      buildStPersonalInformation(acspDataDto, acsp);
     }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     return acsp;
+  }
+
+  private Aml buildAml(AcspDataDto acspDataDto) {
+    var aml = new Aml();
+    aml.setAmlMemberships(buildAmlMemberships(acspDataDto));
+    aml.setPersonName(buildPersonName(acspDataDto));
+    return aml;
+  }
+
+  private AmlMembership[] buildAmlMemberships(AcspDataDto acspDataDto) {
+    var amlMemberships = new ArrayList<AmlMembership>();
+    Arrays.stream(acspDataDto.getAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
+      var membership = new AmlMembership();
+      membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
+      membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().toUpperCase());
+      amlMemberships.add(membership);
+    });
+    var amlMembershipsArray = new AmlMembership[amlMemberships.size()];
+    for(var counter = 0; counter < amlMemberships.size(); counter++) {
+      amlMembershipsArray[counter] = amlMemberships.get(counter);
+    }
+    return amlMembershipsArray;
   }
 
   private PersonName buildPersonName(AcspDataDto acspDataDto) {
@@ -197,36 +205,37 @@ public class FilingsService {
     }
     return null;
   }
-  private void buildAppointments(AcspDataDto acspDataDto, ACSP acsp) {
-    var appointements = new Appointements();
-    var officers = new Officers();
-    officers.setPersonName(buildPersonName(acspDataDto));
+  private void buildStPersonalInformation(AcspDataDto acspDataDto, ACSP acsp) {
+    var stPersonalInformation = new STPersonalInformation();
+    stPersonalInformation.setPersonName(buildPersonName(acspDataDto));
 
     if(acspDataDto.getDateOfBirth() != null) {
-      officers.setBirthDate(acspDataDto.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+      stPersonalInformation.setBirthDate(acspDataDto.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
     if(acspDataDto.getNationality() != null) {
       var nationalities = new ArrayList<String>();
 
-      if (acspDataDto.getNationality().getFirstNationality() != null) {
+      if (acspDataDto.getNationality().getFirstNationality() != null &&
+              !acspDataDto.getNationality().getFirstNationality().isEmpty()) {
         nationalities.add(acspDataDto.getNationality().getFirstNationality());
       }
-      if (acspDataDto.getNationality().getSecondNationality() != null) {
+      if (acspDataDto.getNationality().getSecondNationality() != null &&
+              !acspDataDto.getNationality().getSecondNationality().isEmpty()) {
         nationalities.add(acspDataDto.getNationality().getSecondNationality());
       }
-      if (acspDataDto.getNationality().getThirdNationality() != null) {
+      if (acspDataDto.getNationality().getThirdNationality() != null &&
+              !acspDataDto.getNationality().getThirdNationality().isEmpty()) {
         nationalities.add(acspDataDto.getNationality().getThirdNationality());
       }
-      officers.setNationalityOther(String.join(",", nationalities).toUpperCase());
+      stPersonalInformation.setNationalityOther(String.join(",", nationalities).toUpperCase());
     }
 
-    officers.setUsualResidence(Optional.ofNullable(acspDataDto.getCountryOfResidence())
+    stPersonalInformation.setUsualResidence(Optional.ofNullable(acspDataDto.getCountryOfResidence())
                               .map(String::toUpperCase).orElse(null));
 
 
-    appointements.setOfficers(officers);
-    acsp.setAppointements(appointements);
+    acsp.setStPersonalInformation(stPersonalInformation);
   }
 
   private void buildCompanyDetails(AcspDataDto acspDataDto, ACSP acsp) {
@@ -249,6 +258,15 @@ public class FilingsService {
       }
     }
 
+  }
+
+  private ServiceAddress buildServiceAddress(AcspDataDto acspDataDto, boolean isServiceAddressROA) {
+    var serviceAddress = new ServiceAddress();
+    if(acspDataDto != null) {
+      serviceAddress.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
+    }
+    serviceAddress.setServiceAddressROA(isServiceAddressROA);
+    return serviceAddress;
   }
 
   private Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
