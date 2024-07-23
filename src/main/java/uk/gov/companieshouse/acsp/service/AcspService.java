@@ -87,7 +87,7 @@ public class AcspService {
     public ResponseEntity<Object> updateACSPDetails(Transaction transaction,
                                                                 AcspDataDto acspDataDto,
                                                                 String requestId,
-                                                                String acspId) throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
+                                                                String acspId) throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException, ServiceException {
         if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
             throw new SubmissionNotLinkedToTransactionException(String.format(
                     "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
@@ -97,6 +97,14 @@ public class AcspService {
                 || TransactionStatus.DELETED == transaction.getStatus()){
             throw new InvalidTransactionStatusException(String.format(
                     "Can't update transaction with stastus: %s ", transaction.getStatus().toString()));
+        }
+
+        if (acspDataDto.getCompanyDetails() != null) {
+            transaction.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName());
+            transaction.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber());
+            transactionService.updateTransaction(requestId, transaction);
+        } else {
+            LOGGER.debug("No company details found in acspDataDto");
         }
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
 

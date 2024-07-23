@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
+import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -59,7 +60,7 @@ class AcspControllerTest {
     }
 
     @Test
-    void updateAcsp() throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
+    void updateAcsp() throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException, ServiceException {
         when(acspService.updateACSPDetails(transaction,
                 acspDataDto,
                 REQUEST_ID,
@@ -74,7 +75,7 @@ class AcspControllerTest {
     }
 
     @Test
-    void updateAcspThrowsException() throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException {
+    void updateAcspThrowsException() throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException, ServiceException {
         when(acspService.updateACSPDetails(transaction,
                 acspDataDto,
                 REQUEST_ID,

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
+import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
 import uk.gov.companieshouse.acsp.service.TransactionService;
@@ -61,7 +62,7 @@ public class AcspController {
             @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
             @RequestHeader(value = ERIC_IDENTITY) String userId,
             @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
-            @RequestBody AcspDataDto acspData) {
+            @RequestBody AcspDataDto acspData)throws ServiceException {
         LOGGER.info("received request to PUT acsp data");
         try {
             return acspService.updateACSPDetails(transaction, acspData, requestId, userId);
