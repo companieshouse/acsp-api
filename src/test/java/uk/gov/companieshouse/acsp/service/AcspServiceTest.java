@@ -379,19 +379,15 @@ class AcspServiceTest {
         when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
         when(acspRepository.save(any())).thenReturn(acspDataDao);
 
-        // Set initial values for the transaction
         when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
 
-        // Call the method under test
         ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
                 acspData,
                 REQUEST_ID,
                 "demo@ch.gov.uk");
-
-        // Verify the expected changes
         verify(transaction).setCompanyName("Test Company");
         verify(transaction).setCompanyNumber("12345678");
-        verify(transactionService).updateTransaction(eq(REQUEST_ID), eq(transaction));
+        verify(transactionService).updateTransaction((REQUEST_ID),(transaction));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -408,18 +404,14 @@ class AcspServiceTest {
         when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
         when(acspRepository.save(any())).thenReturn(acspDataDao);
 
-        // Set initial values for the transaction
         when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
 
-        // Call the method under test
         ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
                 acspData,
                 REQUEST_ID,
                 "demo@ch.gov.uk");
-
-        // Verify the expected changes
         verify(transaction).setCompanyName("Test Business Name");
-        verify(transactionService).updateTransaction(eq(REQUEST_ID), eq(transaction));
+        verify(transactionService).updateTransaction((REQUEST_ID),(transaction));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -428,7 +420,6 @@ class AcspServiceTest {
     void updateAcspWithNullCompanyDetailsAndBusinessName() throws Exception {
         AcspDataDto acspData = new AcspDataDto();
         // No companyDetails or businessName set
-
         AcspDataDao acspDataDao = new AcspDataDao();
         acspDataDao.setId("demo@ch.gov.uk");
         when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
@@ -436,19 +427,15 @@ class AcspServiceTest {
         when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
         when(acspRepository.save(any())).thenReturn(acspDataDao);
 
-        // Set initial values for the transaction
         when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
 
-        // Call the method under test
         ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
                 acspData,
                 REQUEST_ID,
                 "demo@ch.gov.uk");
-
-        // Verify no changes to the transaction
         verify(transaction, times(0)).setCompanyName(anyString());
         verify(transaction, times(0)).setCompanyNumber(anyString());
-        verify(transactionService, times(0)).updateTransaction(eq(REQUEST_ID), eq(transaction));
+        verify(transactionService, times(0)).updateTransaction((REQUEST_ID),(transaction));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
