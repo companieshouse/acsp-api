@@ -37,7 +37,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
 
-
 @ExtendWith(MockitoExtension.class)
 class AcspServiceTest {
     private static final String REQUEST_ID = "fd4gld5h3jhh";
@@ -65,6 +64,27 @@ class AcspServiceTest {
 
     @Mock
     private TransactionUtils transactionUtils;
+
+    private static class CompanyDetails {
+        private String companyName;
+        private String companyNumber;
+
+        public String getCompanyName() {
+            return companyName;
+        }
+
+        public void setCompanyName(String companyName) {
+            this.companyName = companyName;
+        }
+
+        public String getCompanyNumber() {
+            return companyNumber;
+        }
+
+        public void setCompanyNumber(String companyNumber) {
+            this.companyNumber = companyNumber;
+        }
+    }
 
     @Test
     void createAcspSuccess() throws Exception {
@@ -342,5 +362,15 @@ class AcspServiceTest {
         doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(USER_ID);
         ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
         assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void testCompanyDetails() {
+        CompanyDetails companyDetails = new CompanyDetails();
+        companyDetails.setCompanyName("Test Company");
+        companyDetails.setCompanyNumber("12345678");
+
+        assertEquals("Test Company", companyDetails.getCompanyName());
+        assertEquals("12345678", companyDetails.getCompanyNumber());
     }
 }
