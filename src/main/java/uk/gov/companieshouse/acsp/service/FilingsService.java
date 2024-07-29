@@ -94,7 +94,7 @@ public class FilingsService {
   }
 
   private void buildFilingStatus(FilingApi filing) {
-    filing.setKind(FILING_KIND_ACSP.toUpperCase());
+    filing.setKind(FILING_KIND_ACSP);
     filing.setCost(costAmount);
   }
 
