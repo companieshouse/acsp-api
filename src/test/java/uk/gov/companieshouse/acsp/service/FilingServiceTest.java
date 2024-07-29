@@ -240,7 +240,7 @@ class FilingServiceTest {
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
-        Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
+        Assertions.assertEquals("acsp", response.getKind());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getCompanyName());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getCompanyNumber());
 
@@ -267,7 +267,7 @@ class FilingServiceTest {
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
-        Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
+        Assertions.assertEquals("acsp", response.getKind());
 
     }
 
@@ -293,7 +293,7 @@ class FilingServiceTest {
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
-        Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
+        Assertions.assertEquals("acsp", response.getKind());
 
     }
 
@@ -318,7 +318,7 @@ class FilingServiceTest {
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
-        Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
+        Assertions.assertEquals("acsp", response.getKind());
 
     }
 
@@ -343,7 +343,7 @@ class FilingServiceTest {
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
-        Assertions.assertEquals("acsp".toUpperCase(), response.getKind());
+        Assertions.assertEquals("acsp", response.getKind());
         Assertions.assertEquals("COMPANY", ((ACSP) response.getData().get("acsp")).getCompanyName());
         Assertions.assertNotEquals("company", ((ACSP) response.getData().get("acsp")).getCompanyName());
         Assertions.assertEquals("12345678", ((ACSP) response.getData().get("acsp")).getCompanyNumber());
