@@ -98,8 +98,7 @@ class AcspServiceTest {
         doNothing().when(transactionService).updateTransaction(any(), any());
         ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
                 acspData,
-                REQUEST_ID,
-                USER_ID);
+                REQUEST_ID);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
@@ -114,8 +113,7 @@ class AcspServiceTest {
         when(acspRepository.insert((AcspDataDao) any())).thenThrow(DuplicateKeyException.class);
         ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
                 acspData,
-                REQUEST_ID,
-                USER_ID);
+                REQUEST_ID);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
 
@@ -130,8 +128,7 @@ class AcspServiceTest {
         when(acspRepository.insert((AcspDataDao) any())).thenThrow(MongoSocketWriteException.class);
         ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
                 acspData,
-                REQUEST_ID,
-                USER_ID);
+                REQUEST_ID);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 

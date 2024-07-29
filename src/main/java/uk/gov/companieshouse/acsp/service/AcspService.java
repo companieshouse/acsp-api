@@ -51,19 +51,18 @@ public class AcspService {
     }
 
     public ResponseEntity<Object> createAcspRegData(Transaction transaction, AcspDataDto acspData,
-                                                  String requestId, String userId) {
-        return createDataAndUpdateTransaction(transaction, acspData, requestId, userId);
+                                                  String requestId) {
+        return createDataAndUpdateTransaction(transaction, acspData, requestId);
     }
 
     private ResponseEntity<Object> createDataAndUpdateTransaction(Transaction transaction,
                                                                 AcspDataDto acspDataDto,
-                                                                String requestId,
-                                                                String userId) {
+                                                                String requestId) {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         String submissionId = acspDataDao.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
-        updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
+        updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var acspTransactionResource = createAcspTransactionResource(submissionUri);
@@ -121,13 +120,12 @@ public class AcspService {
 
     private void updateAcspRegWithMetaData(AcspDataDao acspData,
                                            String submissionUri,
-                                           String requestId,
-                                           String userId) {
+                                           String requestId) {
         var submission = new AcspDataSubmissionDao();
         submission.setLinks(Collections.singletonMap(LINK_SELF, submissionUri));
         submission.setCreatedAt(LocalDateTime.now());
         submission.setHttpRequestId(requestId);
-        submission.setLastModifiedByUserId(userId);
+        submission.setLastModifiedByUserId(acspData.getId());
         acspData.setAcspDataSubmission(submission);
     }
 

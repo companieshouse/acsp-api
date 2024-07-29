@@ -328,7 +328,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDtoWithCompanyDetails();
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.lc);
         acspDataDto.setCorrespondenceAddress(buildBlankCorrespondenceAddress());
         acspDataDto.setBusinessAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
@@ -411,7 +411,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.lc);
         acspDataDto.setWorkSector("Work Sector");
         acspDataDto.setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
@@ -426,7 +426,7 @@ class FilingServiceTest {
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertEquals(((ACSP) response.getData().get("acsp")).getAcspType().toUpperCase(),
-                TypeOfBusiness.LC.name().toUpperCase());
+                TypeOfBusiness.lc.name().toUpperCase());
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getAml());
         Assertions.assertEquals("WORK SECTOR", ((ACSP) response.getData().get("acsp")).getBusinessSector());
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getAml());
@@ -466,7 +466,7 @@ class FilingServiceTest {
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.sole_trader);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
@@ -509,7 +509,7 @@ class FilingServiceTest {
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.sole_trader);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
@@ -542,7 +542,7 @@ class FilingServiceTest {
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.sole_trader);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertEquals("businessName".toUpperCase(), ((ACSP) response.getData().get("acsp")).getBusinessName());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
@@ -583,7 +583,7 @@ class FilingServiceTest {
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.corporate_body);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
         Assertions.assertNull(((ACSP) response.getData().get("acsp")).getStPersonalInformation());
@@ -614,7 +614,7 @@ class FilingServiceTest {
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.PARTNERSHIP);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.partnership);
         var response2 = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNotNull(((ACSP) response2.getData().get("acsp")).getOfficeAddress());
 
@@ -643,7 +643,7 @@ class FilingServiceTest {
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.UNINCORPORATED);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.unincorporated);
         var response2 = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNotNull(((ACSP) response2.getData().get("acsp")).getOfficeAddress());
 
@@ -672,7 +672,7 @@ class FilingServiceTest {
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.corporate_body);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
         Assertions.assertEquals("COUNTRY", ((ACSP) response.getData().get("acsp")).getOfficeAddress().getCountry());
@@ -705,7 +705,7 @@ class FilingServiceTest {
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.corporate_body);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
         Assertions.assertTrue(((ACSP) response.getData().get("acsp")).getServiceAddress().isServiceAddressROA());
@@ -735,7 +735,7 @@ class FilingServiceTest {
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.corporate_body);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
         Assertions.assertFalse(((ACSP) response.getData().get("acsp")).getServiceAddress().isServiceAddressROA());
