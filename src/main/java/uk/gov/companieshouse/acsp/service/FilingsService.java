@@ -135,9 +135,9 @@ public class FilingsService {
     var acsp = new ACSP();
     acsp.setEmail(Optional.ofNullable(acspDataDto.getEmail()).map((String::toUpperCase)).orElse(null));
 
-    if(TypeOfBusiness.corporate_body.equals(acspDataDto.getTypeOfBusiness()) ||
-            TypeOfBusiness.partnership.equals(acspDataDto.getTypeOfBusiness())||
-            TypeOfBusiness.unincorporated.equals(acspDataDto.getTypeOfBusiness())) {
+    if(TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness()) ||
+            TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
+            TypeOfBusiness.UNINCORPORATED.equals(acspDataDto.getTypeOfBusiness())) {
       acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
     }
     if(acspDataDto.getBusinessAddress() != null &&
@@ -163,7 +163,7 @@ public class FilingsService {
     }
 
     if(acspDataDto.getTypeOfBusiness() != null &&
-            TypeOfBusiness.sole_trader.equals(acspDataDto.getTypeOfBusiness())) {
+            TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
       buildStPersonalInformation(acspDataDto, acsp);
     }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
@@ -246,7 +246,7 @@ public class FilingsService {
     }
     if (acspDataDto.getTypeOfBusiness() != null) {
       switch (acspDataDto.getTypeOfBusiness()) {
-        case lc, lp, llp:
+        case LC, LP, LLP:
           if (acspDataDto.getCompanyDetails() != null) {
             acsp.setCompanyNumber(Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyNumber())
                     .map(String::toUpperCase).orElse(null));
