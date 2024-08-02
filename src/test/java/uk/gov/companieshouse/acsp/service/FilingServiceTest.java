@@ -13,8 +13,10 @@ import uk.gov.companieshouse.acsp.models.dto.NationalityDto;
 import uk.gov.companieshouse.acsp.models.dto.AMLSupervisoryBodiesDto;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
-import uk.gov.companieshouse.acsp.models.filing.ACSP;
+import uk.gov.companieshouse.acsp.models.filing.Aml;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
+import uk.gov.companieshouse.acsp.models.filing.STPersonalInformation;
+import uk.gov.companieshouse.acsp.models.filing.ServiceAddress;
 import uk.gov.companieshouse.acsp.models.type.Address;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.ApiClient;
@@ -226,23 +228,22 @@ class FilingServiceTest {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
 
-
         setACSPDataDto();
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertEquals("100", response.getCost());
-        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentReference());
-        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentMethod());
-        Assertions.assertNotNull(response.getData().get("acsp"));
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
         Assertions.assertNotNull(response.getData().get("presenter"));
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
         Assertions.assertEquals("acsp", response.getKind());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getCompanyName());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getCompanyNumber());
+        Assertions.assertNull(response.getData().get("company_number"));
+        Assertions.assertNull(response.getData().get("company_name"));
 
     }
 
@@ -259,11 +260,11 @@ class FilingServiceTest {
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertEquals("100", response.getCost());
-        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentReference());
-        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentMethod());
-        Assertions.assertNotNull(response.getData().get("acsp"));
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
         Assertions.assertNotNull(response.getData().get("presenter"));
-        Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getServiceAddress().getCorrespondenceAddress());
+        Assertions.assertNotNull(response.getData().get("service_address"));
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
@@ -285,11 +286,11 @@ class FilingServiceTest {
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertEquals("100", response.getCost());
-        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentReference());
-        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentMethod());
-        Assertions.assertNotNull(response.getData().get("acsp"));
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
         Assertions.assertNotNull(response.getData().get("presenter"));
-        Assertions.assertEquals("COUNTRY", ((ACSP) response.getData().get("acsp")).getServiceAddress().getCorrespondenceAddress().getCountry());
+        Assertions.assertEquals("COUNTRY", ((ServiceAddress)response.getData().get("service_address")).getCorrespondenceAddress().getCountry());
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
@@ -310,10 +311,10 @@ class FilingServiceTest {
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertEquals("100", response.getCost());
-        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentReference());
-        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentMethod());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
-        Assertions.assertNotNull(response.getData().get("acsp"));
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
+        Assertions.assertNull(response.getData().get("registered_office_address"));
         Assertions.assertNotNull(response.getData().get("presenter"));
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
@@ -336,17 +337,17 @@ class FilingServiceTest {
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertEquals("100", response.getCost());
-        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentReference());
-        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentMethod());
-        Assertions.assertNotNull(response.getData().get("acsp"));
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
         Assertions.assertNotNull(response.getData().get("presenter"));
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
         Assertions.assertNotNull(response.getData().get("submission"));
         Assertions.assertEquals("acsp", response.getKind());
-        Assertions.assertEquals("COMPANY", ((ACSP) response.getData().get("acsp")).getCompanyName());
-        Assertions.assertNotEquals("company", ((ACSP) response.getData().get("acsp")).getCompanyName());
-        Assertions.assertEquals("12345678", ((ACSP) response.getData().get("acsp")).getCompanyNumber());
+        Assertions.assertEquals("COMPANY", response.getData().get("company_name"));
+        Assertions.assertNotEquals("company", response.getData().get("company_name"));
+        Assertions.assertEquals("12345678", response.getData().get("company_number"));
     }
 
 
@@ -363,9 +364,9 @@ class FilingServiceTest {
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertEquals("100", response.getCost());
-        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentReference());
-        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), ((ACSP) response.getData().get("acsp")).getPaymentMethod());
-        Assertions.assertNotNull(response.getData().get("acsp"));
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
         Assertions.assertNotNull(response.getData().get("presenter"));
         Assertions.assertNull(((Presenter)response.getData().get("presenter")).getFirstName());
         Assertions.assertNull(((Presenter)response.getData().get("presenter")).getLastName());
@@ -384,7 +385,7 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getEmail());
+        Assertions.assertNull(response.getData().get("email"));
     }
 
 
@@ -398,8 +399,8 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getCompanyName());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getCompanyNumber());
+        Assertions.assertNull(response.getData().get("company_name"));
+        Assertions.assertNull(response.getData().get("company_number"));
     }
 
 
@@ -425,22 +426,20 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertEquals(((ACSP) response.getData().get("acsp")).getAcspType().toUpperCase(),
+        Assertions.assertEquals(response.getData().get("acsp_type").toString().toUpperCase(),
                 TypeOfBusiness.LC.name().toUpperCase());
-        Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getAml());
-        Assertions.assertEquals("WORK SECTOR", ((ACSP) response.getData().get("acsp")).getBusinessSector());
-        Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getAml());
-        Assertions.assertEquals("CREDIT-CARD", ((ACSP) response.getData().get("acsp")).getPaymentMethod());
-        Assertions.assertEquals("PAYMENT_REFERENCE", ((ACSP) response.getData().get("acsp")).getPaymentReference());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
-        Arrays.stream(((ACSP) response.getData().get("acsp")).getAml().getAmlMemberships()).forEach(
+        Assertions.assertNotNull(response.getData().get("aml"));
+        Assertions.assertEquals("WORK SECTOR", response.getData().get("business_sector"));
+        Assertions.assertEquals("CREDIT-CARD", response.getData().get("payment_method"));
+        Assertions.assertEquals("PAYMENT_REFERENCE", response.getData().get("payment_reference"));
+        Assertions.assertNull(response.getData().get("business_name"));
+        Arrays.stream(((Aml)response.getData().get("aml")).getAmlMemberships()).forEach(
                 amlMembership -> {
                     Assertions.assertEquals("12345678", amlMembership.getRegistrationNumber().toUpperCase());
                     Assertions.assertEquals("HMRC", amlMembership.getSupervisoryBody().toUpperCase());
                 }
         );
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getCompanyNumber());
-
+        Assertions.assertNull(response.getData().get("company_number"));
     }
 
 
@@ -457,8 +456,6 @@ class FilingServiceTest {
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
 
-
-
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
         amlSupervisoryBodies1.setMembershipId("12345678");
@@ -468,17 +465,16 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
+        Assertions.assertNull( response.getData().get("business_name"));
+        Assertions.assertNull(response.getData().get("registered_office_address"));
         Assertions.assertEquals(FIRST_NAME.toUpperCase(),
-                ((ACSP) response.getData().get("acsp")).getStPersonalInformation().getPersonName().getFirstName());
+                ((STPersonalInformation)response.getData().get("st_personal_information")).getPersonName().getFirstName());
         Assertions.assertEquals("1984-10-31",
-                ((ACSP) response.getData().get("acsp")).getStPersonalInformation().getBirthDate());
+                ((STPersonalInformation)response.getData().get("st_personal_information")).getBirthDate());
         Assertions.assertEquals("BRITISH,IRISH,CANADIAN",
-                ((ACSP) response.getData().get("acsp")).getStPersonalInformation().getNationalityOther());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
+                ((STPersonalInformation)response.getData().get("st_personal_information")).getNationalityOther());
         Assertions.assertEquals(COUNTRY_OF_RESIDENCE.toUpperCase(),
-                ((ACSP) response.getData().get("acsp")).getStPersonalInformation().getUsualResidence());
+                ((STPersonalInformation)response.getData().get("st_personal_information")).getUsualResidence());
     }
 
     @Test
@@ -511,10 +507,10 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getBusinessName());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getStPersonalInformation().getBirthDate());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getStPersonalInformation().getUsualResidence());
+        Assertions.assertNull( response.getData().get("business_name"));
+        Assertions.assertNull(response.getData().get("registered_office_address"));
+        Assertions.assertNull(((STPersonalInformation)response.getData().get("st_personal_information")).getBirthDate());
+        Assertions.assertNull(((STPersonalInformation)response.getData().get("st_personal_information")).getUsualResidence());
     }
 
     @Test
@@ -544,16 +540,15 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertEquals("businessName".toUpperCase(), ((ACSP) response.getData().get("acsp")).getBusinessName());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
+        Assertions.assertEquals("businessName".toUpperCase(), response.getData().get("business_name"));
+        Assertions.assertNull(response.getData().get("registered_office_address"));
         Assertions.assertEquals(FIRST_NAME.toUpperCase(),
-                ((ACSP) response.getData().get("acsp")).getStPersonalInformation().getPersonName().getFirstName());
+                ((STPersonalInformation)response.getData().get("st_personal_information")).getPersonName().getFirstName());
         Assertions.assertEquals("1984-10-31",
-                ((ACSP) response.getData().get("acsp")).getStPersonalInformation().getBirthDate());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getStPersonalInformation().getUsualResidence());
+                ((STPersonalInformation)response.getData().get("st_personal_information")).getBirthDate());
+        Assertions.assertNull(((STPersonalInformation)response.getData().get("st_personal_information")).getUsualResidence());
         Assertions.assertEquals("BRITISH",
-                ((ACSP) response.getData().get("acsp")).getStPersonalInformation().getNationalityOther());
+                ((STPersonalInformation)response.getData().get("st_personal_information")).getNationalityOther());
     }
 
 
@@ -585,12 +580,10 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
-        Assertions.assertNull(((ACSP) response.getData().get("acsp")).getStPersonalInformation());
+        Assertions.assertNotNull(response.getData().get("registered_office_address"));
+        Assertions.assertNull(response.getData().get("st_personal_information"));
 
     }
-
-
     @Test
     void tesGenerateAcspApplicationBusineessAddressForPatnerships() throws Exception {
         initTransactionPaymentLinkMocks();
@@ -606,7 +599,6 @@ class FilingServiceTest {
         acspDataDto.setDateOfBirth(localDate);
         acspDataDto.setBusinessAddress(buildBusinessAddress());
 
-
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
         amlSupervisoryBodies1.setMembershipId("12345678");
@@ -616,10 +608,9 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.PARTNERSHIP);
         var response2 = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNotNull(((ACSP) response2.getData().get("acsp")).getOfficeAddress());
+        Assertions.assertNotNull(response2.getData().get("registered_office_address"));
 
     }
-
     @Test
     void tesGenerateAcspApplicationBusineessAddressForUnincorporatedEntity() throws Exception {
         initTransactionPaymentLinkMocks();
@@ -645,7 +636,7 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.UNINCORPORATED);
         var response2 = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNotNull(((ACSP) response2.getData().get("acsp")).getOfficeAddress());
+        Assertions.assertNotNull(response2.getData().get("registered_office_address"));
 
     }
 
@@ -674,11 +665,10 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
-        Assertions.assertEquals("COUNTRY", ((ACSP) response.getData().get("acsp")).getOfficeAddress().getCountry());
+        Assertions.assertNotNull(response.getData().get("registered_office_address"));
+        Assertions.assertEquals("COUNTRY", ((uk.gov.companieshouse.acsp.models.filing.Address)response.getData().get("registered_office_address")).getCountry());
 
     }
-
 
     @Test
     void tesGenerateAcspApplicationServiceROATrue() throws Exception {
@@ -707,8 +697,8 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
-        Assertions.assertTrue(((ACSP) response.getData().get("acsp")).getServiceAddress().isServiceAddressROA());
+        Assertions.assertNotNull(response.getData().get("registered_office_address"));
+        Assertions.assertTrue(((ServiceAddress)(response.getData().get("service_address"))).getIsServiceAddressROA());
     }
 
 
@@ -737,11 +727,10 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNotNull(((ACSP) response.getData().get("acsp")).getOfficeAddress());
-        Assertions.assertFalse(((ACSP) response.getData().get("acsp")).getServiceAddress().isServiceAddressROA());
+        Assertions.assertNotNull(response.getData().get("registered_office_address"));
+        Assertions.assertFalse(((ServiceAddress)(response.getData().get("service_address"))).getIsServiceAddressROA());
 
     }
-
 
     @Test
     void tesDescriptionDate() throws Exception {
@@ -758,10 +747,4 @@ class FilingServiceTest {
         Assertions.assertTrue(response.getDescription().contains("01-07-2024"));
 
     }
-
-
-
-
-
-
 }
