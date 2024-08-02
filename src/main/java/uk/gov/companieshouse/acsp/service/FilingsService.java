@@ -211,7 +211,7 @@ public class FilingsService {
     }
 
     if(acspDataDto.getNationality() != null) {
-      var nationalities = geNationalities(acspDataDto);
+      var nationalities = getNationalities(acspDataDto);
       stPersonalInformation.setNationalityOther(String.join(",", nationalities).toUpperCase());
     }
 
@@ -221,7 +221,7 @@ public class FilingsService {
     return stPersonalInformation;
   }
 
-  private ArrayList<String> geNationalities(AcspDataDto acspDataDto) {
+  private ArrayList<String> getNationalities(AcspDataDto acspDataDto) {
     var nationalities = new ArrayList<String>();
 
     if (acspDataDto.getNationality().getFirstNationality() != null &&
