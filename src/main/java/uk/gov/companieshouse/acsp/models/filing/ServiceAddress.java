@@ -12,7 +12,7 @@ public final class ServiceAddress {
     @JsonProperty("address")
     private Address correspondenceAddress;
 
-    public boolean isServiceAddressROA() {
+    public boolean getIsServiceAddressROA() {
         return isServiceAddressROA;
     }
 
