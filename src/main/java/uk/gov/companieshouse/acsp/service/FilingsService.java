@@ -258,7 +258,6 @@ public class FilingsService {
                             .map(String::toUpperCase).orElse(null));
       }
     }
-
   }
 
   private ServiceAddress buildServiceAddress(AcspDataDto acspDataDto, boolean isServiceAddressROA) {
