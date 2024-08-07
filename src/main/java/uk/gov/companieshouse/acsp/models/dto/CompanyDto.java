@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.acsp.models.type.Address;
 
 public class CompanyDto {
 
@@ -10,18 +9,6 @@ public class CompanyDto {
 
     @JsonProperty("companyNumber")
     private String companyNumber;
-
-    @JsonProperty("status")
-    private String status;
-
-    @JsonProperty("incorporationDate")
-    private String incorporationDate;
-
-    @JsonProperty("companyType")
-    private String companyType;
-
-    @JsonProperty("registeredOfficeAddress")
-    private Address registeredOfficeAddress;
 
 
     public String getCompanyName() {
@@ -38,38 +25,6 @@ public class CompanyDto {
 
     public void setCompanyNumber(String companyNumber) {
         this.companyNumber = companyNumber;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getIncorporationDate() {
-        return incorporationDate;
-    }
-
-    public void setIncorporationDate(String incorporationDate) {
-        this.incorporationDate = incorporationDate;
-    }
-
-    public String getCompanyType() {
-        return companyType;
-    }
-
-    public void setCompanyType(String companyType) {
-        this.companyType = companyType;
-    }
-
-    public Address getRegisteredOfficeAddress() {
-        return registeredOfficeAddress;
-    }
-
-    public void setRegisteredOfficeAddress(Address registeredOfficeAddress) {
-        this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
 }
