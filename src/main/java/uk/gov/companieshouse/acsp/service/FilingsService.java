@@ -101,9 +101,9 @@ public class FilingsService {
   private void buildPresenter(Map<String, Object>data, AcspDataDto acspDataDto) {
     var presenter = new Presenter();
 
-    presenter.setFirstName(Optional.ofNullable(acspDataDto.getFirstName())
+    presenter.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
             .map(String::toUpperCase).orElse(null));
-    presenter.setLastName(Optional.ofNullable(acspDataDto.getLastName())
+    presenter.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
             .map(String::toUpperCase).orElse(null));
     presenter.setUserId(Optional.ofNullable(acspDataDto.getId())
             .map(String::toUpperCase).orElse(null));
@@ -139,7 +139,7 @@ public class FilingsService {
       data.put("registered_office_address", buildBusinessAddress(acspDataDto));
     }
     if(acspDataDto.getBusinessAddress() != null &&
-            acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
+            acspDataDto.getBusinessAddress().equals(acspDataDto.getApplicantDetails().getCorrespondenceAddress())) {
       data.put("service_address",buildServiceAddress(null, true));
     } else {
       data.put("service_address",buildServiceAddress(acspDataDto, false));
@@ -191,12 +191,12 @@ public class FilingsService {
 
   private PersonName buildPersonName(AcspDataDto acspDataDto) {
     var personName = new PersonName();
-    if (acspDataDto.getFirstName() != null || acspDataDto.getLastName() != null || acspDataDto.getMiddleName() != null) {
-      personName.setFirstName(Optional.ofNullable(acspDataDto.getFirstName())
+    if (acspDataDto.getApplicantDetails().getFirstName() != null || acspDataDto.getApplicantDetails().getLastName() != null || acspDataDto.getApplicantDetails().getMiddleName() != null) {
+      personName.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
               .map(String::toUpperCase).orElse(null));
-      personName.setLastName(Optional.ofNullable(acspDataDto.getLastName())
+      personName.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
               .map(String::toUpperCase).orElse(null));
-      personName.setMiddleName(Optional.ofNullable(acspDataDto.getMiddleName())
+      personName.setMiddleName(Optional.ofNullable(acspDataDto.getApplicantDetails().getMiddleName())
               .map(String::toUpperCase).orElse(null));
       return personName;
     }
@@ -206,16 +206,16 @@ public class FilingsService {
     var stPersonalInformation = new STPersonalInformation();
     stPersonalInformation.setPersonName(buildPersonName(acspDataDto));
 
-    if(acspDataDto.getDateOfBirth() != null) {
-      stPersonalInformation.setBirthDate(acspDataDto.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    if(acspDataDto.getApplicantDetails().getDateOfBirth() != null) {
+      stPersonalInformation.setBirthDate(acspDataDto.getApplicantDetails().getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 
-    if(acspDataDto.getNationality() != null) {
+    if(acspDataDto.getApplicantDetails().getNationality() != null) {
       var nationalities = getNationalities(acspDataDto);
       stPersonalInformation.setNationalityOther(String.join(",", nationalities).toUpperCase());
     }
 
-    stPersonalInformation.setUsualResidence(Optional.ofNullable(acspDataDto.getCountryOfResidence())
+    stPersonalInformation.setUsualResidence(Optional.ofNullable(acspDataDto.getApplicantDetails().getCountryOfResidence())
                               .map(String::toUpperCase).orElse(null));
 
     return stPersonalInformation;
@@ -224,17 +224,17 @@ public class FilingsService {
   private ArrayList<String> getNationalities(AcspDataDto acspDataDto) {
     var nationalities = new ArrayList<String>();
 
-    if (acspDataDto.getNationality().getFirstNationality() != null &&
-            !acspDataDto.getNationality().getFirstNationality().isEmpty()) {
-      nationalities.add(acspDataDto.getNationality().getFirstNationality());
+    if (acspDataDto.getApplicantDetails().getNationality().getFirstNationality() != null &&
+            !acspDataDto.getApplicantDetails().getNationality().getFirstNationality().isEmpty()) {
+      nationalities.add(acspDataDto.getApplicantDetails().getNationality().getFirstNationality());
     }
-    if (acspDataDto.getNationality().getSecondNationality() != null &&
-            !acspDataDto.getNationality().getSecondNationality().isEmpty()) {
-      nationalities.add(acspDataDto.getNationality().getSecondNationality());
+    if (acspDataDto.getApplicantDetails().getNationality().getSecondNationality() != null &&
+            !acspDataDto.getApplicantDetails().getNationality().getSecondNationality().isEmpty()) {
+      nationalities.add(acspDataDto.getApplicantDetails().getNationality().getSecondNationality());
     }
-    if (acspDataDto.getNationality().getThirdNationality() != null &&
-            !acspDataDto.getNationality().getThirdNationality().isEmpty()) {
-      nationalities.add(acspDataDto.getNationality().getThirdNationality());
+    if (acspDataDto.getApplicantDetails().getNationality().getThirdNationality() != null &&
+            !acspDataDto.getApplicantDetails().getNationality().getThirdNationality().isEmpty()) {
+      nationalities.add(acspDataDto.getApplicantDetails().getNationality().getThirdNationality());
     }
     return nationalities;
   }
@@ -271,24 +271,24 @@ public class FilingsService {
 
   private Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
     var correspondenceAddress = new Address();
-    if(acspDataDto.getCorrespondenceAddress() != null) {
+    if(acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
       correspondenceAddress.setAddressLine1(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getLine1())
+              Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getLine1())
                       .map(String::toUpperCase).orElse(null));
       correspondenceAddress.setAddressLine2(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getLine2())
+              Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getLine2())
                       .map(String::toUpperCase).orElse(null));
       correspondenceAddress.setPostalCode(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getPostcode())
+              Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getPostcode())
                       .map(String::toUpperCase).orElse(null));
       correspondenceAddress.setCountry(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getCountry())
+              Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getCountry())
                       .map(String::toUpperCase).orElse(null));
       correspondenceAddress.setPremises(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getPropertyDetails())
+              Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getPropertyDetails())
                       .map(String::toUpperCase).orElse(null));
       correspondenceAddress.setRegion(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getCounty())
+              Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getCounty())
                       .map(String::toUpperCase).orElse(null));
     }
     return correspondenceAddress;
