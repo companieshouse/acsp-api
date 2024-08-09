@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.acsp.models.dao;
 
 import org.springframework.data.mongodb.core.mapping.Field;
-import uk.gov.companieshouse.acsp.models.type.Address;
 
 public class CompanyDao {
 
@@ -10,18 +9,6 @@ public class CompanyDao {
 
     @Field("company_number")
     private String companyNumber;
-
-    @Field("status")
-    private String status;
-
-    @Field("incorporation_date")
-    private String incorporationDate;
-
-    @Field("company_type")
-    private String companyType;
-
-    @Field("registered_office_address")
-    private Address registeredOfficeAddress;
 
 
     public String getCompanyName() {
@@ -40,35 +27,4 @@ public class CompanyDao {
         this.companyNumber = companyNumber;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getIncorporationDate() {
-        return incorporationDate;
-    }
-
-    public void setIncorporationDate(String incorporationDate) {
-        this.incorporationDate = incorporationDate;
-    }
-
-    public String getCompanyType() {
-        return companyType;
-    }
-
-    public void setCompanyType(String companyType) {
-        this.companyType = companyType;
-    }
-
-    public Address getRegisteredOfficeAddress() {
-        return registeredOfficeAddress;
-    }
-
-    public void setRegisteredOfficeAddress(Address registeredOfficeAddress) {
-        this.registeredOfficeAddress = registeredOfficeAddress;
-    }
 }
