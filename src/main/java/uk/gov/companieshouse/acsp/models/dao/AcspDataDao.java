@@ -8,28 +8,17 @@ import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.type.Address;
 
-import java.time.LocalDate;
-
 @Document(collection = "applications")
 public class AcspDataDao {
 
     @Id
     private String id;
 
-    @Field("first_name")
-    private String firstName;
-
-    @Field("last_name")
-    private String lastName;
-
-    @Field("middle_name")
-    private String middleName;
-
     @Field("email")
     private String email;
 
-    @Field("correspondence_address")
-    private Address correspondenceAddress;
+    @Field("applicant_details")
+    private ApplicantDetailsDao applicantDetails;
 
     @Field("business_address")
     private Address businessAddress;
@@ -40,17 +29,8 @@ public class AcspDataDao {
     @Field("role_type")
     private RoleType roleType;
 
-    @Field("date_of_birth")
-    private LocalDate dateOfBirth;
-
     @Field("verified")
     private Boolean verified;
-
-    @Field("nationality")
-    private NationalityDao nationality;
-
-    @Field("country_of_residence")
-    private String countryOfResidence;
 
     @Field("business_name")
     private String businessName;
@@ -81,36 +61,20 @@ public class AcspDataDao {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public ApplicantDetailsDao getApplicantDetails() {
+        return applicantDetails;
+    }
+
+    public void setApplicantDetails(ApplicantDetailsDao applicantDetails) {
+        this.applicantDetails = applicantDetails;
     }
 
     public Address getBusinessAddress() {
@@ -137,36 +101,12 @@ public class AcspDataDao {
         this.roleType = roleType;
     }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
     public Boolean getVerified() {
         return verified;
     }
 
     public void setVerified(Boolean verified) {
         this.verified = verified;
-    }
-
-    public NationalityDao getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(NationalityDao nationality) {
-        this.nationality = nationality;
-    }
-
-    public String getCountryOfResidence() {
-        return countryOfResidence;
-    }
-
-    public void setCountryOfResidence(String countryOfResidence) {
-        this.countryOfResidence = countryOfResidence;
     }
 
     public String getBusinessName() {
@@ -183,6 +123,14 @@ public class AcspDataDao {
 
     public void setWorkSector(String workSector) {
         this.workSector = workSector;
+    }
+
+    public AMLSupervisoryBodiesDao[] getAmlSupervisoryBodies() {
+        return amlSupervisoryBodies;
+    }
+
+    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDao[] amlSupervisoryBodies) {
+        this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
     public CompanyDao getCompanyDetails() {
@@ -207,22 +155,6 @@ public class AcspDataDao {
 
     public void setAcspDataSubmission(AcspDataSubmissionDao acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
-    }
-
-    public AMLSupervisoryBodiesDao[] getAmlSupervisoryBodies() {
-        return amlSupervisoryBodies;
-    }
-
-    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDao[] amlSupervisoryBodies) {
-        this.amlSupervisoryBodies = amlSupervisoryBodies;
-    }
-
-    public Address getCorrespondenceAddress() {
-        return correspondenceAddress;
-    }
-
-    public void setCorrespondenceAddress(Address correspondenceAddress) {
-        this.correspondenceAddress = correspondenceAddress;
     }
 
     public String getHowAreYouRegisteredWithAml() {

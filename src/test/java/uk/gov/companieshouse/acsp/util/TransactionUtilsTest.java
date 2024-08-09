@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
+import uk.gov.companieshouse.acsp.models.dto.ApplicantDetailsDto;
 import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 
@@ -99,8 +100,13 @@ class TransactionUtilsTest {
     private AcspDataDto getAcspDataDto() {
         acspDataDto = new AcspDataDto();
         acspDataDto.setId(ACSP_ID);
-        acspDataDto.setFirstName(FIRST_NAME);
-        acspDataDto.setLastName(LAST_NAME);
+
+        ApplicantDetailsDto applicantDetails = new ApplicantDetailsDto();
+        applicantDetails.setFirstName(FIRST_NAME);
+        applicantDetails.setLastName(LAST_NAME);
+
+        acspDataDto.setApplicantDetails(applicantDetails);
+
         acspDataDto.setEmail("email@email.com");
         AcspDataSubmissionDto dataSubmissionDto = new AcspDataSubmissionDto();
         Map<String, String> linksMap = Map.of("self", ACSP_SELF_LINK);
