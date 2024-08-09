@@ -14,7 +14,7 @@ public class AcspDataDto {
     @JsonProperty("email")
     private String email;
 
-    @JsonProperty("applicant_details")
+    @JsonProperty("applicantDetails")
     private ApplicantDetailsDto applicantDetails;
 
     @JsonProperty("businessAddress")
