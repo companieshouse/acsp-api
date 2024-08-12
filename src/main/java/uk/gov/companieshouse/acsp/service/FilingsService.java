@@ -106,11 +106,7 @@ public class FilingsService {
               .map(String::toUpperCase).orElse(null));
       presenter.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
               .map(String::toUpperCase).orElse(null));
-    } else {
-      presenter.setFirstName(null);
-      presenter.setLastName(null);
     }
-
     presenter.setUserId(Optional.ofNullable(acspDataDto.getId())
             .map(String::toUpperCase).orElse(null));
 
@@ -147,6 +143,7 @@ public class FilingsService {
       data.put("registered_office_address", buildBusinessAddress(acspDataDto));
     }
     if(acspDataDto.getBusinessAddress() != null &&
+            acspDataDto.getApplicantDetails() != null &&
             acspDataDto.getBusinessAddress().equals(acspDataDto.getApplicantDetails().getCorrespondenceAddress())) {
       data.put("service_address",buildServiceAddress(null, true));
     } else {
