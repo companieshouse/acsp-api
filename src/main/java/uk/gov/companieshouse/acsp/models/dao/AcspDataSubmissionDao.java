@@ -13,9 +13,6 @@ public class AcspDataSubmissionDao {
     @Field("updated_at")
     private LocalDateTime updatedAt;
 
-    @Field("links")
-    private Map<String, String> links;
-
     @Field("last_modified_by_user_id")
 
     private String lastModifiedByUserId;
@@ -37,14 +34,6 @@ public class AcspDataSubmissionDao {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Map<String, String> getLinks() {
-        return links;
-    }
-
-    public void setLinks(Map<String, String> links) {
-        this.links = links;
     }
 
     public String getLastModifiedByUserId() {

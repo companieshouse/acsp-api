@@ -131,7 +131,8 @@ public class FilingsService {
 
   private void buildAcspData(Map<String, Object>data, AcspDataDto acspDataDto, Transaction transaction,
                              String passThroughTokenHeader) throws ServiceException {
-    data.put("email", Optional.ofNullable(acspDataDto.getEmail()).map((String::toUpperCase)).orElse(null));
+    //TODO : fetch email as per new design.
+    data.put("email", Optional.of("demo@email.com").map((String::toUpperCase)).orElse(null));
 
     if(TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness()) ||
             TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||

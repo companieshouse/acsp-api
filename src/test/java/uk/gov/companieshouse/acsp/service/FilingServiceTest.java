@@ -105,7 +105,6 @@ class FilingServiceTest {
         acspDataDto.setId(ACSP_ID);
         acspDataDto.setFirstName(FIRST_NAME);
         acspDataDto.setLastName(LAST_NAME);
-        acspDataDto.setEmail("email@email.com");
         AcspDataSubmissionDto dataSubmissionDto = new AcspDataSubmissionDto();
         dataSubmissionDto.setUpdatedAt(LocalDateTime.now());
         acspDataDto.setAcspDataSubmission(dataSubmissionDto);
@@ -149,12 +148,6 @@ class FilingServiceTest {
         ReflectionTestUtils.setField(filingsService,
                 "filingDescription",null);
     }
-
-    private void setACSPDataDtoWithoutemailaddress() {
-        setACSPDataDto();
-        acspDataDto.setEmail(null);
-    }
-
 
     void initTransactionPaymentLinkMocks() throws IOException, URIValidationException {
         var transactionPayment = new TransactionPayment();
@@ -373,19 +366,6 @@ class FilingServiceTest {
         Assertions.assertNull(((Presenter)response.getData().get("presenter")).getUserId());
         Assertions.assertNull(response.getDescriptionIdentifier());
         Assertions.assertNull(response.getDescription());
-    }
-
-    @Test
-    void tesGenerateAcspApplicationFilingWithNoEmail() throws Exception {
-        initTransactionPaymentLinkMocks();
-        initGetPaymentMocks();
-
-        setACSPDataDtoWithoutemailaddress();
-        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
-        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-
-        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-        Assertions.assertNull(response.getData().get("email"));
     }
 
 

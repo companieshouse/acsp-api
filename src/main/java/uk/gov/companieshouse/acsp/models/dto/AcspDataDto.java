@@ -6,6 +6,7 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.type.Address;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 public class AcspDataDto {
 
@@ -20,9 +21,6 @@ public class AcspDataDto {
 
     @JsonProperty("lastName")
     private String lastName;
-
-    @JsonProperty("email")
-    private String email;
 
     @JsonProperty("correspondenceAddress")
     private Address correspondenceAddress;
@@ -66,6 +64,9 @@ public class AcspDataDto {
     @JsonProperty("acspDataSubmission")
     private AcspDataSubmissionDto acspDataSubmission;
 
+    @JsonProperty("links")
+    private Map<String, String> links;
+
     @JsonProperty("howAreYouRegisteredWithAml")
     private String howAreYouRegisteredWithAml;
 
@@ -99,14 +100,6 @@ public class AcspDataDto {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Address getBusinessAddress() {
@@ -203,6 +196,14 @@ public class AcspDataDto {
 
     public void setAcspDataSubmission(AcspDataSubmissionDto acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
+    }
+
+    public Map<String, String> getLinks() {
+        return links;
+    }
+
+    public void setLinks(Map<String, String> links) {
+        this.links = links;
     }
 
     public AMLSupervisoryBodiesDto[] getAmlSupervisoryBodies() {
