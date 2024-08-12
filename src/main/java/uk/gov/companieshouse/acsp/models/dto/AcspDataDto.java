@@ -7,7 +7,6 @@ import uk.gov.companieshouse.acsp.models.type.Address;
 
 public class AcspDataDto {
 
-    public ApplicantDetailsDto getApplicantDetails;
     @JsonProperty("id")
     private String id;
 

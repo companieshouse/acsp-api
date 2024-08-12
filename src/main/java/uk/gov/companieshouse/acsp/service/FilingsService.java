@@ -98,18 +98,26 @@ public class FilingsService {
     filing.setCost(costAmount);
   }
 
-  private void buildPresenter(Map<String, Object>data, AcspDataDto acspDataDto) {
+  private void buildPresenter(Map<String, Object> data, AcspDataDto acspDataDto) {
     var presenter = new Presenter();
 
-    presenter.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
-            .map(String::toUpperCase).orElse(null));
-    presenter.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
-            .map(String::toUpperCase).orElse(null));
+    if (acspDataDto.getApplicantDetails() != null) {
+      presenter.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
+              .map(String::toUpperCase).orElse(null));
+      presenter.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
+              .map(String::toUpperCase).orElse(null));
+    } else {
+      presenter.setFirstName(null);
+      presenter.setLastName(null);
+    }
+
     presenter.setUserId(Optional.ofNullable(acspDataDto.getId())
             .map(String::toUpperCase).orElse(null));
-    //presenter.setLanguage(); //add language in ascpDataModel
+
+    // presenter.setLanguage(); // add language in acspDataModel
     data.put(PRESENTER, presenter);
   }
+
 
 
   private void buildSubmission(Map<String, Object>data, AcspDataDto acspDataDto, String transactionId) {

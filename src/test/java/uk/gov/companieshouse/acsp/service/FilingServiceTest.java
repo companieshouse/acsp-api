@@ -100,9 +100,7 @@ class FilingServiceTest {
         acspDataDto = new AcspDataDto();
         acspDataDto.setId(ACSP_ID);
 
-        if (acspDataDto.getApplicantDetails() == null) {
-            acspDataDto.setApplicantDetails(new ApplicantDetailsDto());
-        }
+        acspDataDto.setApplicantDetails(new ApplicantDetailsDto());
 
         acspDataDto.getApplicantDetails().setFirstName(FIRST_NAME);
         acspDataDto.getApplicantDetails().setLastName(LAST_NAME);
