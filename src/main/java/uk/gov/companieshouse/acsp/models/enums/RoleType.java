@@ -1,15 +1,15 @@
 package uk.gov.companieshouse.acsp.models.enums;
 
 public enum RoleType {
-    SOLE_TRADER("Sole Trader"),
-    MEMBER_OF_PARTNERSHIP("Member of partnership"),
-    MEMBER_OF_GOVERNING_BODY("Member of the governing body"),
-    EQUIVALENT_OF_DIRECTOR("Equivalent to director"),
-    MEMBER_OF_ENTITY("Member of the entity"),
-    DIRECTOR("Director"),
-    MEMBER_OF_LLP("Member of LLP"),
-    GENERAL_PARTNER("General partner"),
-    SOMEONE_ELSE("Someone else");
+    SOLE_TRADER("sole-trader"),
+    MEMBER_OF_PARTNERSHIP("member-of-partnership"),
+    MEMBER_OF_GOVERNING_BODY("member-of-the-governing-body"),
+    EQUIVALENT_OF_DIRECTOR("equivalent-to-director"),
+    MEMBER_OF_ENTITY("member-of-the-entity"),
+    DIRECTOR("director"),
+    MEMBER_OF_LLP("member-of-LLP"),
+    GENERAL_PARTNER("general-partner"),
+    SOMEONE_ELSE("someone-else");
 
     public final String label;
     private RoleType(String label) {

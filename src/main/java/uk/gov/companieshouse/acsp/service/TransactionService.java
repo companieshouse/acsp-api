@@ -38,7 +38,7 @@ public class TransactionService {
         try {
             var transactionsUri = TRANSACTIONS_URI.expand(id).toString();
             var apiClient = apiClientService.getApiClient(passThroughHeader);
-            //apiClient.setBasePath("https://api.cidev.aws.chdev.org"); //This is for local testing
+            apiClient.setBasePath("https://api.cidev.aws.chdev.org"); //This is for local testing
             return apiClient.transactions().get(transactionsUri).execute().getData();
         } catch (URIValidationException | IOException e) {
             throw new ServiceException("Error Retrieving Transaction " + id, e);
