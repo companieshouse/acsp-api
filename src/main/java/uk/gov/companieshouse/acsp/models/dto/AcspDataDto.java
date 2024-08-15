@@ -5,27 +5,16 @@ import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.type.Address;
 
-import java.time.LocalDate;
-
 public class AcspDataDto {
 
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("firstName")
-    private String firstName;
-
-    @JsonProperty("middleName")
-    private String middleName;
-
-    @JsonProperty("lastName")
-    private String lastName;
-
     @JsonProperty("email")
     private String email;
 
-    @JsonProperty("correspondenceAddress")
-    private Address correspondenceAddress;
+    @JsonProperty("applicantDetails")
+    private ApplicantDetailsDto applicantDetails;
 
     @JsonProperty("businessAddress")
     private Address businessAddress;
@@ -36,17 +25,8 @@ public class AcspDataDto {
     @JsonProperty("roleType")
     private RoleType roleType;
 
-    @JsonProperty("dateOfBirth")
-    private LocalDate dateOfBirth;
-
     @JsonProperty("verified")
     private Boolean verified;
-
-    @JsonProperty("nationality")
-    private NationalityDto nationality;
-
-    @JsonProperty("countryOfResidence")
-    private String countryOfResidence;
 
     @JsonProperty("businessName")
     private String businessName;
@@ -69,6 +49,8 @@ public class AcspDataDto {
     @JsonProperty("howAreYouRegisteredWithAml")
     private String howAreYouRegisteredWithAml;
 
+    // Getters and Setters
+
     public String getId() {
         return id;
     }
@@ -77,36 +59,20 @@ public class AcspDataDto {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public ApplicantDetailsDto getApplicantDetails() {
+        return applicantDetails;
+    }
+
+    public void setApplicantDetails(ApplicantDetailsDto applicantDetails) {
+        this.applicantDetails = applicantDetails;
     }
 
     public Address getBusinessAddress() {
@@ -133,36 +99,12 @@ public class AcspDataDto {
         this.roleType = roleType;
     }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
     public Boolean getVerified() {
         return verified;
     }
 
     public void setVerified(Boolean verified) {
         this.verified = verified;
-    }
-
-    public NationalityDto getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(NationalityDto nationality) {
-        this.nationality = nationality;
-    }
-
-    public String getCountryOfResidence() {
-        return countryOfResidence;
-    }
-
-    public void setCountryOfResidence(String countryOfResidence) {
-        this.countryOfResidence = countryOfResidence;
     }
 
     public String getBusinessName() {
@@ -179,6 +121,14 @@ public class AcspDataDto {
 
     public void setWorkSector(String workSector) {
         this.workSector = workSector;
+    }
+
+    public AMLSupervisoryBodiesDto[] getAmlSupervisoryBodies() {
+        return amlSupervisoryBodies;
+    }
+
+    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDto[] amlSupervisoryBodies) {
+        this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
     public CompanyDto getCompanyDetails() {
@@ -203,22 +153,6 @@ public class AcspDataDto {
 
     public void setAcspDataSubmission(AcspDataSubmissionDto acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
-    }
-
-    public AMLSupervisoryBodiesDto[] getAmlSupervisoryBodies() {
-        return amlSupervisoryBodies;
-    }
-
-    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDto[] amlSupervisoryBodies) {
-        this.amlSupervisoryBodies = amlSupervisoryBodies;
-    }
-
-    public Address getCorrespondenceAddress() {
-        return correspondenceAddress;
-    }
-
-    public void setCorrespondenceAddress(Address correspondenceAddress) {
-        this.correspondenceAddress = correspondenceAddress;
     }
 
     public String getHowAreYouRegisteredWithAml() {
