@@ -107,7 +107,6 @@ class TransactionUtilsTest {
 
         acspDataDto.setApplicantDetails(applicantDetails);
 
-        acspDataDto.setEmail("email@email.com");
         AcspDataSubmissionDto dataSubmissionDto = new AcspDataSubmissionDto();
         Map<String, String> linksMap = Map.of("self", ACSP_SELF_LINK);
         acspDataDto.setLinks(linksMap);

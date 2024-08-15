@@ -8,7 +8,6 @@ import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.type.Address;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 @Document(collection = "applications")
@@ -72,8 +71,8 @@ public class AcspDataDao {
         this.applicantDetails = applicantDetails;
     }
 
-    public Address getBusinessAddress() {
-        return businessAddress;
+    public Address getRegisteredOfficeAddress() {
+        return registeredOfficeAddress;
     }
 
     public void setRegisteredOfficeAddress(Address registeredOfficeAddress) {
