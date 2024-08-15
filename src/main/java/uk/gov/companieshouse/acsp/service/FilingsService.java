@@ -137,10 +137,10 @@ public class FilingsService {
     if(TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness()) ||
             TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
             TypeOfBusiness.UNINCORPORATED.equals(acspDataDto.getTypeOfBusiness())) {
-      data.put("registered_office_address", buildBusinessAddress(acspDataDto));
+      data.put("registered_office_address", buildRegisteredOfficeAddress(acspDataDto));
     }
-    if(acspDataDto.getBusinessAddress() != null &&
-            acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
+    if(acspDataDto.getRegisteredOfficeAddress() != null &&
+            acspDataDto.getRegisteredOfficeAddress().equals(acspDataDto.getCorrespondenceAddress())) {
       data.put("service_address",buildServiceAddress(null, true));
     } else {
       data.put("service_address",buildServiceAddress(acspDataDto, false));
@@ -295,29 +295,29 @@ public class FilingsService {
     return correspondenceAddress;
   }
 
-  private Address buildBusinessAddress(AcspDataDto acspDataDto) {
-    var businessAddress = new Address();
-    if(acspDataDto.getBusinessAddress() != null) {
-      businessAddress.setAddressLine1(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getLine1())
+  private Address buildRegisteredOfficeAddress(AcspDataDto acspDataDto) {
+    var registeredOfficeAddress = new Address();
+    if(acspDataDto.getRegisteredOfficeAddress() != null) {
+      registeredOfficeAddress.setAddressLine1(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getLine1())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setAddressLine2(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getLine2())
+      registeredOfficeAddress.setAddressLine2(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getLine2())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setPostalCode(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getPostcode())
+      registeredOfficeAddress.setPostalCode(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getPostcode())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setCountry(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getCountry())
+      registeredOfficeAddress.setCountry(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getCountry())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setPremises(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getPropertyDetails())
+      registeredOfficeAddress.setPremises(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getPropertyDetails())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setRegion(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getCounty())
+      registeredOfficeAddress.setRegion(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getCounty())
                       .map(String::toUpperCase).orElse(null));
     }
-    return businessAddress;
+    return registeredOfficeAddress;
   }
 
   private void setDescriptionFields(FilingApi filing, Transaction transaction) {

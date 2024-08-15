@@ -29,8 +29,8 @@ public class AcspDataDao {
     @Field("correspondence_address")
     private Address correspondenceAddress;
 
-    @Field("business_address")
-    private Address businessAddress;
+    @Field("registered_office_address")
+    private Address registeredOfficeAddress;
 
     @Field("type_of_business")
     private TypeOfBusiness typeOfBusiness;
@@ -106,12 +106,12 @@ public class AcspDataDao {
         this.middleName = middleName;
     }
 
-    public Address getBusinessAddress() {
-        return businessAddress;
+    public Address getRegisteredOfficeAddress() {
+        return registeredOfficeAddress;
     }
 
-    public void setBusinessAddress(Address businessAddress) {
-        this.businessAddress = businessAddress;
+    public void setRegisteredOfficeAddress(Address registeredOfficeAddress) {
+        this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
     public TypeOfBusiness getTypeOfBusiness() {

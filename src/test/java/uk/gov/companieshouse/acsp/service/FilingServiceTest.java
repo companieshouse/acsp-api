@@ -109,7 +109,7 @@ class FilingServiceTest {
         dataSubmissionDto.setUpdatedAt(LocalDateTime.now());
         acspDataDto.setAcspDataSubmission(dataSubmissionDto);
         acspDataDto.setCorrespondenceAddress(buildCorrespondenceAddress());
-        acspDataDto.setBusinessAddress(buildBusinessAddress());
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
         acspDataDto.setCountryOfResidence("United Kingdom");
         ReflectionTestUtils.setField(filingsService,
                 "filingDescriptionIdentifier","**ACSP Application** submission made");
@@ -247,7 +247,7 @@ class FilingServiceTest {
 
         setACSPDataDto();
         acspDataDto.setCorrespondenceAddress(null);
-        acspDataDto.setBusinessAddress(buildBusinessAddress());
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -273,7 +273,7 @@ class FilingServiceTest {
 
         setACSPDataDto();
         acspDataDto.setCorrespondenceAddress(buildCorrespondenceAddressWithOnlyCountry());
-        acspDataDto.setBusinessAddress(buildBusinessAddress());
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -298,7 +298,7 @@ class FilingServiceTest {
 
         setACSPDataDto();
         acspDataDto.setCorrespondenceAddress(buildBlankCorrespondenceAddress());
-        acspDataDto.setBusinessAddress(buildBlankBusinessAddress());
+        acspDataDto.setRegisteredOfficeAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -324,7 +324,7 @@ class FilingServiceTest {
         setACSPDataDtoWithCompanyDetails();
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
         acspDataDto.setCorrespondenceAddress(buildBlankCorrespondenceAddress());
-        acspDataDto.setBusinessAddress(buildBlankBusinessAddress());
+        acspDataDto.setRegisteredOfficeAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -351,7 +351,7 @@ class FilingServiceTest {
 
         setACSPDataDtoWithoutNamesandId();
         acspDataDto.setCorrespondenceAddress(buildBlankCorrespondenceAddress());
-        acspDataDto.setBusinessAddress(buildBlankBusinessAddress());
+        acspDataDto.setRegisteredOfficeAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -545,7 +545,7 @@ class FilingServiceTest {
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
-        acspDataDto.setBusinessAddress(buildBusinessAddress());
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
         acspDataDto.getNationality().setThirdNationality("");
         acspDataDto.getNationality().setSecondNationality("");
         acspDataDto.getNationality().setFirstNationality("");
@@ -577,7 +577,7 @@ class FilingServiceTest {
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
-        acspDataDto.setBusinessAddress(buildBusinessAddress());
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
@@ -604,7 +604,7 @@ class FilingServiceTest {
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
-        acspDataDto.setBusinessAddress(buildBusinessAddress());
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
 
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
@@ -633,7 +633,7 @@ class FilingServiceTest {
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
-        acspDataDto.setBusinessAddress(buildBusinessAddressWithOnlyCountry());
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddressWithOnlyCountry());
 
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
@@ -665,7 +665,7 @@ class FilingServiceTest {
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
-        acspDataDto.setBusinessAddress(buildBusinessAddressWithOnlyCountry());
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddressWithOnlyCountry());
         acspDataDto.setCorrespondenceAddress(buildCorrespondenceAddressWithOnlyCountry());
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
@@ -695,7 +695,7 @@ class FilingServiceTest {
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.setDateOfBirth(localDate);
-        acspDataDto.setBusinessAddress(buildBusinessAddressWithOnlyCountry());
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddressWithOnlyCountry());
         acspDataDto.setCorrespondenceAddress(buildCorrespondenceAddress());
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
