@@ -114,8 +114,6 @@ public class FilingsService {
     data.put(PRESENTER, presenter);
   }
 
-
-
   private void buildSubmission(Map<String, Object>data, AcspDataDto acspDataDto, String transactionId) {
     var submission = new Submission();
     submission.setReceivedAt(acspDataDto.getAcspDataSubmission().getUpdatedAt());
@@ -135,16 +133,17 @@ public class FilingsService {
 
   private void buildAcspData(Map<String, Object>data, AcspDataDto acspDataDto, Transaction transaction,
                              String passThroughTokenHeader) throws ServiceException {
-    data.put("email", Optional.ofNullable(acspDataDto.getEmail()).map((String::toUpperCase)).orElse(null));
+    //TODO : fetch email as per new design.
+    data.put("email", Optional.of("demo@email.com").map((String::toUpperCase)).orElse(null));
 
     if(TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness()) ||
             TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
             TypeOfBusiness.UNINCORPORATED.equals(acspDataDto.getTypeOfBusiness())) {
-      data.put("registered_office_address", buildBusinessAddress(acspDataDto));
+      data.put("registered_office_address", buildRegisteredOfficeAddress(acspDataDto));
     }
-    if(acspDataDto.getBusinessAddress() != null &&
+    if(acspDataDto.getRegisteredOfficeAddress() != null &&
             acspDataDto.getApplicantDetails() != null &&
-            acspDataDto.getBusinessAddress().equals(acspDataDto.getApplicantDetails().getCorrespondenceAddress())) {
+            acspDataDto.getRegisteredOfficeAddress().equals(acspDataDto.getApplicantDetails().getCorrespondenceAddress())) {
       data.put("service_address",buildServiceAddress(null, true));
     } else {
       data.put("service_address",buildServiceAddress(acspDataDto, false));
@@ -304,29 +303,29 @@ public class FilingsService {
     return correspondenceAddress;
   }
 
-  private Address buildBusinessAddress(AcspDataDto acspDataDto) {
-    var businessAddress = new Address();
-    if(acspDataDto.getBusinessAddress() != null) {
-      businessAddress.setAddressLine1(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getLine1())
+  private Address buildRegisteredOfficeAddress(AcspDataDto acspDataDto) {
+    var registeredOfficeAddress = new Address();
+    if(acspDataDto.getRegisteredOfficeAddress() != null) {
+      registeredOfficeAddress.setAddressLine1(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getLine1())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setAddressLine2(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getLine2())
+      registeredOfficeAddress.setAddressLine2(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getLine2())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setPostalCode(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getPostcode())
+      registeredOfficeAddress.setPostalCode(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getPostcode())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setCountry(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getCountry())
+      registeredOfficeAddress.setCountry(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getCountry())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setPremises(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getPropertyDetails())
+      registeredOfficeAddress.setPremises(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getPropertyDetails())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setRegion(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getCounty())
+      registeredOfficeAddress.setRegion(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getCounty())
                       .map(String::toUpperCase).orElse(null));
     }
-    return businessAddress;
+    return registeredOfficeAddress;
   }
 
   private void setDescriptionFields(FilingApi filing, Transaction transaction) {

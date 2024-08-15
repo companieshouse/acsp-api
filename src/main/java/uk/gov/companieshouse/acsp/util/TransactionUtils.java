@@ -17,8 +17,8 @@ public class TransactionUtils {
 
     public boolean isTransactionLinkedToAcspSubmission(Transaction transaction, AcspDataDto acspDataDto) {
         Map<String, String> links;
-        if(ObjectUtils.isNotEmpty(acspDataDto) && ObjectUtils.isNotEmpty(acspDataDto.getAcspDataSubmission())){
-            links = acspDataDto.getAcspDataSubmission().getLinks();
+        if(ObjectUtils.isNotEmpty(acspDataDto)){
+            links = acspDataDto.getLinks();
         }else {
             return false;
         }

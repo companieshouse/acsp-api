@@ -8,20 +8,19 @@ import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.type.Address;
 
+import java.util.Map;
+
 @Document(collection = "applications")
 public class AcspDataDao {
 
     @Id
     private String id;
 
-    @Field("email")
-    private String email;
-
     @Field("applicant_details")
     private ApplicantDetailsDao applicantDetails;
 
-    @Field("business_address")
-    private Address businessAddress;
+    @Field("registered_office_address")
+    private Address registeredOfficeAddress;
 
     @Field("type_of_business")
     private TypeOfBusiness typeOfBusiness;
@@ -50,6 +49,9 @@ public class AcspDataDao {
     @Field("acsp_data_submission")
     private AcspDataSubmissionDao acspDataSubmission;
 
+    @JsonProperty("links")
+    private Map<String, String> links;
+
     @JsonProperty("how_are_you_registered_with_aml")
     private String howAreYouRegisteredWithAml;
 
@@ -61,14 +63,6 @@ public class AcspDataDao {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public ApplicantDetailsDao getApplicantDetails() {
         return applicantDetails;
     }
@@ -77,12 +71,12 @@ public class AcspDataDao {
         this.applicantDetails = applicantDetails;
     }
 
-    public Address getBusinessAddress() {
-        return businessAddress;
+    public Address getRegisteredOfficeAddress() {
+        return registeredOfficeAddress;
     }
 
-    public void setBusinessAddress(Address businessAddress) {
-        this.businessAddress = businessAddress;
+    public void setRegisteredOfficeAddress(Address registeredOfficeAddress) {
+        this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
     public TypeOfBusiness getTypeOfBusiness() {
@@ -155,6 +149,13 @@ public class AcspDataDao {
 
     public void setAcspDataSubmission(AcspDataSubmissionDao acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
+    }
+    public Map<String, String> getLinks() {
+        return links;
+    }
+
+    public void setLinks(Map<String, String> links) {
+        this.links = links;
     }
 
     public String getHowAreYouRegisteredWithAml() {

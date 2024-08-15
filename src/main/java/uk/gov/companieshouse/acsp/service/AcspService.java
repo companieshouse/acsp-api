@@ -124,11 +124,11 @@ public class AcspService {
                                            String requestId,
                                            String userId) {
         var submission = new AcspDataSubmissionDao();
-        submission.setLinks(Collections.singletonMap(LINK_SELF, submissionUri));
         submission.setCreatedAt(LocalDateTime.now());
         submission.setHttpRequestId(requestId);
         submission.setLastModifiedByUserId(userId);
         acspData.setAcspDataSubmission(submission);
+        acspData.setLinks(Collections.singletonMap(LINK_SELF, submissionUri));
     }
 
     public Optional<AcspDataDto> getAcsp(String acspId, Transaction transaction) throws SubmissionNotLinkedToTransactionException {
@@ -155,7 +155,7 @@ public class AcspService {
                 LOGGER.info("No application found for userId: " + userId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            String transactionId = application.get().getAcspDataSubmission().getLinks().get("self").split("/")[2];
+            String transactionId = application.get().getLinks().get("self").split("/")[2];
             var transaction = transactionService.getTransaction(requestId, transactionId);
             if(!TransactionStatus.CLOSED.equals(transaction.getStatus())) {
                 LOGGER.info("Open application found for userId: " + userId);
