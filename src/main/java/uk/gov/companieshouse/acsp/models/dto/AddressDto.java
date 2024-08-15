@@ -1,67 +1,68 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 public class AddressDto {
 
-    @JsonProperty("propertyDetails")
-    private String propertyDetails;
+    @Field("premises")
+    private String premises;
 
-    @JsonProperty("line1")
-    private String line1;
+    @Field("addressLine1")
+    private String addressLine1;
 
-    @JsonProperty("line2")
-    private String line2;
+    @Field("addressLine2")
+    private String addressLine2;
 
-    @JsonProperty("town")
-    private String town;
+    @Field("locality")
+    private String locality;
 
-    @JsonProperty("county")
-    private String county;
+    @Field("region")
+    private String region;
 
-    @JsonProperty("country")
+    @Field("country")
     private String country;
 
-    @JsonProperty("postcode")
-    private String postcode;
-    public String getPropertyDetails() {
-        return propertyDetails;
+    @Field("postalCode")
+    private String postalCode;
+
+    public String getPremises() {
+        return premises;
     }
 
-    public void setPropertyDetails(String propertyDetails) {
-        this.propertyDetails = propertyDetails;
+    public void setPremises(String premises) {
+        this.premises = premises;
     }
 
-    public String getLine1() {
-        return line1;
+    public String getAddressLine1() {
+        return addressLine1;
     }
 
-    public void setLine1(String line1) {
-        this.line1 = line1;
+    public void setAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
     }
 
-    public String getLine2() {
-        return line2;
+    public String getAddressLine2() {
+        return addressLine2;
     }
 
-    public void setLine2(String line2) {
-        this.line2 = line2;
+    public void setAddressLine2(String addressLine2) {
+        this.addressLine2 = addressLine2;
     }
 
-    public String getTown() {
-        return town;
+    public String getLocality() {
+        return locality;
     }
 
-    public void setTown(String town) {
-        this.town = town;
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 
-    public String getCounty() {
-        return county;
+    public String getRegion() {
+        return region;
     }
 
-    public void setCounty(String county) {
-        this.county = county;
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     public String getCountry() {
@@ -72,11 +73,11 @@ public class AddressDto {
         this.country = country;
     }
 
-    public String getPostcode() {
-        return postcode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setPostcode(String postcode) {
-        this.postcode = postcode;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 }
