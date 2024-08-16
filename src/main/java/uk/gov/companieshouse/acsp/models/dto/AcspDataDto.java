@@ -3,7 +3,6 @@ package uk.gov.companieshouse.acsp.models.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
-import uk.gov.companieshouse.acsp.models.type.Address;
 
 import java.util.Map;
 
@@ -73,8 +72,8 @@ public class AcspDataDto {
         return registeredOfficeAddress;
     }
 
-    public void setRegisteredOfficeAddress(AddressDto businessAddress) {
-        this.registeredOfficeAddress = businessAddress;
+    public void setRegisteredOfficeAddress(AddressDto registeredOfficeAddress) {
+        this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
     public TypeOfBusiness getTypeOfBusiness() {

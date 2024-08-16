@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
-import uk.gov.companieshouse.acsp.models.type.Address;
 
 import java.util.Map;
 
@@ -75,8 +74,8 @@ public class AcspDataDao {
         return registeredOfficeAddress;
     }
 
-    public void setRegisteredOfficeAddress(AddressDao businessAddress) {
-        this.registeredOfficeAddress = businessAddress;
+    public void setRegisteredOfficeAddress(AddressDao registeredOfficeAddress) {
+        this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
     public TypeOfBusiness getTypeOfBusiness() {
