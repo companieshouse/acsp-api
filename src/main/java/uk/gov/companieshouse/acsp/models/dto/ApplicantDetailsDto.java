@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.companieshouse.acsp.models.type.Address;
 
 import java.time.LocalDate;
 
@@ -17,7 +16,7 @@ public class ApplicantDetailsDto {
     private String middleName;
 
     @JsonProperty("correspondenceAddress")
-    private Address correspondenceAddress;
+    private AddressDto correspondenceAddress;
 
     @JsonProperty("dateOfBirth")
     private LocalDate dateOfBirth;
@@ -56,11 +55,11 @@ public class ApplicantDetailsDto {
         this.middleName = middleName;
     }
 
-    public Address getCorrespondenceAddress() {
+    public AddressDto getCorrespondenceAddress() {
         return correspondenceAddress;
     }
 
-    public void setCorrespondenceAddress(Address correspondenceAddress) {
+    public void setCorrespondenceAddress(AddressDto correspondenceAddress) {
         this.correspondenceAddress = correspondenceAddress;
     }
 

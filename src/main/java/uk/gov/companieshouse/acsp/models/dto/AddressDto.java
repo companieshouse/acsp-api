@@ -2,6 +2,8 @@ package uk.gov.companieshouse.acsp.models.dto;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Objects;
+
 public class AddressDto {
 
     @Field("premises")
@@ -79,5 +81,18 @@ public class AddressDto {
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AddressDto address)) return false;
+        return Objects.equals(premises, address.premises)
+                && Objects.equals(addressLine1, address.addressLine1)
+                && Objects.equals(addressLine2, address.addressLine2)
+                && Objects.equals(locality, address.locality)
+                && Objects.equals(region, address.region)
+                && Objects.equals(country, address.country)
+                && Objects.equals(postalCode, address.postalCode);
     }
 }

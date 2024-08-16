@@ -281,22 +281,22 @@ public class FilingsService {
     if (acspDataDto.getApplicantDetails() != null) {
       if (acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
         correspondenceAddress.setAddressLine1(
-                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getLine1())
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getAddressLine1())
                         .map(String::toUpperCase).orElse(null));
         correspondenceAddress.setAddressLine2(
-                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getLine2())
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getAddressLine2())
                         .map(String::toUpperCase).orElse(null));
         correspondenceAddress.setPostalCode(
-                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getPostcode())
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getPostalCode())
                         .map(String::toUpperCase).orElse(null));
         correspondenceAddress.setCountry(
                 Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getCountry())
                         .map(String::toUpperCase).orElse(null));
         correspondenceAddress.setPremises(
-                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getPropertyDetails())
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getPremises())
                         .map(String::toUpperCase).orElse(null));
         correspondenceAddress.setRegion(
-                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getCounty())
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getRegion())
                         .map(String::toUpperCase).orElse(null));
       }
     }
@@ -306,23 +306,23 @@ public class FilingsService {
   private Address buildRegisteredOfficeAddress(AcspDataDto acspDataDto) {
     var registeredOfficeAddress = new Address();
     if(acspDataDto.getRegisteredOfficeAddress() != null) {
-      registeredOfficeAddress.setAddressLine1(
-              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getLine1())
+        registeredOfficeAddress.setAddressLine1(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getAddressLine1())
                       .map(String::toUpperCase).orElse(null));
-      registeredOfficeAddress.setAddressLine2(
-              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getLine2())
+        registeredOfficeAddress.setAddressLine2(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getAddressLine2())
                       .map(String::toUpperCase).orElse(null));
-      registeredOfficeAddress.setPostalCode(
-              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getPostcode())
+        registeredOfficeAddress.setPostalCode(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getPostalCode())
                       .map(String::toUpperCase).orElse(null));
       registeredOfficeAddress.setCountry(
               Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getCountry())
                       .map(String::toUpperCase).orElse(null));
-      registeredOfficeAddress.setPremises(
-              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getPropertyDetails())
+        registeredOfficeAddress.setPremises(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getPremises())
                       .map(String::toUpperCase).orElse(null));
-      registeredOfficeAddress.setRegion(
-              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getCounty())
+        registeredOfficeAddress.setRegion(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getRegion())
                       .map(String::toUpperCase).orElse(null));
     }
     return registeredOfficeAddress;

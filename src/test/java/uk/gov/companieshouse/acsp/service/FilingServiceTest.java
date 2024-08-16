@@ -12,13 +12,13 @@ import uk.gov.companieshouse.acsp.models.dto.CompanyDto;
 import uk.gov.companieshouse.acsp.models.dto.NationalityDto;
 import uk.gov.companieshouse.acsp.models.dto.AMLSupervisoryBodiesDto;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
+import uk.gov.companieshouse.acsp.models.dto.AddressDto;
 import uk.gov.companieshouse.acsp.models.dto.ApplicantDetailsDto;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.Aml;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
 import uk.gov.companieshouse.acsp.models.filing.STPersonalInformation;
 import uk.gov.companieshouse.acsp.models.filing.ServiceAddress;
-import uk.gov.companieshouse.acsp.models.type.Address;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -87,8 +87,8 @@ class FilingServiceTest {
     private Transaction transaction;
     AcspDataSubmissionDto dataSubmissionDto;
     AcspDataDto acspDataDto;
-    Address correspondenceAddress;
-    Address businessAddress;
+    AddressDto correspondenceAddress;
+    AddressDto businessAddress;
 
     @BeforeEach
     void init() {
@@ -174,48 +174,48 @@ class FilingServiceTest {
         when(paymentResourceHandler.get(anyString())).thenReturn(paymentGet);
         when(paymentGet.execute()).thenReturn(paymentApiResponse);
     }
-    private Address buildCorrespondenceAddress() {
-        correspondenceAddress = new Address();
+    private AddressDto buildCorrespondenceAddress() {
+        correspondenceAddress = new AddressDto();
         correspondenceAddress.setCountry("Country");
-        correspondenceAddress.setCounty("County");
-        correspondenceAddress.setLine1("Line1");
-        correspondenceAddress.setPostcode("postcode1");
-        correspondenceAddress.setTown("town");
-        correspondenceAddress.setLine2("line2");
-        correspondenceAddress.setPropertyDetails("propertyDetails");
+        correspondenceAddress.setRegion("County");
+        correspondenceAddress.setAddressLine1("Line1");
+        correspondenceAddress.setPostalCode("postcode1");
+        correspondenceAddress.setLocality("town");
+        correspondenceAddress.setAddressLine2("line2");
+        correspondenceAddress.setPremises("propertyDetails");
         return correspondenceAddress;
     }
 
-    private Address buildBusinessAddress() {
-        businessAddress = new Address();
+    private AddressDto buildBusinessAddress() {
+        businessAddress = new AddressDto();
         businessAddress.setCountry("Country");
-        businessAddress.setCounty("County");
-        businessAddress.setLine1("Line1");
-        businessAddress.setPostcode("postcode");
-        businessAddress.setTown("town");
-        businessAddress.setLine2("line2");
-        businessAddress.setPropertyDetails("propertyDetails");
+        businessAddress.setRegion("County");
+        businessAddress.setAddressLine1("Line1");
+        businessAddress.setPostalCode("postcode");
+        businessAddress.setLocality("town");
+        businessAddress.setAddressLine2("line2");
+        businessAddress.setPremises("propertyDetails");
         return businessAddress;
     }
 
-    private Address buildBusinessAddressWithOnlyCountry() {
-        businessAddress = new Address();
+    private AddressDto buildBusinessAddressWithOnlyCountry() {
+        businessAddress = new AddressDto();
         businessAddress.setCountry("Country");
         return businessAddress;
     }
-    private Address buildCorrespondenceAddressWithOnlyCountry() {
-        correspondenceAddress = new Address();
+    private AddressDto buildCorrespondenceAddressWithOnlyCountry() {
+        correspondenceAddress = new AddressDto();
         correspondenceAddress.setCountry("Country");
         return correspondenceAddress;
     }
 
-    private Address buildBlankCorrespondenceAddress() {
-        correspondenceAddress = new Address();
+    private AddressDto buildBlankCorrespondenceAddress() {
+        correspondenceAddress = new AddressDto();
         return correspondenceAddress;
     }
 
-    private Address buildBlankBusinessAddress() {
-        businessAddress = new Address();
+    private AddressDto buildBlankBusinessAddress() {
+        businessAddress = new AddressDto();
         return businessAddress;
     }
 

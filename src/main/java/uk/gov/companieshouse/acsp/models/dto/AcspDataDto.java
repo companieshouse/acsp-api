@@ -16,7 +16,7 @@ public class AcspDataDto {
     private ApplicantDetailsDto applicantDetails;
 
     @JsonProperty("registeredOfficeAddress")
-    private Address registeredOfficeAddress;
+    private AddressDto registeredOfficeAddress;
 
     @JsonProperty("typeOfBusiness")
     private TypeOfBusiness typeOfBusiness;
@@ -69,12 +69,12 @@ public class AcspDataDto {
         this.applicantDetails = applicantDetails;
     }
 
-    public Address getRegisteredOfficeAddress() {
+    public AddressDto getRegisteredOfficeAddress() {
         return registeredOfficeAddress;
     }
 
-    public void setRegisteredOfficeAddress(Address registeredOfficeAddress) {
-        this.registeredOfficeAddress = registeredOfficeAddress;
+    public void setRegisteredOfficeAddress(AddressDto businessAddress) {
+        this.registeredOfficeAddress = businessAddress;
     }
 
     public TypeOfBusiness getTypeOfBusiness() {
