@@ -95,4 +95,9 @@ public class AddressDto {
                 && Objects.equals(country, address.country)
                 && Objects.equals(postalCode, address.postalCode);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(premises, addressLine1, addressLine2, locality, region, country, postalCode);
+    }
 }
