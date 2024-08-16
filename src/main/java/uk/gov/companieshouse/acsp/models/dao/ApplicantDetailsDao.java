@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.acsp.models.dao;
 
 import org.springframework.data.mongodb.core.mapping.Field;
-import uk.gov.companieshouse.acsp.models.type.Address;
 
 import java.time.LocalDate;
 
@@ -17,7 +16,7 @@ public class ApplicantDetailsDao {
     private String middleName;
 
     @Field("correspondence_address")
-    private Address correspondenceAddress;
+    private AddressDao correspondenceAddress;
 
     @Field("date_of_birth")
     private LocalDate dateOfBirth;
@@ -57,11 +56,11 @@ public class ApplicantDetailsDao {
         this.middleName = middleName;
     }
 
-    public Address getCorrespondenceAddress() {
+    public AddressDao getCorrespondenceAddress() {
         return correspondenceAddress;
     }
 
-    public void setCorrespondenceAddress(Address correspondenceAddress) {
+    public void setCorrespondenceAddress(AddressDao correspondenceAddress) {
         this.correspondenceAddress = correspondenceAddress;
     }
 
