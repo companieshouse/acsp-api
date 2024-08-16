@@ -235,7 +235,7 @@ class AcspServiceTest {
         var submissionData = new AcspDataSubmissionDao();
         Map<String, String> links = new HashMap<>();
         links.put("self", "/transaction/" + TRANSACTION_ID + "/");
-        submissionData.setLinks(links);
+        application.setLinks(links);
         application.setAcspDataSubmission(submissionData);
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         Transaction transaction = new Transaction();
@@ -253,7 +253,7 @@ class AcspServiceTest {
         var submissionData = new AcspDataSubmissionDao();
         Map<String, String> links = new HashMap<>();
         links.put("self", "/transaction/" + TRANSACTION_ID + "/");
-        submissionData.setLinks(links);
+        application.setLinks(links);
         application.setAcspDataSubmission(submissionData);
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         Transaction transaction = new Transaction();
@@ -277,7 +277,7 @@ class AcspServiceTest {
         var submissionData = new AcspDataSubmissionDao();
         Map<String, String> links = new HashMap<>();
         links.put("self", "/transaction/" + TRANSACTION_ID + "/");
-        submissionData.setLinks(links);
+        application.setLinks(links);
         application.setAcspDataSubmission(submissionData);
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.FORBIDDEN);
         Transaction transaction = new Transaction();
@@ -300,7 +300,7 @@ class AcspServiceTest {
         var submissionData = new AcspDataSubmissionDao();
         Map<String, String> links = new HashMap<>();
         links.put("self", "/transaction/" + TRANSACTION_ID + "/");
-        submissionData.setLinks(links);
+        application.setLinks(links);
         application.setAcspDataSubmission(submissionData);
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 

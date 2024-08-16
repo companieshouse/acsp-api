@@ -6,9 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
-import uk.gov.companieshouse.acsp.models.type.Address;
 
-import java.time.LocalDate;
+import java.util.Map;
 
 @Document(collection = "applications")
 public class AcspDataDao {
@@ -16,23 +15,11 @@ public class AcspDataDao {
     @Id
     private String id;
 
-    @Field("first_name")
-    private String firstName;
+    @Field("applicant_details")
+    private ApplicantDetailsDao applicantDetails;
 
-    @Field("last_name")
-    private String lastName;
-
-    @Field("middle_name")
-    private String middleName;
-
-    @Field("email")
-    private String email;
-
-    @Field("correspondence_address")
-    private Address correspondenceAddress;
-
-    @Field("business_address")
-    private Address businessAddress;
+    @Field("registered_office_address")
+    private AddressDao registeredOfficeAddress;
 
     @Field("type_of_business")
     private TypeOfBusiness typeOfBusiness;
@@ -40,17 +27,8 @@ public class AcspDataDao {
     @Field("role_type")
     private RoleType roleType;
 
-    @Field("date_of_birth")
-    private LocalDate dateOfBirth;
-
     @Field("verified")
     private Boolean verified;
-
-    @Field("nationality")
-    private NationalityDao nationality;
-
-    @Field("country_of_residence")
-    private String countryOfResidence;
 
     @Field("business_name")
     private String businessName;
@@ -70,6 +48,9 @@ public class AcspDataDao {
     @Field("acsp_data_submission")
     private AcspDataSubmissionDao acspDataSubmission;
 
+    @JsonProperty("links")
+    private Map<String, String> links;
+
     @JsonProperty("how_are_you_registered_with_aml")
     private String howAreYouRegisteredWithAml;
 
@@ -81,44 +62,20 @@ public class AcspDataDao {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public ApplicantDetailsDao getApplicantDetails() {
+        return applicantDetails;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setApplicantDetails(ApplicantDetailsDao applicantDetails) {
+        this.applicantDetails = applicantDetails;
     }
 
-    public String getLastName() {
-        return lastName;
+    public AddressDao getRegisteredOfficeAddress() {
+        return registeredOfficeAddress;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Address getBusinessAddress() {
-        return businessAddress;
-    }
-
-    public void setBusinessAddress(Address businessAddress) {
-        this.businessAddress = businessAddress;
+    public void setRegisteredOfficeAddress(AddressDao registeredOfficeAddress) {
+        this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
     public TypeOfBusiness getTypeOfBusiness() {
@@ -137,36 +94,12 @@ public class AcspDataDao {
         this.roleType = roleType;
     }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
     public Boolean getVerified() {
         return verified;
     }
 
     public void setVerified(Boolean verified) {
         this.verified = verified;
-    }
-
-    public NationalityDao getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(NationalityDao nationality) {
-        this.nationality = nationality;
-    }
-
-    public String getCountryOfResidence() {
-        return countryOfResidence;
-    }
-
-    public void setCountryOfResidence(String countryOfResidence) {
-        this.countryOfResidence = countryOfResidence;
     }
 
     public String getBusinessName() {
@@ -183,6 +116,14 @@ public class AcspDataDao {
 
     public void setWorkSector(String workSector) {
         this.workSector = workSector;
+    }
+
+    public AMLSupervisoryBodiesDao[] getAmlSupervisoryBodies() {
+        return amlSupervisoryBodies;
+    }
+
+    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDao[] amlSupervisoryBodies) {
+        this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
     public CompanyDao getCompanyDetails() {
@@ -208,21 +149,12 @@ public class AcspDataDao {
     public void setAcspDataSubmission(AcspDataSubmissionDao acspDataSubmission) {
         this.acspDataSubmission = acspDataSubmission;
     }
-
-    public AMLSupervisoryBodiesDao[] getAmlSupervisoryBodies() {
-        return amlSupervisoryBodies;
+    public Map<String, String> getLinks() {
+        return links;
     }
 
-    public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDao[] amlSupervisoryBodies) {
-        this.amlSupervisoryBodies = amlSupervisoryBodies;
-    }
-
-    public Address getCorrespondenceAddress() {
-        return correspondenceAddress;
-    }
-
-    public void setCorrespondenceAddress(Address correspondenceAddress) {
-        this.correspondenceAddress = correspondenceAddress;
+    public void setLinks(Map<String, String> links) {
+        this.links = links;
     }
 
     public String getHowAreYouRegisteredWithAml() {

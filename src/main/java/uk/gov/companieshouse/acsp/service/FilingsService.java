@@ -7,7 +7,6 @@ import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
-import uk.gov.companieshouse.acsp.models.filing.ACSP;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
 import uk.gov.companieshouse.acsp.models.filing.Aml;
 import uk.gov.companieshouse.acsp.models.filing.ServiceAddress;
@@ -95,23 +94,25 @@ public class FilingsService {
   }
 
   private void buildFilingStatus(FilingApi filing) {
-    filing.setKind(FILING_KIND_ACSP.toUpperCase());
+    filing.setKind(FILING_KIND_ACSP);
     filing.setCost(costAmount);
   }
 
-  private void buildPresenter(Map<String, Object>data, AcspDataDto acspDataDto) {
+  private void buildPresenter(Map<String, Object> data, AcspDataDto acspDataDto) {
     var presenter = new Presenter();
 
-    presenter.setFirstName(Optional.ofNullable(acspDataDto.getFirstName())
-            .map(String::toUpperCase).orElse(null));
-    presenter.setLastName(Optional.ofNullable(acspDataDto.getLastName())
-            .map(String::toUpperCase).orElse(null));
+    if (acspDataDto.getApplicantDetails() != null) {
+      presenter.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
+              .map(String::toUpperCase).orElse(null));
+      presenter.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
+              .map(String::toUpperCase).orElse(null));
+    }
     presenter.setUserId(Optional.ofNullable(acspDataDto.getId())
             .map(String::toUpperCase).orElse(null));
-    //presenter.setLanguage(); //add language in ascpDataModel
+
+    // presenter.setLanguage(); // add language in acspDataModel
     data.put(PRESENTER, presenter);
   }
-
 
   private void buildSubmission(Map<String, Object>data, AcspDataDto acspDataDto, String transactionId) {
     var submission = new Submission();
@@ -123,51 +124,51 @@ public class FilingsService {
   private Map<String, Object> buildData(AcspDataDto acspDataDto, String transactionId, Transaction transaction,
                                             String passThroughTokenHeader) throws ServiceException {
     Map<String, Object> data = new HashMap<>();
-    data.put("acsp", buildAcspData(acspDataDto, transaction,passThroughTokenHeader));
+    buildAcspData(data, acspDataDto, transaction,passThroughTokenHeader);
     buildPresenter(data, acspDataDto);
     buildSubmission(data, acspDataDto, transactionId);
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     return data;
   }
 
-  private ACSP buildAcspData(AcspDataDto acspDataDto, Transaction transaction,
+  private void buildAcspData(Map<String, Object>data, AcspDataDto acspDataDto, Transaction transaction,
                              String passThroughTokenHeader) throws ServiceException {
-    var acsp = new ACSP();
-    acsp.setEmail(Optional.ofNullable(acspDataDto.getEmail()).map((String::toUpperCase)).orElse(null));
+    //TODO : fetch email as per new design.
+    data.put("email", Optional.of("demo@email.com").map((String::toUpperCase)).orElse(null));
 
     if(TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness()) ||
             TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
             TypeOfBusiness.UNINCORPORATED.equals(acspDataDto.getTypeOfBusiness())) {
-      acsp.setOfficeAddress(buildBusinessAddress(acspDataDto));
+      data.put("registered_office_address", buildRegisteredOfficeAddress(acspDataDto));
     }
-    if(acspDataDto.getBusinessAddress() != null &&
-            acspDataDto.getBusinessAddress().equals(acspDataDto.getCorrespondenceAddress())) {
-      acsp.setServiceAddress(buildServiceAddress(null, true));
+    if(acspDataDto.getRegisteredOfficeAddress() != null &&
+            acspDataDto.getApplicantDetails() != null &&
+            acspDataDto.getRegisteredOfficeAddress().equals(acspDataDto.getApplicantDetails().getCorrespondenceAddress())) {
+      data.put("service_address",buildServiceAddress(null, true));
     } else {
-      acsp.setServiceAddress(buildServiceAddress(acspDataDto, false));
+      data.put("service_address",buildServiceAddress(acspDataDto, false));
     }
     if(transaction.getStatus() != null &&
             TransactionStatus.CLOSED.equals(transaction.getStatus())) {
-      setPaymentData(acsp, transaction, passThroughTokenHeader);
+      setPaymentData(data, transaction, passThroughTokenHeader);
     }
 
-    acsp.setAcspType(Optional.ofNullable(acspDataDto.getTypeOfBusiness()).map(TypeOfBusiness::name).orElse(null));
+    data.put("acsp_type", Optional.ofNullable(acspDataDto.getTypeOfBusiness()).map(TypeOfBusiness::name).orElse(null));
 
     if(acspDataDto.getCompanyDetails() != null || acspDataDto.getBusinessName() != null) {
-      buildCompanyDetails(acspDataDto, acsp);
+      buildCompanyDetails(acspDataDto, data);
     }
-    acsp.setBusinessSector(Optional.ofNullable(acspDataDto.getWorkSector()).map((String::toUpperCase)).orElse(null));
+    data.put("business_sector", Optional.ofNullable(acspDataDto.getWorkSector()).map((String::toUpperCase)).orElse(null));
 
     if(acspDataDto.getAmlSupervisoryBodies() != null) {
-      acsp.setAml(buildAml(acspDataDto));
+      data.put("aml", buildAml(acspDataDto));
     }
 
     if(acspDataDto.getTypeOfBusiness() != null &&
             TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
-      buildStPersonalInformation(acspDataDto, acsp);
+      data.put("st_personal_information", buildStPersonalInformation(acspDataDto));
     }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
-    return acsp;
   }
 
   private Aml buildAml(AcspDataDto acspDataDto) {
@@ -194,70 +195,76 @@ public class FilingsService {
 
   private PersonName buildPersonName(AcspDataDto acspDataDto) {
     var personName = new PersonName();
-    if (acspDataDto.getFirstName() != null || acspDataDto.getLastName() != null || acspDataDto.getMiddleName() != null) {
-      personName.setFirstName(Optional.ofNullable(acspDataDto.getFirstName())
+    if (acspDataDto.getApplicantDetails() != null) {
+    if (acspDataDto.getApplicantDetails().getFirstName() != null || acspDataDto.getApplicantDetails().getLastName() != null || acspDataDto.getApplicantDetails().getMiddleName() != null) {
+      personName.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
               .map(String::toUpperCase).orElse(null));
-      personName.setLastName(Optional.ofNullable(acspDataDto.getLastName())
+      personName.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
               .map(String::toUpperCase).orElse(null));
-      personName.setMiddleName(Optional.ofNullable(acspDataDto.getMiddleName())
+      personName.setMiddleName(Optional.ofNullable(acspDataDto.getApplicantDetails().getMiddleName())
               .map(String::toUpperCase).orElse(null));
       return personName;
     }
+    }
     return null;
   }
-  private void buildStPersonalInformation(AcspDataDto acspDataDto, ACSP acsp) {
+  private STPersonalInformation buildStPersonalInformation(AcspDataDto acspDataDto) {
     var stPersonalInformation = new STPersonalInformation();
     stPersonalInformation.setPersonName(buildPersonName(acspDataDto));
+    if (acspDataDto.getApplicantDetails() != null) {
+      if (acspDataDto.getApplicantDetails().getDateOfBirth() != null) {
+        stPersonalInformation.setBirthDate(acspDataDto.getApplicantDetails().getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+      }
 
-    if(acspDataDto.getDateOfBirth() != null) {
-      stPersonalInformation.setBirthDate(acspDataDto.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+      if (acspDataDto.getApplicantDetails().getNationality() != null) {
+        var nationalities = getNationalities(acspDataDto);
+        stPersonalInformation.setNationalityOther(String.join(",", nationalities).toUpperCase());
+      }
+
+      stPersonalInformation.setUsualResidence(Optional.ofNullable(acspDataDto.getApplicantDetails().getCountryOfResidence())
+              .map(String::toUpperCase).orElse(null));
     }
-
-    if(acspDataDto.getNationality() != null) {
-      var nationalities = new ArrayList<String>();
-
-      if (acspDataDto.getNationality().getFirstNationality() != null &&
-              !acspDataDto.getNationality().getFirstNationality().isEmpty()) {
-        nationalities.add(acspDataDto.getNationality().getFirstNationality());
-      }
-      if (acspDataDto.getNationality().getSecondNationality() != null &&
-              !acspDataDto.getNationality().getSecondNationality().isEmpty()) {
-        nationalities.add(acspDataDto.getNationality().getSecondNationality());
-      }
-      if (acspDataDto.getNationality().getThirdNationality() != null &&
-              !acspDataDto.getNationality().getThirdNationality().isEmpty()) {
-        nationalities.add(acspDataDto.getNationality().getThirdNationality());
-      }
-      stPersonalInformation.setNationalityOther(String.join(",", nationalities).toUpperCase());
-    }
-
-    stPersonalInformation.setUsualResidence(Optional.ofNullable(acspDataDto.getCountryOfResidence())
-                              .map(String::toUpperCase).orElse(null));
-
-
-    acsp.setStPersonalInformation(stPersonalInformation);
+    return stPersonalInformation;
   }
 
-  private void buildCompanyDetails(AcspDataDto acspDataDto, ACSP acsp) {
+  private ArrayList<String> getNationalities(AcspDataDto acspDataDto) {
+    var nationalities = new ArrayList<String>();
+    if (acspDataDto.getApplicantDetails() != null) {
+      if (acspDataDto.getApplicantDetails().getNationality().getFirstNationality() != null &&
+              !acspDataDto.getApplicantDetails().getNationality().getFirstNationality().isEmpty()) {
+        nationalities.add(acspDataDto.getApplicantDetails().getNationality().getFirstNationality());
+      }
+      if (acspDataDto.getApplicantDetails().getNationality().getSecondNationality() != null &&
+              !acspDataDto.getApplicantDetails().getNationality().getSecondNationality().isEmpty()) {
+        nationalities.add(acspDataDto.getApplicantDetails().getNationality().getSecondNationality());
+      }
+      if (acspDataDto.getApplicantDetails().getNationality().getThirdNationality() != null &&
+              !acspDataDto.getApplicantDetails().getNationality().getThirdNationality().isEmpty()) {
+        nationalities.add(acspDataDto.getApplicantDetails().getNationality().getThirdNationality());
+      }
+    }
+    return nationalities;
+  }
+
+  private void buildCompanyDetails(AcspDataDto acspDataDto, Map<String, Object>data) {
 
     if (acspDataDto.getCompanyDetails() != null) {
-      acsp.setCompanyName(Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyName())
+      data.put("company_name", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyName())
                             .map(String::toUpperCase).orElse(null));
     }
     if (acspDataDto.getTypeOfBusiness() != null) {
       switch (acspDataDto.getTypeOfBusiness()) {
         case LC, LP, LLP:
           if (acspDataDto.getCompanyDetails() != null) {
-            acsp.setCompanyNumber(Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyNumber())
+            data.put("company_number", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyNumber())
                     .map(String::toUpperCase).orElse(null));
           }
           break;
         default:
-         acsp.setBusinessName(Optional.ofNullable(acspDataDto.getBusinessName())
+          data.put("business_name", Optional.ofNullable(acspDataDto.getBusinessName())
                             .map(String::toUpperCase).orElse(null));
       }
     }
-
   }
 
   private ServiceAddress buildServiceAddress(AcspDataDto acspDataDto, boolean isServiceAddressROA) {
@@ -271,52 +278,54 @@ public class FilingsService {
 
   private Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
     var correspondenceAddress = new Address();
-    if(acspDataDto.getCorrespondenceAddress() != null) {
-      correspondenceAddress.setAddressLine1(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getLine1())
-                      .map(String::toUpperCase).orElse(null));
-      correspondenceAddress.setAddressLine2(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getLine2())
-                      .map(String::toUpperCase).orElse(null));
-      correspondenceAddress.setPostalCode(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getPostcode())
-                      .map(String::toUpperCase).orElse(null));
-      correspondenceAddress.setCountry(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getCountry())
-                      .map(String::toUpperCase).orElse(null));
-      correspondenceAddress.setPremises(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getPropertyDetails())
-                      .map(String::toUpperCase).orElse(null));
-      correspondenceAddress.setRegion(
-              Optional.ofNullable(acspDataDto.getCorrespondenceAddress().getCounty())
-                      .map(String::toUpperCase).orElse(null));
+    if (acspDataDto.getApplicantDetails() != null) {
+      if (acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
+        correspondenceAddress.setAddressLine1(
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getAddressLine1())
+                        .map(String::toUpperCase).orElse(null));
+        correspondenceAddress.setAddressLine2(
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getAddressLine2())
+                        .map(String::toUpperCase).orElse(null));
+        correspondenceAddress.setPostalCode(
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getPostalCode())
+                        .map(String::toUpperCase).orElse(null));
+        correspondenceAddress.setCountry(
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getCountry())
+                        .map(String::toUpperCase).orElse(null));
+        correspondenceAddress.setPremises(
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getPremises())
+                        .map(String::toUpperCase).orElse(null));
+        correspondenceAddress.setRegion(
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getRegion())
+                        .map(String::toUpperCase).orElse(null));
+      }
     }
     return correspondenceAddress;
   }
 
-  private Address buildBusinessAddress(AcspDataDto acspDataDto) {
-    var businessAddress = new Address();
-    if(acspDataDto.getBusinessAddress() != null) {
-      businessAddress.setAddressLine1(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getLine1())
+  private Address buildRegisteredOfficeAddress(AcspDataDto acspDataDto) {
+    var registeredOfficeAddress = new Address();
+    if(acspDataDto.getRegisteredOfficeAddress() != null) {
+        registeredOfficeAddress.setAddressLine1(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getAddressLine1())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setAddressLine2(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getLine2())
+        registeredOfficeAddress.setAddressLine2(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getAddressLine2())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setPostalCode(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getPostcode())
+        registeredOfficeAddress.setPostalCode(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getPostalCode())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setCountry(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getCountry())
+      registeredOfficeAddress.setCountry(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getCountry())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setPremises(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getPropertyDetails())
+        registeredOfficeAddress.setPremises(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getPremises())
                       .map(String::toUpperCase).orElse(null));
-      businessAddress.setRegion(
-              Optional.ofNullable(acspDataDto.getBusinessAddress().getCounty())
+        registeredOfficeAddress.setRegion(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getRegion())
                       .map(String::toUpperCase).orElse(null));
     }
-    return businessAddress;
+    return registeredOfficeAddress;
   }
 
   private void setDescriptionFields(FilingApi filing, Transaction transaction) {
@@ -337,9 +346,8 @@ public class FilingsService {
     filing.setDescriptionValues(values);
   }
 
-
   private void setPaymentData(
-          ACSP acsp,
+          Map<String, Object>data,
           Transaction transaction,
           String passthroughTokenHeader)
           throws ServiceException {
@@ -347,8 +355,8 @@ public class FilingsService {
     var paymentReference = getPaymentReferenceFromTransaction(paymentLink, passthroughTokenHeader);
     var payment = getPayment(paymentReference, passthroughTokenHeader);
 
-    acsp.setPaymentReference(paymentReference.toUpperCase());
-    acsp.setPaymentMethod(payment.getPaymentMethod().toUpperCase());
+    data.put("payment_reference", paymentReference.toUpperCase());
+    data.put("payment_method", payment.getPaymentMethod().toUpperCase());
   }
 
   private PaymentApi getPayment(String paymentReference, String passthroughTokenHeader)
