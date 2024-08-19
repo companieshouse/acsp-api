@@ -12,7 +12,6 @@ public interface ACSPRegDataDtoDaoMapper {
 
       AcspDataDto daoToDto(AcspDataDao acspDataDao);
 
-      @Mapping(source = "type", target = "type", ignore = true)
       AcspDataDao dtoToDao(AcspDataDto acspDataDto);
 
 }
