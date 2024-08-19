@@ -4,7 +4,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 public class NationalityDao {
 
-    @Field("first_name")
+    @Field("first_nationality")
     private String firstNationality;
 
     @Field("second_nationality")
