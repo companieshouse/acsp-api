@@ -64,7 +64,7 @@ public class AcspService {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         acspDataDao.setTypeOfBusiness(acspDataDto.getTypeOfBusiness().getLabel());
-        System.out.println("post dao------------------>" + acspDataDao.getTypeOfBusiness());
+        System.out.println("post dao------------------->" + acspDataDao.getTypeOfBusiness());
         String submissionId = acspDataDao.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
         updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
