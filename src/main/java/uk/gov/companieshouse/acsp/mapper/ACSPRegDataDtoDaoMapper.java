@@ -10,9 +10,9 @@ import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 @Mapper(componentModel = "spring")
 public interface ACSPRegDataDtoDaoMapper {
 
-      @Mapping(source = "type", target = "type", ignore = true)
       AcspDataDto daoToDto(AcspDataDao acspDataDao);
 
+      @Mapping(source = "type", target = "type", ignore = true)
       AcspDataDao dtoToDao(AcspDataDto acspDataDto);
 
 }
