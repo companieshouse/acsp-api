@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.acsp.service;
 
+import org.bson.io.BsonOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.ApiLogger;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
@@ -61,6 +63,8 @@ public class AcspService {
                                                                 String userId) {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
+        acspDataDao.setTypeOfBusiness(acspDataDto.getTypeOfBusiness().getLabel());
+        System.out.println("post dao------------------>" + acspDataDao.getTypeOfBusiness());
         String submissionId = acspDataDao.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
         updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
@@ -136,6 +140,7 @@ public class AcspService {
         Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
         if(acspData.isPresent()) {
             var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspData.get());
+            System.out.println("get dto------------------>" + acspDataDto.getTypeOfBusiness());
 
             if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
                 throw new SubmissionNotLinkedToTransactionException(String.format(
