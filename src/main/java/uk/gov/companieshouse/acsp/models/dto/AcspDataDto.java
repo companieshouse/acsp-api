@@ -1,53 +1,40 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 
 import java.util.Map;
-
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class AcspDataDto {
 
-    @JsonProperty("id")
     private String id;
 
-    @JsonProperty("applicantDetails")
     private ApplicantDetailsDto applicantDetails;
 
-    @JsonProperty("registeredOfficeAddress")
     private AddressDto registeredOfficeAddress;
 
-    @JsonProperty("typeOfBusiness")
     private TypeOfBusiness typeOfBusiness;
 
-    @JsonProperty("roleType")
     private RoleType roleType;
 
-    @JsonProperty("verified")
     private Boolean verified;
 
-    @JsonProperty("businessName")
     private String businessName;
 
-    @JsonProperty("workSector")
     private String workSector;
 
-    @JsonProperty("amlSupervisoryBodies")
     private AMLSupervisoryBodiesDto[] amlSupervisoryBodies;
 
-    @JsonProperty("companyDetails")
     private CompanyDto companyDetails;
 
-    @JsonProperty("companyAuthCodeProvided")
     private boolean companyAuthCodeProvided;
 
-    @JsonProperty("acspDataSubmission")
     private AcspDataSubmissionDto acspDataSubmission;
 
-    @JsonProperty("links")
     private Map<String, String> links;
 
-    @JsonProperty("howAreYouRegisteredWithAml")
     private String howAreYouRegisteredWithAml;
 
     // Getters and Setters

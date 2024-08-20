@@ -1,30 +1,25 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.Objects;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class AddressDto {
 
-    @Field("premises")
     private String premises;
 
-    @Field("addressLine1")
     private String addressLine1;
 
-    @Field("addressLine2")
     private String addressLine2;
 
-    @Field("locality")
     private String locality;
 
-    @Field("region")
     private String region;
 
-    @Field("country")
     private String country;
 
-    @Field("postalCode")
     private String postalCode;
 
     public String getPremises() {
