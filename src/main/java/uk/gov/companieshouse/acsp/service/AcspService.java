@@ -12,6 +12,7 @@ import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.ApiLogger;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
@@ -61,6 +62,8 @@ public class AcspService {
                                                                 String userId) {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
+        acspDataDao.setTypeOfBusiness(acspDataDto.getTypeOfBusiness().getLabel());
+        System.out.println("enum stored in DB ------------>" + acspDataDao.getTypeOfBusiness());
         String submissionId = acspDataDao.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
         updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
@@ -72,7 +75,10 @@ public class AcspService {
             updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId);
             ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                     transaction.getId(), insertedSubmission.getId()));
+            acspDataDao.setTypeOfBusiness(TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()).name());
             acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
+            System.out.println("post 1------------>" + acspDataDao.getTypeOfBusiness());
+            System.out.println("post 2------------>" + TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()));
             return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
         } catch (DuplicateKeyException e) {
             LOGGER.error("A document already exist with this id " + acspDataDao.getId());
@@ -135,8 +141,12 @@ public class AcspService {
 
         Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
         if(acspData.isPresent()) {
-            var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspData.get());
-
+            AcspDataDao acspDataDao = acspData.get();
+            System.out.println("get 1------------>" + acspDataDao.getTypeOfBusiness());
+            System.out.println("get 2------------>" + TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()));
+            acspDataDao.setTypeOfBusiness(TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()).name());
+            var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
+            System.out.println("enum from DB---------------->" + acspDataDto.getTypeOfBusiness());
             if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
                 throw new SubmissionNotLinkedToTransactionException(String.format(
                         "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
