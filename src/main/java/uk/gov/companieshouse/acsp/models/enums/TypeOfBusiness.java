@@ -9,8 +9,17 @@ public enum TypeOfBusiness {
     UNINCORPORATED("Unincorporated entity"),
     CORPORATE_BODY("Corporate body");
 
-    public final String label;
-    private TypeOfBusiness(String label) {
-        this.label = label;
+    public final String typeOfBusiness;
+
+    TypeOfBusiness(String typeOfBusiness) {
+        this.typeOfBusiness = typeOfBusiness;
+    }
+
+    /**
+     *   getValue() returns the selected value (for e.g. Type of Business) from this enum list
+     * @return selected value of typeOfBusiness
+     */
+    public String getValue() {
+        return this.typeOfBusiness;
     }
 }

@@ -11,8 +11,17 @@ public enum RoleType {
     GENERAL_PARTNER("General partner"),
     SOMEONE_ELSE("Someone else");
 
-    public final String label;
-    private RoleType(String label) {
-        this.label = label;
+    public final String roleType;
+
+    RoleType(String roleType) {
+        this.roleType = roleType;
+    }
+
+    /**
+     *   getValue() returns the selected value (for e.g. Role Type) from this enum list
+     * @return selected value of roleType
+     */
+    public String getValue() {
+        return this.roleType;
     }
 }

@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.acsp.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,10 +30,14 @@ class AcspControllerTest {
 
     private static final ResponseEntity<Object> CREATED_SUCCESS_RESPONSE = ResponseEntity.created(URI.create("URI")).body("Created");
 
-    private static final String TRANSACTION_ID = "324234-123123-768685";
+    //private static final String TRANSACTION_ID = "324234-123123-768685";
     private static final String REQUEST_ID = "fd4gld5h3jhh";
     private static final String USER_ID = "22334455";
     private static final String SUBMISSION_ID = "demo@ch.gov.uk";
+    private static final String PASSTHROUGH_HEADER = "passthrough";
+
+    @Mock
+    private HttpServletRequest mockHttpServletRequest;
 
     @Mock
     private AcspService acspService;
@@ -48,44 +54,47 @@ class AcspControllerTest {
     void createAcsp() {
         when(acspService.createAcspRegData(transaction,
                 acspDataDto,
-                REQUEST_ID,
-                USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
+                PASSTHROUGH_HEADER)).thenReturn(CREATED_SUCCESS_RESPONSE);
 
-        var response = acspController.createAcspData( TRANSACTION_ID,
-                REQUEST_ID,
-                USER_ID,
-                transaction,
-                acspDataDto);
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
+
+        var response = acspController.createAcspData(transaction,
+                acspDataDto,mockHttpServletRequest);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
     void updateAcsp() throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException, ServiceException {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
         when(acspService.updateACSPDetails(transaction,
-                acspDataDto,
-                REQUEST_ID,
-                USER_ID)).thenReturn(CREATED_SUCCESS_RESPONSE);
+                acspData,
+                PASSTHROUGH_HEADER,
+                acspData.getId())).thenReturn(CREATED_SUCCESS_RESPONSE);
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
 
-        var response = acspController.saveAcspData( TRANSACTION_ID,
-                REQUEST_ID,
-                USER_ID,
+        var response = acspController.saveAcspData(
                 transaction,
-                acspDataDto);
+                acspData, mockHttpServletRequest);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
     void updateAcspThrowsException() throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException, ServiceException {
-        when(acspService.updateACSPDetails(transaction,
-                acspDataDto,
-                REQUEST_ID,
-                USER_ID)).thenThrow(SubmissionNotLinkedToTransactionException.class);
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
 
-        var response = acspController.saveAcspData( TRANSACTION_ID,
-                REQUEST_ID,
-                USER_ID,
+        when(acspService.updateACSPDetails(transaction,
+                acspData,
+                PASSTHROUGH_HEADER,
+                acspData.getId())).thenThrow(SubmissionNotLinkedToTransactionException.class);
+
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
+
+        var response = acspController.saveAcspData(
                 transaction,
-                acspDataDto);
+                acspData,
+                mockHttpServletRequest);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
@@ -94,8 +103,8 @@ class AcspControllerTest {
         acspDataDto = new AcspDataDto();
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
 
-        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID,
-                transaction, REQUEST_ID);
+        var response = acspController.getAcspData(SUBMISSION_ID,
+                transaction);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -105,8 +114,8 @@ class AcspControllerTest {
     void getAcspWhenGetAcspReturnsNull() throws SubmissionNotLinkedToTransactionException {
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.empty());
 
-        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID,
-                transaction, REQUEST_ID);
+        var response = acspController.getAcspData(SUBMISSION_ID,
+                transaction);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
@@ -117,24 +126,26 @@ class AcspControllerTest {
         acspDataDto = new AcspDataDto();
         when(acspService.getAcsp(any(), any())).thenThrow(SubmissionNotLinkedToTransactionException.class);
 
-        var response = acspController.getAcspData(TRANSACTION_ID, SUBMISSION_ID,
-                transaction, REQUEST_ID);
+        var response = acspController.getAcspData(SUBMISSION_ID,
+                transaction);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     void checkHasApplicationTrue() {
         when(acspService.getAcspApplicationStatus(any(), any())).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
 
-        var response = acspController.checkHasApplication(USER_ID, REQUEST_ID);
+        var response = acspController.checkHasApplication(USER_ID, mockHttpServletRequest);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
     void checkHasApplicationFalse() {
         when(acspService.getAcspApplicationStatus(any(), any())).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
 
-        var response = acspController.checkHasApplication(USER_ID, REQUEST_ID);
+        var response = acspController.checkHasApplication(USER_ID, mockHttpServletRequest);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 

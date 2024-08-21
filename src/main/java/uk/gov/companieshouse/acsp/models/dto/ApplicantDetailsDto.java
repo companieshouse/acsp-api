@@ -1,33 +1,27 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.time.LocalDate;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ApplicantDetailsDto {
 
-    @JsonProperty("firstName")
     private String firstName;
 
-    @JsonProperty("lastName")
     private String lastName;
 
-    @JsonProperty("middleName")
     private String middleName;
 
-    @JsonProperty("correspondenceAddress")
     private AddressDto correspondenceAddress;
 
-    @JsonProperty("dateOfBirth")
     private LocalDate dateOfBirth;
 
-    @JsonProperty("nationality")
     private NationalityDto nationality;
 
-    @JsonProperty("countryOfResidence")
     private String countryOfResidence;
 
-    @JsonProperty("correspondenceAddressIsSameAsRegisteredOfficeAddress")
     private boolean correspondenceAddressIsSameAsRegisteredOfficeAddress;
 
 

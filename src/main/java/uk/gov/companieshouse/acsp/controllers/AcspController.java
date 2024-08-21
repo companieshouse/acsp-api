@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.acsp.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
@@ -17,66 +17,59 @@ import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionExce
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
-import uk.gov.companieshouse.acsp.service.TransactionService;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
+import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import java.util.Optional;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.TRANSACTION_ID_KEY;
-import static uk.gov.companieshouse.acsp.util.Constants.ERIC_ACCESS_TOKEN;
-import static uk.gov.companieshouse.acsp.util.Constants.ERIC_IDENTITY;
 import static uk.gov.companieshouse.acsp.util.Constants.TRANSACTION_KEY;
 
 
 @RestController
 public class AcspController {
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
+
     @Autowired
     private AcspService acspService;
 
-    @Autowired
-    private TransactionService transactionService;
 
-    @PostMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
+    @PostMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/authorised-corporate-service-provider-applications")
     public ResponseEntity<Object> createAcspData(
-            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
-            @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
-            @RequestHeader(value = ERIC_IDENTITY) String userId,
             @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
-            @RequestBody AcspDataDto acspData) {
+            @RequestBody AcspDataDto acspData,
+            HttpServletRequest request) {
         LOGGER.info("received POST request to save acsp data");
         try {
-            return acspService.createAcspRegData(transaction, acspData, requestId, userId);
+            String requestId = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+            return acspService.createAcspRegData(transaction, acspData, requestId);
         } catch (Exception e) {
             LOGGER.error("Error creating record " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PutMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp")
+    @PutMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/authorised-corporate-service-provider-applications/{acsp_application_id}")
     public ResponseEntity<Object> saveAcspData(
-            @PathVariable(TRANSACTION_ID_KEY) String transactionId,
-            @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId,
-            @RequestHeader(value = ERIC_IDENTITY) String userId,
             @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
-            @RequestBody AcspDataDto acspData)throws ServiceException {
+            @RequestBody AcspDataDto acspData,
+            HttpServletRequest request) throws ServiceException {
         LOGGER.info("received request to PUT acsp data");
         try {
-            return acspService.updateACSPDetails(transaction, acspData, requestId, userId);
+            String requestId = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
+            return acspService.updateACSPDetails(transaction, acspData, requestId, acspData.getId());
         } catch (SubmissionNotLinkedToTransactionException | InvalidTransactionStatusException e) {
             LOGGER.error("Error updating record " + e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @GetMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/acsp/{acsp_id}")
-    public ResponseEntity<Object> getAcspData(@PathVariable(TRANSACTION_ID_KEY) String transactionId,
-                                              @PathVariable("acsp_id") String acspId,
-                                              @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
-                                              @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId) {
+    @GetMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/authorised-corporate-service-provider-applications/{acsp_application_id}")
+    public ResponseEntity<Object> getAcspData(@PathVariable("acsp_application_id") String acspId,
+                                              @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction) {
         LOGGER.info("received request to get acsp data");
         Optional<AcspDataDto> acspData;
         try {
@@ -91,15 +84,16 @@ public class AcspController {
         }
     }
 
-    @GetMapping("/acsp-api/user/{acsp_id}/application")
-    public ResponseEntity<Object> checkHasApplication(@PathVariable("acsp_id") String acspId,
-                                                @RequestHeader(value = ERIC_ACCESS_TOKEN) String requestId){
+    @GetMapping("/acsp-api/user/{acsp_application_id}/application")
+    public ResponseEntity<Object> checkHasApplication(@PathVariable("acsp_application_id") String acspId,
+                                                      HttpServletRequest request){
         LOGGER.info("received request to check for user applications");
+        String requestId = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         return acspService.getAcspApplicationStatus(acspId, requestId);
     }
 
-    @DeleteMapping("/acsp-api/user/{acsp_id}/application")
-    public ResponseEntity<Object> deleteApplication(@PathVariable("acsp_id") String acspId) {
+    @DeleteMapping("/acsp-api/user/{acsp_application_id}/application")
+    public ResponseEntity<Object> deleteApplication(@PathVariable("acsp_application_id") String acspId) {
         LOGGER.info("received request to delete application for id: " + acspId);
         return acspService.deleteAcspApplication(acspId);
     }

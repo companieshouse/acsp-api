@@ -28,8 +28,17 @@ public enum AMLSupervisoryBodies {
     SRASEW("Solicitors Regulation Authority (SRA) Solicitors in England and Wales"),
     HMRC("Her Majesty's Revenue and Customs");
 
-    public final String label;
-    private AMLSupervisoryBodies(String label) {
-        this.label = label;
+    public final String amlSupervisoryBodies;
+
+    AMLSupervisoryBodies(String amlSupervisoryBodies) {
+        this.amlSupervisoryBodies = amlSupervisoryBodies;
+    }
+
+    /**
+     *   getValue() returns the selected value (for e.g. AML Supervisory bodies) from this enum list
+     * @return selected value of amlSupervisoryBodies
+     */
+    public String getValue() {
+        return this.amlSupervisoryBodies;
     }
 }

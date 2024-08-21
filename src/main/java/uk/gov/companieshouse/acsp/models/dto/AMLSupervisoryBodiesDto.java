@@ -1,13 +1,13 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AMLSupervisoryBodiesDto {
 
-    @JsonProperty("amlSupervisoryBody")
     private String amlSupervisoryBody;
 
-    @JsonProperty("membershipId")
     private String membershipId;
 
     public String getMembershipId() {
