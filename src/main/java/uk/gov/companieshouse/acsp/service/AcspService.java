@@ -75,10 +75,12 @@ public class AcspService {
             updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId);
             ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                     transaction.getId(), insertedSubmission.getId()));
+            System.out.println("post 2------------>" + TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()));
             acspDataDao.setTypeOfBusiness(TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()).name());
+//            System.out.println("test------------>" + acspDataDao.getTypeOfBusiness());
             acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
             System.out.println("post 1------------>" + acspDataDao.getTypeOfBusiness());
-            System.out.println("post 2------------>" + TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()));
+
             return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
         } catch (DuplicateKeyException e) {
             LOGGER.error("A document already exist with this id " + acspDataDao.getId());
@@ -116,10 +118,13 @@ public class AcspService {
             LOGGER.debug("No company details found in acspDataDto");
         }
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
+        acspDataDao.setTypeOfBusiness(acspDataDto.getTypeOfBusiness().getLabel());
+        System.out.println("enum stored in DB put------------>" + acspDataDao.getTypeOfBusiness());
 
         var updatedSubmission = acspRepository.save(acspDataDao);
         ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                 transaction.getId(), updatedSubmission.getId()));
+        acspDataDao.setTypeOfBusiness(TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()).name());
         acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
         return ResponseEntity.ok().body(acspDataDto);
     }
@@ -143,7 +148,7 @@ public class AcspService {
         if(acspData.isPresent()) {
             AcspDataDao acspDataDao = acspData.get();
             System.out.println("get 1------------>" + acspDataDao.getTypeOfBusiness());
-            System.out.println("get 2------------>" + TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()));
+            System.out.println("get 2------------>" + TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()).name());
             acspDataDao.setTypeOfBusiness(TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()).name());
             var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
             System.out.println("enum from DB---------------->" + acspDataDto.getTypeOfBusiness());

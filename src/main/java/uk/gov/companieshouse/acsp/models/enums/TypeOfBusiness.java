@@ -14,10 +14,12 @@ public enum TypeOfBusiness {
         this.label = label;
     }
 
+    //text
     public String getLabel() {
         return label;
     }
 
+    //keys
     public static TypeOfBusiness findByLabel(String label){
         for(TypeOfBusiness v : values()){
             if( v.label.equals(label)){
