@@ -10,9 +10,10 @@ import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 @Mapper(componentModel = "spring", uses = EnumTranslator.class)
 public interface ACSPRegDataDtoDaoMapper {
       @Mapping(source = "typeOfBusiness", target = "typeOfBusiness", qualifiedByName = "TypeOfBusinessStringToEnum")
+      @Mapping(source = "roleType", target = "roleType", qualifiedByName = "RoleTypeStringToEnum")
       AcspDataDto daoToDto(AcspDataDao acspDataDao);
 
       @Mapping(source = "typeOfBusiness", target = "typeOfBusiness", qualifiedByName = "TypeOfBusinessEnumToString")
+      @Mapping(source = "roleType", target = "roleType", qualifiedByName = "RoleTypeEnumToString")
       AcspDataDao dtoToDao(AcspDataDto acspDataDto);
-
 }

@@ -25,7 +25,7 @@ public class AcspDataDao {
     private String typeOfBusiness;
 
     @Field("role_type")
-    private RoleType roleType;
+    private String roleType;
 
     @Field("verified")
     private Boolean verified;
@@ -86,11 +86,11 @@ public class AcspDataDao {
         this.typeOfBusiness = typeOfBusiness;
     }
 
-    public RoleType getRoleType() {
+    public String getRoleType() {
         return roleType;
     }
 
-    public void setRoleType(RoleType roleType) {
+    public void setRoleType(String roleType) {
         this.roleType = roleType;
     }
 

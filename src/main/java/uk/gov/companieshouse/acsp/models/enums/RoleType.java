@@ -15,4 +15,19 @@ public enum RoleType {
     private RoleType(String label) {
         this.label = label;
     }
+
+    //text
+    public String getLabel() {
+        return label;
+    }
+
+    //keys
+    public static RoleType findByLabel(String label){
+        for(RoleType v : values()){
+            if( v.label.equals(label)){
+                return v;
+            }
+        }
+        return null;
+    }
 }
