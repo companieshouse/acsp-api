@@ -10,6 +10,7 @@ public enum TypeOfBusiness {
     CORPORATE_BODY("corporate-body");
 
     public final String label;
+
     private TypeOfBusiness(String label) {
         this.label = label;
     }
@@ -20,9 +21,9 @@ public enum TypeOfBusiness {
     }
 
     //keys
-    public static TypeOfBusiness findByLabel(String label){
-        for(TypeOfBusiness v : values()){
-            if( v.label.equals(label)){
+    public static TypeOfBusiness findByLabel(String label) {
+        for (TypeOfBusiness v : values()) {
+            if (v.label.equals(label)) {
                 return v;
             }
         }

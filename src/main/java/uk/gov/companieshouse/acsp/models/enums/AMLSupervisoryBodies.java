@@ -29,6 +29,7 @@ public enum AMLSupervisoryBodies {
     HMRC("her-majesty's-revenue-and-customs");
 
     public final String label;
+
     private AMLSupervisoryBodies(String label) {
         this.label = label;
     }
@@ -38,9 +39,9 @@ public enum AMLSupervisoryBodies {
     }
 
     //keys
-    public static AMLSupervisoryBodies findByLabel(String label){
-        for(AMLSupervisoryBodies v : values()){
-            if( v.label.equals(label)){
+    public static AMLSupervisoryBodies findByLabel(String label) {
+        for (AMLSupervisoryBodies v : values()) {
+            if (v.label.equals(label)) {
                 return v;
             }
         }

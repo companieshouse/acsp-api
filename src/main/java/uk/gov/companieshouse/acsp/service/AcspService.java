@@ -52,14 +52,14 @@ public class AcspService {
     }
 
     public ResponseEntity<Object> createAcspRegData(Transaction transaction, AcspDataDto acspData,
-                                                  String requestId, String userId) {
+                                                    String requestId, String userId) {
         return createDataAndUpdateTransaction(transaction, acspData, requestId, userId);
     }
 
     private ResponseEntity<Object> createDataAndUpdateTransaction(Transaction transaction,
-                                                                AcspDataDto acspDataDto,
-                                                                String requestId,
-                                                                String userId) {
+                                                                  AcspDataDto acspDataDto,
+                                                                  String requestId,
+                                                                  String userId) {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         String submissionId = acspDataDao.getId();
@@ -88,16 +88,16 @@ public class AcspService {
     }
 
     public ResponseEntity<Object> updateACSPDetails(Transaction transaction,
-                                                                AcspDataDto acspDataDto,
-                                                                String requestId,
-                                                                String acspId) throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException, ServiceException {
+                                                    AcspDataDto acspDataDto,
+                                                    String requestId,
+                                                    String acspId) throws SubmissionNotLinkedToTransactionException, InvalidTransactionStatusException, ServiceException {
         if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
             throw new SubmissionNotLinkedToTransactionException(String.format(
                     "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
         }
         //check for browser back etc.
         if (TransactionStatus.CLOSED == transaction.getStatus()
-                || TransactionStatus.DELETED == transaction.getStatus()){
+                || TransactionStatus.DELETED == transaction.getStatus()) {
             throw new InvalidTransactionStatusException(String.format(
                     "Can't update transaction with stastus: %s ", transaction.getStatus().toString()));
         }
@@ -137,7 +137,7 @@ public class AcspService {
     public Optional<AcspDataDto> getAcsp(String acspId, Transaction transaction) throws SubmissionNotLinkedToTransactionException {
 
         Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
-        if(acspData.isPresent()) {
+        if (acspData.isPresent()) {
             AcspDataDao acspDataDao = acspData.get();
             var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
             if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
@@ -151,20 +151,20 @@ public class AcspService {
         }
     }
 
-    public ResponseEntity<Object> getAcspApplicationStatus(String userId, String requestId){
-        try{
+    public ResponseEntity<Object> getAcspApplicationStatus(String userId, String requestId) {
+        try {
             var application = acspRepository.findById(userId);
-            if (application.isEmpty()){
+            if (application.isEmpty()) {
                 LOGGER.info("No application found for userId: " + userId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             String transactionId = application.get().getLinks().get("self").split("/")[2];
             var transaction = transactionService.getTransaction(requestId, transactionId);
-            if(!TransactionStatus.CLOSED.equals(transaction.getStatus())) {
+            if (!TransactionStatus.CLOSED.equals(transaction.getStatus())) {
                 LOGGER.info("Open application found for userId: " + userId);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            if(transaction.getFilings().get(transactionId + "-1").getStatus().equals("rejected")){
+            if (transaction.getFilings().get(transactionId + "-1").getStatus().equals("rejected")) {
                 LOGGER.info("Rejected application found for userId: " + userId);
                 acspRepository.delete(application.get());
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -196,7 +196,7 @@ public class AcspService {
         transaction.setResources(Collections.singletonMap(submissionUri, resource));
         var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
         transaction.setResumeJourneyUri(resumeJourneyUri);
-        transactionService.updateTransaction(requestId,transaction);
+        transactionService.updateTransaction(requestId, transaction);
     }
 
     private String getSubmissionUri(String transactionId, String submissionId) {

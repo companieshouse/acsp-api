@@ -136,7 +136,7 @@ class AcspServiceTest {
     }
 
     @Test
-    void updateAcsp() throws Exception{
+    void updateAcsp() throws Exception {
         AcspDataDto acspData = new AcspDataDto();
         acspData.setId("demo@ch.gov.uk");
 
@@ -157,7 +157,7 @@ class AcspServiceTest {
 
 
     @Test
-    void updateAcspWhenTransactionisPendingPayment() throws Exception{
+    void updateAcspWhenTransactionisPendingPayment() throws Exception {
         AcspDataDto acspData = new AcspDataDto();
         acspData.setId("demo@ch.gov.uk");
 
@@ -387,7 +387,7 @@ class AcspServiceTest {
                 "demo@ch.gov.uk");
         verify(transaction).setCompanyName("Test Company");
         verify(transaction).setCompanyNumber("12345678");
-        verify(transactionService).updateTransaction((REQUEST_ID),(transaction));
+        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -411,7 +411,7 @@ class AcspServiceTest {
                 REQUEST_ID,
                 "demo@ch.gov.uk");
         verify(transaction).setCompanyName("Test Business Name");
-        verify(transactionService).updateTransaction((REQUEST_ID),(transaction));
+        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -435,7 +435,7 @@ class AcspServiceTest {
                 "demo@ch.gov.uk");
         verify(transaction, times(0)).setCompanyName(anyString());
         verify(transaction, times(0)).setCompanyNumber(anyString());
-        verify(transactionService, times(0)).updateTransaction((REQUEST_ID),(transaction));
+        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }

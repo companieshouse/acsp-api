@@ -11,7 +11,7 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 @Service
 public class EnumTranslator {
 
-    
+
     public EnumTranslator() {
 
     }
@@ -28,7 +28,7 @@ public class EnumTranslator {
 
     @Named("RoleTypeEnumToString")
     public String roleTypeEnumToString(RoleType inputEnum) {
-        return inputEnum != null ? inputEnum.getLabel(): "";
+        return inputEnum != null ? inputEnum.getLabel() : "";
     }
 
     @Named("RoleTypeStringToEnum")
@@ -38,7 +38,7 @@ public class EnumTranslator {
 
     @Named("WorkSectorEnumToString")
     public String businessSectorEnumToString(BusinessSector inputEnum) {
-        return inputEnum != null ? inputEnum.getLabel(): "";
+        return inputEnum != null ? inputEnum.getLabel() : "";
     }
 
     @Named("WorkSectorStringToEnum")

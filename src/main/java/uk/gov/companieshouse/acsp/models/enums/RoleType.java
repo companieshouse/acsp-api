@@ -12,6 +12,7 @@ public enum RoleType {
     SOMEONE_ELSE("someone-else");
 
     public final String label;
+
     private RoleType(String label) {
         this.label = label;
     }
@@ -22,9 +23,9 @@ public enum RoleType {
     }
 
     //keys
-    public static RoleType findByLabel(String label){
-        for(RoleType v : values()){
-            if( v.label.equals(label)){
+    public static RoleType findByLabel(String label) {
+        for (RoleType v : values()) {
+            if (v.label.equals(label)) {
                 return v;
             }
         }
