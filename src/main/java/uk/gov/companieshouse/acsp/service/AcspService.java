@@ -62,7 +62,6 @@ public class AcspService {
                                                                 String userId) {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
-//        acspDataDao.setTypeOfBusiness(acspDataDto.getTypeOfBusiness().getLabel());
         System.out.println("enum stored in DB ------------>" + acspDataDao.getTypeOfBusiness());
         String submissionId = acspDataDao.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
@@ -76,9 +75,7 @@ public class AcspService {
             ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                     transaction.getId(), insertedSubmission.getId()));
 
-//            acspDataDao.setTypeOfBusiness(TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()).name());
             acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
-            System.out.println("post------------>" + acspDataDao.getTypeOfBusiness());
 
             return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
         } catch (DuplicateKeyException e) {
@@ -117,8 +114,6 @@ public class AcspService {
             LOGGER.debug("No company details found in acspDataDto");
         }
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
-//        acspDataDao.setTypeOfBusiness(acspDataDto.getTypeOfBusiness().getLabel());
-        System.out.println("enum stored in DB put------------>" + acspDataDao.getTypeOfBusiness());
 
         var updatedSubmission = acspRepository.save(acspDataDao);
         ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",

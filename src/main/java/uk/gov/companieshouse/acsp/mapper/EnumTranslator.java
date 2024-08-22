@@ -4,6 +4,7 @@ import org.mapstruct.Context;
 import org.mapstruct.Named;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 
@@ -33,6 +34,16 @@ public class EnumTranslator {
     @Named("RoleTypeStringToEnum")
     public RoleType roleTypeStringToEnum(String inputStr) {
         return RoleType.findByLabel(inputStr);
+    }
+
+    @Named("WorkSectorEnumToString")
+    public String businessSectorEnumToString(BusinessSector inputEnum) {
+        return inputEnum != null ? inputEnum.getLabel(): "";
+    }
+
+    @Named("WorkSectorStringToEnum")
+    public BusinessSector businessSectorStringToEnum(String inputStr) {
+        return BusinessSector.findByLabel(inputStr);
     }
 
 }

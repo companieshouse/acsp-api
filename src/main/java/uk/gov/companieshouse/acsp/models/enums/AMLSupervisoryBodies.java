@@ -32,4 +32,18 @@ public enum AMLSupervisoryBodies {
     private AMLSupervisoryBodies(String label) {
         this.label = label;
     }
+
+    public String getLabel() {
+        return label;
+    }
+
+    //keys
+    public static AMLSupervisoryBodies findByLabel(String label){
+        for(AMLSupervisoryBodies v : values()){
+            if( v.label.equals(label)){
+                return v;
+            }
+        }
+        return null;
+    }
 }
