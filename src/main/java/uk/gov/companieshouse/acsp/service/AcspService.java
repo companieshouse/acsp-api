@@ -62,7 +62,6 @@ public class AcspService {
                                                                 String userId) {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
-        System.out.println("enum stored in DB ------------>" + acspDataDao.getTypeOfBusiness());
         String submissionId = acspDataDao.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
         updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
@@ -118,7 +117,6 @@ public class AcspService {
         var updatedSubmission = acspRepository.save(acspDataDao);
         ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                 transaction.getId(), updatedSubmission.getId()));
-//        acspDataDao.setTypeOfBusiness(TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()).name());
         acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
         return ResponseEntity.ok().body(acspDataDto);
     }
@@ -141,9 +139,7 @@ public class AcspService {
         Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
         if(acspData.isPresent()) {
             AcspDataDao acspDataDao = acspData.get();
-//            acspDataDao.setTypeOfBusiness(TypeOfBusiness.findByLabel(acspDataDao.getTypeOfBusiness()).name());
             var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
-            System.out.println("enum from DB---------------->" + acspDataDto.getTypeOfBusiness());
             if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
                 throw new SubmissionNotLinkedToTransactionException(String.format(
                         "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
