@@ -1,23 +1,20 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AcspDataSubmissionDto {
 
-    @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
-    @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
-
-    @JsonProperty("last_modified_by_user_id")
 
     private String lastModifiedByUserId;
 
-    @JsonProperty("http_request_id")
     private String httpRequestId;
 
     public LocalDateTime getCreatedAt() {

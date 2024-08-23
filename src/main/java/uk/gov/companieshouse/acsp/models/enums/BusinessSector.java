@@ -10,9 +10,18 @@ public enum BusinessSector {
     HVD("high-value-dealers"),
     CASINOS("casinos");
 
-    public final String label;
-    private BusinessSector(String label) {
-        this.label = label;
+    public final String businessSector;
+
+    BusinessSector(String businessSector) {
+        this.businessSector = businessSector;
+    }
+
+    /**
+     *   getValue() returns the selected value (for e.g. Business Sector) from this enum list
+     * @return selected value of business sector
+     */
+    public String getValue() {
+        return this.businessSector;
     }
 
     //text

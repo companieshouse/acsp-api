@@ -63,7 +63,6 @@ public class AcspService {
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         String submissionId = acspDataDao.getId();
         final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
-        updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId, userId);
 
         // create the Resource to be added to the Transaction (includes various links to the resource)
         var acspTransactionResource = createAcspTransactionResource(submissionUri);
@@ -128,7 +127,7 @@ public class AcspService {
         var submission = new AcspDataSubmissionDao();
         submission.setCreatedAt(LocalDateTime.now());
         submission.setHttpRequestId(requestId);
-        submission.setLastModifiedByUserId(userId);
+        submission.setLastModifiedByUserId(acspData.getId());
         acspData.setAcspDataSubmission(submission);
         acspData.setLinks(Collections.singletonMap(LINK_SELF, submissionUri));
     }
@@ -195,7 +194,7 @@ public class AcspService {
         transaction.setResources(Collections.singletonMap(submissionUri, resource));
         var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
         transaction.setResumeJourneyUri(resumeJourneyUri);
-        transactionService.updateTransaction(requestId, transaction);
+        transactionService.updateTransaction(requestId,transaction);
     }
 
     private String getSubmissionUri(String transactionId, String submissionId) {

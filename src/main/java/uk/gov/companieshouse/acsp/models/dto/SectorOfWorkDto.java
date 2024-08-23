@@ -1,10 +1,11 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class SectorOfWorkDto {
 
-    @JsonProperty("whichSector")
     private String whichSector;
 
     public String getWhichSector() {
