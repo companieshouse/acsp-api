@@ -4,7 +4,7 @@ public enum TypeOfBusiness {
     LC("limited-company"),
     LP("limited-partnership"),
     LLP("limited-liability-partnership"),
-    PARTNERSHIP("on-registered-partnership"),
+    PARTNERSHIP("non-registered-partnership"),
     SOLE_TRADER("sole-trader"),
     UNINCORPORATED("unincorporated-entity"),
     CORPORATE_BODY("corporate-body");
