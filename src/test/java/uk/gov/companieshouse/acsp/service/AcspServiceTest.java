@@ -98,7 +98,6 @@ class AcspServiceTest {
         doNothing().when(transactionService).updateTransaction(any(), any());
         ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
                 acspData,
-
                 REQUEST_ID);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
