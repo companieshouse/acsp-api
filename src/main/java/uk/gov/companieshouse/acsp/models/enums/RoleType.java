@@ -13,7 +13,7 @@ public enum RoleType {
 
     public final String label;
 
-    private RoleType(String label) {
+     RoleType(String label) {
         this.label = label;
     }
 
