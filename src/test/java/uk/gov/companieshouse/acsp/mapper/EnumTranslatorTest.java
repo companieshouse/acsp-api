@@ -14,7 +14,7 @@ public class EnumTranslatorTest {
 	private EnumTranslator enumTranslator;
 
     @Test
-	public void typeOfBusinessEnumToString() {
+	void typeOfBusinessEnumToString() {
 		TypeOfBusiness inputEnum = TypeOfBusiness.PARTNERSHIP;
 		String expected = "non-registered-partnership";
 		String actual = enumTranslator.typeOfBusinessEnumToString(inputEnum);
@@ -23,7 +23,7 @@ public class EnumTranslatorTest {
 	}
 
 	@Test
-	public void typeOfBusinessStringToEnum() {
+	 void typeOfBusinessStringToEnum() {
 		String inputEnum = TypeOfBusiness.LC.label;
 		TypeOfBusiness expected = TypeOfBusiness.LC;
 		TypeOfBusiness actual = enumTranslator.typeOfBusinessStringToEnum(inputEnum);
@@ -32,7 +32,7 @@ public class EnumTranslatorTest {
 	}
 
 	@Test
-	public void workSectorEnumToString() {
+	 void workSectorEnumToString() {
 		BusinessSector inputEnum = BusinessSector.CI;
 		String expected = "credit-institutions";
 		String actual = enumTranslator.businessSectorEnumToString(inputEnum);
@@ -40,7 +40,7 @@ public class EnumTranslatorTest {
 		assertEquals(expected, actual);
 	}
 	@Test
-	public void workSectorStringToEnum() {
+	 void workSectorStringToEnum() {
 		String inputEnum = BusinessSector.AIA.label;
 		BusinessSector expected = BusinessSector.AIA;
 		BusinessSector actual = enumTranslator.businessSectorStringToEnum(inputEnum);
@@ -50,7 +50,7 @@ public class EnumTranslatorTest {
 
 
 	@Test
-	public void roleTypeEnumToString() {
+	 void roleTypeEnumToString() {
 		RoleType inputEnum = RoleType.GENERAL_PARTNER;
 		String expected = "general-partner";
 		String actual = enumTranslator.roleTypeEnumToString(inputEnum);
@@ -58,7 +58,7 @@ public class EnumTranslatorTest {
 		assertEquals(expected, actual);
 	}
 	@Test
-	public void roleTypeStringToEnum() {
+	 void roleTypeStringToEnum() {
 		String inputEnum = RoleType.DIRECTOR.label;
 		RoleType expected = RoleType.DIRECTOR;
 		RoleType actual = enumTranslator.roleTypeStringToEnum(inputEnum);

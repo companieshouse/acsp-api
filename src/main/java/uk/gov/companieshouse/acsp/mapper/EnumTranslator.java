@@ -10,9 +10,9 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 public class EnumTranslator {
 
 
-    public EnumTranslator() {
-
-    }
+//    public EnumTranslator() {
+//
+//    }
 
     @Named("TypeOfBusinessEnumToString")
     public String typeOfBusinessEnumToString(TypeOfBusiness inputEnum) {

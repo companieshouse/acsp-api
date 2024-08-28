@@ -7,7 +7,7 @@ public enum RoleType {
     EQUIVALENT_OF_DIRECTOR("equivalent-to-director"),
     MEMBER_OF_ENTITY("member-of-the-entity"),
     DIRECTOR("director"),
-    MEMBER_OF_LLP("member-of-LLP"),
+    MEMBER_OF_LLP("member-of-llp"),
     GENERAL_PARTNER("general-partner"),
     SOMEONE_ELSE("someone-else");
 
