@@ -7,7 +7,7 @@ locals {
   container_port            = "18642" # default Java port to match start script
   docker_repo               = "acsp-api"
   lb_listener_rule_priority = 18
-  lb_listener_paths         = ["/acsp-api/*", "/transactions/*/acsp*", "/private/transactions/*/acsp/*/filings"]
+  lb_listener_paths         = ["/acsp-api/*", "/transactions/*/authorised-corporate-service-provider-applications*", "/private/transactions/*/authorised-corporate-service-provider-applications/*/filings"]
   healthcheck_path          = "/acsp-api/healthcheck" #healthcheck path for acsp-api service
   healthcheck_matcher       = "200"
   application_subnet_ids    = data.aws_subnets.application.ids

@@ -33,6 +33,12 @@ variable "desired_task_count" {
   default     = 1 # defaulted low for dev environments, override for production
 }
 
+variable "min_task_count" {
+  type        = number
+  description = "The minimum number of tasks for this service."
+  default     = 1
+}
+
 variable "max_task_count" {
   type        = number
   description = "The maximum number of tasks for this service."
@@ -69,7 +75,7 @@ variable "service_autoscale_enabled" {
 variable "service_autoscale_target_value_cpu" {
   type        = number
   description = "Target CPU percentage for the ECS Service to autoscale on"
-  default     = 50 # 100 disables autoscaling using CPU as a metric
+  default     = 80 # 100 disables autoscaling using CPU as a metric
 }
 
 variable "service_scaledown_schedule" {
