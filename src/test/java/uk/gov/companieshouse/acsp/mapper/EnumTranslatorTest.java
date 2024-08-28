@@ -50,7 +50,7 @@ public class EnumTranslatorTest {
     }
 
     @Test
-    public void workSectorEnumToNullString() {
+    void workSectorEnumToNullString() {
         String expected = "";
         String actual = enumTranslator.businessSectorEnumToString(null);
 
@@ -74,7 +74,7 @@ public class EnumTranslatorTest {
     }
 
     @Test
-    public void roleTypeEnumToNullString() {
+    void roleTypeEnumToNullString() {
         String expected = "";
         String actual = enumTranslator.roleTypeEnumToString(null);
 
