@@ -135,7 +135,7 @@ public class AcspService {
 
         Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
         if (acspData.isPresent()) {
-            AcspDataDao acspDataDao = acspData.get();
+            var acspDataDao = acspData.get();
             var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
             if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
                 throw new SubmissionNotLinkedToTransactionException(String.format(

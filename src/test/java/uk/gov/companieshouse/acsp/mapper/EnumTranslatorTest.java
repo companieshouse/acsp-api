@@ -2,7 +2,8 @@ package uk.gov.companieshouse.acsp.mapper;
 
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
@@ -10,7 +11,7 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 
 @SpringBootTest
 public class EnumTranslatorTest {
-    @Autowired
+    @InjectMocks
     private EnumTranslator enumTranslator;
 
     @Test
