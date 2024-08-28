@@ -14,7 +14,7 @@ public class EnumTranslatorTest {
 	private EnumTranslator enumTranslator;
 
     @Test
-	public void typeOfBusinessEnum() {
+	public void typeOfBusinessEnumToString() {
 		TypeOfBusiness inputEnum = TypeOfBusiness.PARTNERSHIP;
 		String expected = "non-registered-partnership";
 		String actual = enumTranslator.typeOfBusinessEnumToString(inputEnum);
@@ -23,20 +23,45 @@ public class EnumTranslatorTest {
 	}
 
 	@Test
-	public void roleTypeEnum() {
-		RoleType inputEnum = RoleType.GENERAL_PARTNER;
-		String expected = "general-partner";
-		String actual = enumTranslator.roleTypeEnumToString(inputEnum);
+	public void typeOfBusinessStringToEnum() {
+		String inputEnum = TypeOfBusiness.LC.label;
+		TypeOfBusiness expected = TypeOfBusiness.LC;
+		TypeOfBusiness actual = enumTranslator.typeOfBusinessStringToEnum(inputEnum);
+
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void workSectorEnumToString() {
+		BusinessSector inputEnum = BusinessSector.CI;
+		String expected = "credit-institutions";
+		String actual = enumTranslator.businessSectorEnumToString(inputEnum);
+
+		assertEquals(expected, actual);
+	}
+	@Test
+	public void workSectorStringToEnum() {
+		String inputEnum = BusinessSector.AIA.label;
+		BusinessSector expected = BusinessSector.AIA;
+		BusinessSector actual = enumTranslator.businessSectorStringToEnum(inputEnum);
 
 		assertEquals(expected, actual);
 	}
 
 
 	@Test
-	public void workSectorEnum() {
-		BusinessSector inputEnum = BusinessSector.AIA;
-		String expected = "auditors, insolvency-practitioners, external-accountants-and-tax-advisers";
-		String actual = enumTranslator.businessSectorEnumToString(inputEnum);
+	public void roleTypeEnumToString() {
+		RoleType inputEnum = RoleType.GENERAL_PARTNER;
+		String expected = "general-partner";
+		String actual = enumTranslator.roleTypeEnumToString(inputEnum);
+
+		assertEquals(expected, actual);
+	}
+	@Test
+	public void roleTypeStringToEnum() {
+		String inputEnum = RoleType.DIRECTOR.label;
+		RoleType expected = RoleType.DIRECTOR;
+		RoleType actual = enumTranslator.roleTypeStringToEnum(inputEnum);
 
 		assertEquals(expected, actual);
 	}
