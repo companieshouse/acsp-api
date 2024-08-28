@@ -10,7 +10,7 @@ import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 
 @SpringBootTest
-public class EnumTranslatorTest {
+ class EnumTranslatorTest {
     @InjectMocks
     private EnumTranslator enumTranslator;
 
