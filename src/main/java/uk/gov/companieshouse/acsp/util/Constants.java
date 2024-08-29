@@ -17,7 +17,7 @@ public class Constants {
     public static final String TRUE = "true";
     public static final String FILING_KIND_ACSP = "acsp";
     public static final String COSTS_URI_SUFFIX = "/costs";
-    public static final String SUBMISSION_URI_PATTERN = "/transactions/%s/acsp/%s";
+    public static final String SUBMISSION_URI_PATTERN = "/transactions/%s/authorised-corporate-service-provider-applications/%s";
     public static final String RESUME_JOURNEY_URI_PATTERN =
             "/register-as-companies-house-authorised-agent/resume?transactionId=%s&acspId=%s";
     public static final String LINK_SELF = "self";
