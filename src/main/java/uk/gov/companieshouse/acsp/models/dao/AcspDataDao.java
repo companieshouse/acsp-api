@@ -22,10 +22,10 @@ public class AcspDataDao {
     private AddressDao registeredOfficeAddress;
 
     @Field("type_of_business")
-    private TypeOfBusiness typeOfBusiness;
+    private String typeOfBusiness;
 
     @Field("role_type")
-    private RoleType roleType;
+    private String roleType;
 
     @Field("verified")
     private Boolean verified;
@@ -78,19 +78,19 @@ public class AcspDataDao {
         this.registeredOfficeAddress = registeredOfficeAddress;
     }
 
-    public TypeOfBusiness getTypeOfBusiness() {
+    public String getTypeOfBusiness() {
         return typeOfBusiness;
     }
 
-    public void setTypeOfBusiness(TypeOfBusiness typeOfBusiness) {
+    public void setTypeOfBusiness(String typeOfBusiness) {
         this.typeOfBusiness = typeOfBusiness;
     }
 
-    public RoleType getRoleType() {
+    public String getRoleType() {
         return roleType;
     }
 
-    public void setRoleType(RoleType roleType) {
+    public void setRoleType(String roleType) {
         this.roleType = roleType;
     }
 

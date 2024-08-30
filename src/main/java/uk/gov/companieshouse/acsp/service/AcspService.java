@@ -71,7 +71,9 @@ public class AcspService {
             updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId);
             ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                     transaction.getId(), insertedSubmission.getId()));
+
             acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
+
             return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
         } catch (DuplicateKeyException e) {
             LOGGER.error("A document already exist with this id " + acspDataDao.getId());
@@ -132,9 +134,9 @@ public class AcspService {
     public Optional<AcspDataDto> getAcsp(String acspId, Transaction transaction) throws SubmissionNotLinkedToTransactionException {
 
         Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
-        if(acspData.isPresent()) {
-            var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspData.get());
-
+        if (acspData.isPresent()) {
+            var acspDataDao = acspData.get();
+            var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
             if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
                 throw new SubmissionNotLinkedToTransactionException(String.format(
                         "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
