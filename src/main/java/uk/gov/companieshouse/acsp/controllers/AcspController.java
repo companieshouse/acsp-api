@@ -99,9 +99,10 @@ public class AcspController {
     }
 
     @DeleteMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/authorised-corporate-service-provider-applications/{acsp_application_id}")
-    public ResponseEntity<Object> deleteApplicationInfo(@PathVariable("acsp_application_id") String acspId) {
+    public ResponseEntity<Object> deleteApplicationInfo(@PathVariable("acsp_application_id") String acspId,
+                                                        @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction) {
         LOGGER.info("received request to delete application for id: " + acspId);
-        return acspService.deleteAcspApplication(acspId);
+        return acspService.deleteAcspApplicationInfo(acspId, transaction);
     }
 
 }

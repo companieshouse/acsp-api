@@ -164,4 +164,22 @@ class AcspControllerTest {
         var response = acspController.deleteApplication(USER_ID);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
+
+
+    @Test
+    void deleteApplicationInfoSuccess() {
+        when(acspService.deleteAcspApplicationInfo(anyString(), any())).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+
+        var response = acspController.deleteApplicationInfo(USER_ID, transaction);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void deleteApplicationInfoError() {
+        when(acspService.deleteAcspApplicationInfo(anyString(), any())).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        var response = acspController.deleteApplicationInfo(USER_ID, transaction);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
 }

@@ -207,4 +207,19 @@ public class AcspService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-}
+
+    public ResponseEntity<Object> deleteAcspApplicationInfo(String id, Transaction transaction) {
+        try {
+            if (transaction == null) {
+                LOGGER.error("Transaction is null");
+                return new ResponseEntity<>("Transaction not found", HttpStatus.BAD_REQUEST);
+            }
+            acspRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            LOGGER.error("Error deleting document with id " + id, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+
+    }}
