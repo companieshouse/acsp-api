@@ -59,7 +59,7 @@ class AcspControllerTest {
         when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
 
         var response = acspController.createAcspData(transaction,
-                acspDataDto,mockHttpServletRequest);
+                acspDataDto, mockHttpServletRequest);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
