@@ -1,25 +1,32 @@
 package uk.gov.companieshouse.acsp.models.enums;
 
 public enum TypeOfBusiness {
-    LC("Limited company"),
-    LP("Limited partnership"),
-    LLP("Limited Liability Partnership"),
-    PARTNERSHIP("Non registered partnership"),
-    SOLE_TRADER("Sole trader"),
-    UNINCORPORATED("Unincorporated entity"),
-    CORPORATE_BODY("Corporate body");
+    LC("limited-company"),
+    LP("limited-partnership"),
+    LLP("limited-liability-partnership"),
+    PARTNERSHIP("non-registered-partnership"),
+    SOLE_TRADER("sole-trader"),
+    UNINCORPORATED("unincorporated-entity"),
+    CORPORATE_BODY("corporate-body");
 
-    public final String typeOfBusiness;
+    public final String label;
 
-    TypeOfBusiness(String typeOfBusiness) {
-        this.typeOfBusiness = typeOfBusiness;
+    private TypeOfBusiness(String label) {
+        this.label = label;
     }
 
-    /**
-     *   getValue() returns the selected value (for e.g. Type of Business) from this enum list
-     * @return selected value of typeOfBusiness
-     */
-    public String getValue() {
-        return this.typeOfBusiness;
+    //text
+    public String getLabel() {
+        return label;
+    }
+
+    //keys
+    public static TypeOfBusiness findByLabel(String label) {
+        for (TypeOfBusiness v : values()) {
+            if (v.label.equals(label)) {
+                return v;
+            }
+        }
+        return null;
     }
 }
