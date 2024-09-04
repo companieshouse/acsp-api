@@ -102,7 +102,7 @@ public class AcspController {
     public ResponseEntity<Object> deleteApplicationInfo(@PathVariable("acsp_application_id") String acspId,
                                                         @PathVariable(value = TRANSACTION_ID_KEY) String transaction_id,
                                                         @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction) {
-        LOGGER.info("received request to delete application for id: " + acspId);
+        LOGGER.info("Received request to delete application for id: " + acspId);
 
         if (transaction == null || !transaction.getId().equals(transaction_id)) {
             LOGGER.error("Transaction validation failed for ID: " + transaction_id);
