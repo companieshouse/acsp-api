@@ -30,7 +30,7 @@ class AcspControllerTest {
 
     private static final ResponseEntity<Object> CREATED_SUCCESS_RESPONSE = ResponseEntity.created(URI.create("URI")).body("Created");
 
-    //private static final String TRANSACTION_ID = "324234-123123-768685";
+    private static final String TRANSACTION_ID = "324234-123123-768685";
     private static final String REQUEST_ID = "fd4gld5h3jhh";
     private static final String USER_ID = "22334455";
     private static final String SUBMISSION_ID = "demo@ch.gov.uk";
@@ -168,18 +168,39 @@ class AcspControllerTest {
 
     @Test
     void deleteApplicationInfoSuccess() {
-        when(acspService.deleteAcspApplicationInfo(anyString(), any())).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        when(transaction.getId()).thenReturn(TRANSACTION_ID);
+        when(acspService.deleteAcspApplication(USER_ID)).thenReturn(ResponseEntity.noContent().build());
 
-        var response = acspController.deleteApplicationInfo(USER_ID, transaction);
+        ResponseEntity<Object> response = acspController.deleteApplicationInfo(USER_ID, TRANSACTION_ID, transaction);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    void deleteApplicationInfoError() {
-        when(acspService.deleteAcspApplicationInfo(anyString(), any())).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+    void deleteApplicationInfoTransactionValidationFailed() {
+        when(transaction.getId()).thenReturn("wrong-id");
 
-        var response = acspController.deleteApplicationInfo(USER_ID, transaction);
+
+        ResponseEntity<Object> response = acspController.deleteApplicationInfo(USER_ID, TRANSACTION_ID, transaction);
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void deleteApplicationInfoInternalServerError() {
+
+        when(transaction.getId()).thenReturn(TRANSACTION_ID);
+        when(acspService.deleteAcspApplication(USER_ID)).thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+
+        ResponseEntity<Object> response = acspController.deleteApplicationInfo(USER_ID, TRANSACTION_ID, transaction);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    void deleteApplicationInfoApplicationNotFound() {
+        when(transaction.getId()).thenReturn(TRANSACTION_ID);
+        when(acspService.deleteAcspApplication(USER_ID)).thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+
+        ResponseEntity<Object> response = acspController.deleteApplicationInfo(USER_ID, TRANSACTION_ID, transaction);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
 }
