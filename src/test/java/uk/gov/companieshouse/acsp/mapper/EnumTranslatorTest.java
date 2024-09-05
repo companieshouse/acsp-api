@@ -3,13 +3,14 @@ package uk.gov.companieshouse.acsp.mapper;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
  class EnumTranslatorTest {
     @InjectMocks
     private EnumTranslator enumTranslator;
