@@ -108,7 +108,10 @@ public class AcspController {
             LOGGER.error("Transaction validation failed for ID: " + transaction_id);
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        ResponseEntity<Object> response = acspService.deleteAcspApplication(acspId);
+        System.out.println("acspId:" + acspId);
+        System.out.println("trasncationId:" + transaction_id);
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(acspId, transaction_id);
+
         if (response.getStatusCode().is2xxSuccessful()) {
             LOGGER.info("Successfully deleted application with ID: " + acspId);
         } else {
