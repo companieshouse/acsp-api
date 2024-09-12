@@ -437,4 +437,48 @@ class AcspServiceTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+    @Test
+    void deleteAcspApplicationAndTransactionSuccess() throws ServiceException {
+        String id = USER_ID;
+        String transactionId = TRANSACTION_ID;
+
+        doNothing().when(acspRepository).deleteById(id);
+        doNothing().when(transactionService).deleteTransaction(transactionId);
+
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(id, transactionId);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(acspRepository, times(1)).deleteById(id);
+        verify(transactionService, times(1)).deleteTransaction(transactionId);
+    }
+
+    @Test
+    void deleteAcspApplicationAndTransactionErrorApplication() throws ServiceException {
+        String id = USER_ID;
+        String transactionId = TRANSACTION_ID;
+
+        doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(id);
+
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(id, transactionId);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        verify(acspRepository, times(1)).deleteById(id);
+        verify(transactionService, times(0)).deleteTransaction(transactionId);  // Ensure transaction deletion is not called
+    }
+
+    @Test
+    void deleteAcspApplicationAndTransactionErrorDeletingTransaction() throws ServiceException {
+        String id = USER_ID;
+        String transactionId = TRANSACTION_ID;
+
+        doNothing().when(acspRepository).deleteById(id);
+        doThrow(ServiceException.class).when(transactionService).deleteTransaction(transactionId);
+
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(id, transactionId);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        verify(acspRepository, times(1)).deleteById(id);
+        verify(transactionService, times(1)).deleteTransaction(transactionId);
+    }
+
 }
