@@ -79,4 +79,19 @@ public class TransactionService {
             throw new ServiceException("Error closing transaction", e);
         }
     }
+
+    public void deleteTransaction(String transactionId) throws ServiceException {
+        try {
+            var uri = "/transactions/" + transactionId;
+            var resp = apiClientService.getApiClient()
+                    .transactions().delete(uri)
+                    .execute();
+            if (resp.getStatusCode() != 204) {
+                throw new IOException("Invalid Status Code received: " + resp.getStatusCode());
+            }
+        } catch (IOException | URIValidationException e) {
+            var message = "Error deleting Transaction " + transactionId;
+            throw new ServiceException(message, e);
+        }
+    }
 }

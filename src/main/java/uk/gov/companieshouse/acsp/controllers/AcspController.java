@@ -77,16 +77,16 @@ public class AcspController {
         } catch (SubmissionNotLinkedToTransactionException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-        if (acspData.isEmpty()){
-            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
-        }else{
+        if (acspData.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
             return ResponseEntity.ok().body(acspData);
         }
     }
 
     @GetMapping("/acsp-api/user/{acsp_application_id}/application")
     public ResponseEntity<Object> checkHasApplication(@PathVariable("acsp_application_id") String acspId,
-                                                      HttpServletRequest request){
+                                                      HttpServletRequest request) {
         LOGGER.info("received request to check for user applications");
         String requestId = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         return acspService.getAcspApplicationStatus(acspId, requestId);
@@ -98,4 +98,26 @@ public class AcspController {
         return acspService.deleteAcspApplication(acspId);
     }
 
+    @DeleteMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/authorised-corporate-service-provider-applications/{acsp_application_id}")
+    public ResponseEntity<Object> deleteApplicationInfo(@PathVariable("acsp_application_id") String acspId,
+                                                        @PathVariable(value = TRANSACTION_ID_KEY) String transaction_id,
+                                                        @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction) {
+        LOGGER.info("Received request to delete application for id: " + acspId);
+
+        if (transaction == null || !transaction.getId().equals(transaction_id)) {
+            LOGGER.error("Transaction validation failed for ID: " + transaction_id);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        System.out.println("acspId:" + acspId);
+        System.out.println("trasncationId:" + transaction_id);
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(acspId, transaction_id);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            LOGGER.info("Successfully deleted application with ID: " + acspId);
+        } else {
+            LOGGER.info("Failed to delete application with ID: " + acspId);
+        }
+        return response;
+
+    }
 }
