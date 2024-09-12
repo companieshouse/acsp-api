@@ -463,7 +463,7 @@ class AcspServiceTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         verify(acspRepository, times(1)).deleteById(id);
-        verify(transactionService, times(0)).deleteTransaction(transactionId);  // Ensure transaction deletion is not called
+        verify(transactionService, times(0)).deleteTransaction(transactionId);
     }
 
     @Test

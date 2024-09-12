@@ -267,7 +267,7 @@ class TransactionServiceTest {
         when(apiClientService.getApiClient()).thenReturn(apiClient);
         when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
         when(transactionsResourceHandler.delete("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsDelete);
-        when(transactionsDelete.execute()).thenReturn(new ApiResponse<>(500, null)); // Invalid status code
+        when(transactionsDelete.execute()).thenReturn(new ApiResponse<>(500, null));
 
         assertThrows(ServiceException.class, () -> transactionService.deleteTransaction(TRANSACTION_ID));
     }
