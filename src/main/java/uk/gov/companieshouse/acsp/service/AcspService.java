@@ -216,7 +216,7 @@ public class AcspService {
             transactionService.deleteTransaction(transactionId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            LOGGER.error("Error deleting document with id " + id + "and transaction ID: " + transactionId, e);
+            LOGGER.error("Error deleting document with id " + id + " and transaction ID: " + transactionId, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
