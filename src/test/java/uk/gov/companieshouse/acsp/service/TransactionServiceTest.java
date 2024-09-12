@@ -14,6 +14,7 @@ import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.handler.privatetransaction.PrivateTransactionResourceHandler;
 import uk.gov.companieshouse.api.handler.privatetransaction.request.PrivateTransactionPatch;
 import uk.gov.companieshouse.api.handler.transaction.TransactionsResourceHandler;
+import uk.gov.companieshouse.api.handler.transaction.request.TransactionsDelete;
 import uk.gov.companieshouse.api.handler.transaction.request.TransactionsGet;
 import uk.gov.companieshouse.api.handler.transaction.request.TransactionsUpdate;
 import uk.gov.companieshouse.api.model.ApiResponse;
@@ -60,6 +61,9 @@ class TransactionServiceTest {
 
     @Mock
     private PrivateTransactionPatch privateTransactionPatch;
+
+    @Mock
+    private TransactionsDelete transactionsDelete;
 
     @Mock
     private ApiResponse<Transaction> apiResponse;
@@ -223,5 +227,48 @@ class TransactionServiceTest {
         when(transactionsUpdate.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
         assertThrows(ServiceException.class, () -> transactionService.closeTransaction(transaction));
+    }
+
+    @Test
+    void deleteTransactionSuccess() throws IOException, URIValidationException {
+        when(apiClientService.getApiClient()).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.delete("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsDelete);
+        when(transactionsDelete.execute()).thenReturn(new ApiResponse<>(204, null));
+
+        assertDoesNotThrow(() -> transactionService.deleteTransaction(TRANSACTION_ID));
+
+        verify(transactionsResourceHandler, times(1)).delete("/transactions/" + TRANSACTION_ID);
+        verify(transactionsDelete, times(1)).execute();
+    }
+
+    @Test
+    void deleteTransactionThrowsApiErrorResponseException() throws IOException, URIValidationException {
+        when(apiClientService.getApiClient()).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.delete("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsDelete);
+        when(transactionsDelete.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
+
+        assertThrows(ServiceException.class, () -> transactionService.deleteTransaction(TRANSACTION_ID));
+    }
+
+    @Test
+    void deleteTransactionThrowsUriValidationException() throws IOException, URIValidationException {
+        when(apiClientService.getApiClient()).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.delete("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsDelete);
+        when(transactionsDelete.execute()).thenThrow(new URIValidationException("ERROR"));
+
+        assertThrows(ServiceException.class, () -> transactionService.deleteTransaction(TRANSACTION_ID));
+    }
+
+    @Test
+    void deleteTransactionInvalidStatusCode() throws IOException, URIValidationException {
+        when(apiClientService.getApiClient()).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.delete("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsDelete);
+        when(transactionsDelete.execute()).thenReturn(new ApiResponse<>(500, null));
+
+        assertThrows(ServiceException.class, () -> transactionService.deleteTransaction(TRANSACTION_ID));
     }
 }
