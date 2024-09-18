@@ -30,6 +30,9 @@ public class ApplicantDetailsDao {
     @Field("correspondence_address_is_same_as_registered_office_address")
     private boolean correspondenceAddressIsSameAsRegisteredOfficeAddress;
 
+    @Field("correspondence_email")
+    private String correspondenceEmail;
+
     // Getters and Setters
 
     public String getFirstName() {
@@ -94,5 +97,13 @@ public class ApplicantDetailsDao {
 
     public void setCorrespondenceAddressIsSameAsRegisteredOfficeAddress(boolean correspondenceAddressIsSameAsRegisteredOfficeAddress) {
         this.correspondenceAddressIsSameAsRegisteredOfficeAddress = correspondenceAddressIsSameAsRegisteredOfficeAddress;
+    }
+
+    public String getCorrespondenceEmail() {
+        return correspondenceEmail;
+    }
+
+    public void setCorrespondenceEmail(String correspondenceEmail) {
+        this.correspondenceEmail = correspondenceEmail;
     }
 }

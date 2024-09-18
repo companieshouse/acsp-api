@@ -24,6 +24,7 @@ public class ApplicantDetailsDto {
 
     private boolean correspondenceAddressIsSameAsRegisteredOfficeAddress;
 
+    private String correspondenceEmail;
 
     public String getFirstName() {
         return firstName;
@@ -87,5 +88,13 @@ public class ApplicantDetailsDto {
 
     public void setCorrespondenceAddressIsSameAsRegisteredOfficeAddress(boolean correspondenceAddressIsSameAsRegisteredOfficeAddress) {
         this.correspondenceAddressIsSameAsRegisteredOfficeAddress = correspondenceAddressIsSameAsRegisteredOfficeAddress;
+    }
+
+    public String getCorrespondenceEmail() {
+        return correspondenceEmail;
+    }
+
+    public void setCorrespondenceEmail(String correspondenceEmail) {
+        this.correspondenceEmail = correspondenceEmail;
     }
 }
