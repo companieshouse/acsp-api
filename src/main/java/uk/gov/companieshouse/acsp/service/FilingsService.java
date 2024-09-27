@@ -136,7 +136,7 @@ public class FilingsService {
     //TODO : fetch email as per new design.
     data.put("email", Optional.of("demo@email.com").map((String::toUpperCase)).orElse(null));
 
-    if(TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness()) ||
+    if(TypeOfBusiness.LP.equals(acspDataDto.getTypeOfBusiness()) ||
             TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
             TypeOfBusiness.UNINCORPORATED.equals(acspDataDto.getTypeOfBusiness())) {
       data.put("registered_office_address", buildRegisteredOfficeAddress(acspDataDto));
@@ -254,7 +254,7 @@ public class FilingsService {
     }
     if (acspDataDto.getTypeOfBusiness() != null) {
       switch (acspDataDto.getTypeOfBusiness()) {
-        case LC, LP, LLP:
+        case LC, LLP, CORPORATE_BODY:
           if (acspDataDto.getCompanyDetails() != null) {
             data.put("company_number", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyNumber())
                     .map(String::toUpperCase).orElse(null));
