@@ -60,19 +60,21 @@ public class AcspService {
                                                                 String requestId) {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
-        String submissionId = acspDataDao.getId();
-        final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
-        updateAcspRegWithMetaData(acspDataDao, submissionUri, requestId);
-
-        // create the Resource to be added to the Transaction (includes various links to the resource)
-        var acspTransactionResource = createAcspTransactionResource(submissionUri);
         try {
             var insertedSubmission = acspRepository.insert(acspDataDao);
+
+            String submissionId = insertedSubmission.getId();
+            final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
+            updateAcspRegWithMetaData(insertedSubmission, submissionUri, requestId);
+            acspRepository.save(insertedSubmission);
+            // create the Resource to be added to the Transaction (includes various links to the resource)
+            var acspTransactionResource = createAcspTransactionResource(submissionUri);
+
             updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId);
             ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                     transaction.getId(), insertedSubmission.getId()));
 
-            acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
+            acspDataDto = acspRegDataDtoDaoMapper.daoToDto(insertedSubmission);
 
             return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
         } catch (DuplicateKeyException e) {
