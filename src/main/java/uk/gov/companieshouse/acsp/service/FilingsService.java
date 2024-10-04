@@ -324,6 +324,9 @@ public class FilingsService {
         registeredOfficeAddress.setRegion(
               Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getRegion())
                       .map(String::toUpperCase).orElse(null));
+      registeredOfficeAddress.setLocality(
+              Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getLocality())
+                      .map(String::toUpperCase).orElse(null));
     }
     return registeredOfficeAddress;
   }
