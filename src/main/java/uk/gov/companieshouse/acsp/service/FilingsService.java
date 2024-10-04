@@ -299,7 +299,7 @@ public class FilingsService {
                 Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getRegion())
                         .map(String::toUpperCase).orElse(null));
         correspondenceAddress.setLocality(
-                Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getLocality())
+                Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getLocality())
                         .map(String::toUpperCase).orElse(null));
       }
     }
