@@ -298,6 +298,9 @@ public class FilingsService {
         correspondenceAddress.setRegion(
                 Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getRegion())
                         .map(String::toUpperCase).orElse(null));
+        correspondenceAddress.setLocality(
+                Optional.ofNullable(acspDataDto.getRegisteredOfficeAddress().getLocality())
+                        .map(String::toUpperCase).orElse(null));
       }
     }
     return correspondenceAddress;
