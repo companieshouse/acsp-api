@@ -14,6 +14,7 @@ import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 
 import java.net.URI;
 import java.util.Optional;
@@ -22,16 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class AcspControllerTest {
 
     private static final ResponseEntity<Object> CREATED_SUCCESS_RESPONSE = ResponseEntity.created(URI.create("URI")).body("Created");
 
-    //private static final String TRANSACTION_ID = "324234-123123-768685";
-    private static final String REQUEST_ID = "fd4gld5h3jhh";
+    private static final String TRANSACTION_ID = "324234-123123-768685";
     private static final String USER_ID = "22334455";
     private static final String SUBMISSION_ID = "demo@ch.gov.uk";
     private static final String PASSTHROUGH_HEADER = "passthrough";
@@ -150,36 +151,32 @@ class AcspControllerTest {
     }
 
     @Test
-    void deleteApplicationSuccess() {
-        when(acspService.deleteAcspApplication(any())).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+    void deleteApplicationSuccessTransactionClosed() {
+        when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED);
+        when(acspService.deleteAcspApplication(USER_ID)).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
 
-        var response = acspController.deleteApplication(USER_ID);
+        var response = acspController.deleteApplication(USER_ID, transaction);
+        verify(acspService, times(1)).deleteAcspApplication(USER_ID);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    void deleteApplicationError() {
-        when(acspService.deleteAcspApplication(any())).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+    void deleteApplicationSuccessTransactionOpen() {
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+        when(transaction.getId()).thenReturn(TRANSACTION_ID);
+        when(acspService.deleteAcspApplicationAndTransaction(USER_ID, TRANSACTION_ID)).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
 
-        var response = acspController.deleteApplication(USER_ID);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void deleteApplicationInfoSuccess() {
-        when(transaction.getId()).thenReturn("123456");
-        when(acspService.deleteAcspApplicationAndTransaction(USER_ID, "123456")).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
-
-        var response = acspController.deleteApplicationInfo(USER_ID, transaction);
+        var response = acspController.deleteApplication(USER_ID, transaction);
+        verify(acspService, times(1)).deleteAcspApplicationAndTransaction(USER_ID, TRANSACTION_ID);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    void deleteApplicationInfoFailure() {
+    void deleteApplicationFailure() {
         when(transaction.getId()).thenReturn("123456");
         when(acspService.deleteAcspApplicationAndTransaction(USER_ID, "123456")).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        var response = acspController.deleteApplicationInfo(USER_ID, transaction);
+        var response = acspController.deleteApplication(USER_ID, transaction);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }
