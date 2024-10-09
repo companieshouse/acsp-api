@@ -44,6 +44,8 @@ class AcspServiceTest {
     private static final String USER_ID = "22334455";
     private static final String TRANSACTION_ID = "12345678";
 
+    private static final String PASS_THROUGH_HEADER = "passThoughHeader";
+
     @InjectMocks
     private AcspService acspService;
 
@@ -439,46 +441,39 @@ class AcspServiceTest {
 
     @Test
     void deleteAcspApplicationAndTransactionSuccess() throws ServiceException {
-        String id = USER_ID;
-        String transactionId = TRANSACTION_ID;
 
-        doNothing().when(acspRepository).deleteById(id);
-        doNothing().when(transactionService).deleteTransaction(transactionId);
+        doNothing().when(acspRepository).deleteById(USER_ID);
+        doNothing().when(transactionService).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
 
-        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(id, transactionId);
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(PASS_THROUGH_HEADER, USER_ID, TRANSACTION_ID);
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(acspRepository, times(1)).deleteById(id);
-        verify(transactionService, times(1)).deleteTransaction(transactionId);
+        verify(acspRepository, times(1)).deleteById(USER_ID);
+        verify(transactionService, times(1)).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
     }
 
     @Test
     void deleteAcspApplicationAndTransactionErrorApplication() throws ServiceException {
-        String id = USER_ID;
-        String transactionId = TRANSACTION_ID;
+        doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(USER_ID);
 
-        doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(id);
-
-        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(id, transactionId);
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(PASS_THROUGH_HEADER, USER_ID, TRANSACTION_ID);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        verify(acspRepository, times(1)).deleteById(id);
-        verify(transactionService, times(0)).deleteTransaction(transactionId);
+        verify(acspRepository, times(1)).deleteById(USER_ID);
+        verify(transactionService, times(0)).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
     }
 
     @Test
     void deleteAcspApplicationAndTransactionErrorDeletingTransaction() throws ServiceException {
-        String id = USER_ID;
-        String transactionId = TRANSACTION_ID;
 
-        doNothing().when(acspRepository).deleteById(id);
-        doThrow(ServiceException.class).when(transactionService).deleteTransaction(transactionId);
+        doNothing().when(acspRepository).deleteById(USER_ID);
+        doThrow(ServiceException.class).when(transactionService).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
 
-        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(id, transactionId);
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(PASS_THROUGH_HEADER, USER_ID, TRANSACTION_ID);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        verify(acspRepository, times(1)).deleteById(id);
-        verify(transactionService, times(1)).deleteTransaction(transactionId);
+        verify(acspRepository, times(1)).deleteById(USER_ID);
+        verify(transactionService, times(1)).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
     }
 
 }

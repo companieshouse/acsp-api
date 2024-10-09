@@ -95,14 +95,16 @@ public class AcspController {
 
     @DeleteMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/authorised-corporate-service-provider-applications/{acsp_application_id}")
     public ResponseEntity<Object> deleteApplication(@PathVariable("acsp_application_id") String acspId,
-                                                        @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction) {
+                                                        @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
+                                                    HttpServletRequest request) {
         LOGGER.info("Received request to delete application for id: " + acspId + " and Transaction ID: " + transaction.getId());
+        String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
         if(transaction.getStatus() == TransactionStatus.CLOSED){
             LOGGER.info("Transaction is CLOSED");
             return acspService.deleteAcspApplication(acspId);
         }
         LOGGER.info("Transaction is not closed");
-        return acspService.deleteAcspApplicationAndTransaction(acspId, transaction.getId());
+        return acspService.deleteAcspApplicationAndTransaction(passThroughHeader, acspId, transaction.getId());
     }
 
 }

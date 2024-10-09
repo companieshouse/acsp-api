@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
-import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -81,10 +80,10 @@ public class TransactionService {
     }
 
 
-    public void deleteTransaction(String transactionId) throws ServiceException {
+    public void deleteTransaction(String passThroughHeader, String transactionId) throws ServiceException {
         try {
             var uri = "/transactions/" + transactionId;
-            var resp = apiClientService.getApiClient()
+            var resp = apiClientService.getApiClient(passThroughHeader)
                     .transactions().delete(uri)
                     .execute();
             if (resp.getStatusCode() != 204) {

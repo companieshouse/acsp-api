@@ -212,10 +212,10 @@ public class AcspService {
         }
     }
 
-    public ResponseEntity<Object> deleteAcspApplicationAndTransaction(String id, String transactionId) {
+    public ResponseEntity<Object> deleteAcspApplicationAndTransaction(String passThroughHeader, String id, String transactionId) {
         try {
             acspRepository.deleteById(id);
-            transactionService.deleteTransaction(transactionId);
+            transactionService.deleteTransaction(passThroughHeader, transactionId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOGGER.error("Error deleting document with id " + id + " and transaction ID: " + transactionId, e);
