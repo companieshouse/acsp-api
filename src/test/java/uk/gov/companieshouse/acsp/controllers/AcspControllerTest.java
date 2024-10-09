@@ -154,8 +154,9 @@ class AcspControllerTest {
     void deleteApplicationSuccessTransactionClosed() {
         when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED);
         when(acspService.deleteAcspApplication(USER_ID)).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
 
-        var response = acspController.deleteApplication(USER_ID, transaction);
+        var response = acspController.deleteApplication(USER_ID, transaction, mockHttpServletRequest);
         verify(acspService, times(1)).deleteAcspApplication(USER_ID);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
@@ -164,19 +165,21 @@ class AcspControllerTest {
     void deleteApplicationSuccessTransactionOpen() {
         when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
         when(transaction.getId()).thenReturn(TRANSACTION_ID);
-        when(acspService.deleteAcspApplicationAndTransaction(USER_ID, TRANSACTION_ID)).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
+        when(acspService.deleteAcspApplicationAndTransaction(PASSTHROUGH_HEADER, USER_ID, TRANSACTION_ID)).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
 
-        var response = acspController.deleteApplication(USER_ID, transaction);
-        verify(acspService, times(1)).deleteAcspApplicationAndTransaction(USER_ID, TRANSACTION_ID);
+        var response = acspController.deleteApplication(USER_ID, transaction, mockHttpServletRequest);
+        verify(acspService, times(1)).deleteAcspApplicationAndTransaction(PASSTHROUGH_HEADER, USER_ID, TRANSACTION_ID);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
     void deleteApplicationFailure() {
         when(transaction.getId()).thenReturn("123456");
-        when(acspService.deleteAcspApplicationAndTransaction(USER_ID, "123456")).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
+        when(acspService.deleteAcspApplicationAndTransaction(PASSTHROUGH_HEADER, USER_ID, "123456")).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        var response = acspController.deleteApplication(USER_ID, transaction);
+        var response = acspController.deleteApplication(USER_ID, transaction, mockHttpServletRequest);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }
