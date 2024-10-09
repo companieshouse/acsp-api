@@ -18,6 +18,7 @@ import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
+import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
@@ -92,19 +93,16 @@ public class AcspController {
         return acspService.getAcspApplicationStatus(acspId, requestId);
     }
 
-    @DeleteMapping("/acsp-api/user/{acsp_application_id}/application")
-    public ResponseEntity<Object> deleteApplication(@PathVariable("acsp_application_id") String acspId) {
-        LOGGER.info("received request to delete application for id: " + acspId);
-        return acspService.deleteAcspApplication(acspId);
-    }
-
     @DeleteMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/authorised-corporate-service-provider-applications/{acsp_application_id}")
-    public ResponseEntity<Object> deleteApplicationInfo(@PathVariable("acsp_application_id") String acspId,
+    public ResponseEntity<Object> deleteApplication(@PathVariable("acsp_application_id") String acspId,
                                                         @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction) {
         LOGGER.info("Received request to delete application for id: " + acspId + " and Transaction ID: " + transaction.getId());
+        if(transaction.getStatus() == TransactionStatus.CLOSED){
+            LOGGER.info("Transaction is CLOSED");
+            return acspService.deleteAcspApplication(acspId);
+        }
+        LOGGER.info("Transaction is not closed");
         return acspService.deleteAcspApplicationAndTransaction(acspId, transaction.getId());
-
-
     }
 
 }
