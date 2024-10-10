@@ -103,12 +103,17 @@ public class AcspService {
         }
 
         if (acspDataDto.getCompanyDetails() != null) {
-            transaction.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName());
-            transaction.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber());
-            transactionService.updateTransaction(requestId, transaction);
+            if(!acspDataDto.getCompanyDetails().getCompanyName().equals(transaction.getCompanyName()) ||
+                    !acspDataDto.getCompanyDetails().getCompanyNumber().equals(transaction.getCompanyNumber())) {
+                transaction.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName());
+                transaction.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber());
+                transactionService.updateTransaction(requestId, transaction);
+            }
         } else if (acspDataDto.getBusinessName() != null) {
-            transaction.setCompanyName(acspDataDto.getBusinessName());
-            transactionService.updateTransaction(requestId, transaction);
+            if (!acspDataDto.getBusinessName().equals(transaction.getCompanyName())) {
+                transaction.setCompanyName(acspDataDto.getBusinessName());
+                transactionService.updateTransaction(requestId, transaction);
+            }
         } else {
             LOGGER.debug("No company details found in acspDataDto");
         }
