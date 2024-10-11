@@ -23,7 +23,7 @@
 		<api-sdk-manager-java-library.version>3.0.5</api-sdk-manager-java-library.version>
 		<structured-logging.version>3.0.1</structured-logging.version>
 		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
-		<api-security-java.version>0.4.3</api-security-java.version>
+		<api-security-java.version>2.0.8</api-security-java.version>
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
 		<sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
