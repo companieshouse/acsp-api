@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
-import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
-import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -57,12 +55,12 @@ public class AcspController {
     public ResponseEntity<Object> saveAcspData(
             @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
             @RequestBody AcspDataDto acspData,
-            HttpServletRequest request) throws ServiceException {
+            HttpServletRequest request) {
         LOGGER.info("received request to PUT acsp data");
         try {
             String requestId = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
             return acspService.updateACSPDetails(transaction, acspData, requestId, acspData.getId());
-        } catch (SubmissionNotLinkedToTransactionException | InvalidTransactionStatusException e) {
+        } catch (Exception e) {
             LOGGER.error("Error updating record " + e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
