@@ -6,9 +6,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.acsp.models.enums.AMLSupervisoryBodies;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
+
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
  class EnumTranslatorTest {
@@ -90,5 +93,37 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
         assertEquals(expected, actual);
     }
 
+    // **AML Supervisory Bodies Tests**
+
+    @Test
+    void amlSupervisoryBodiesEnumArrayToStringArray() {
+        List<AMLSupervisoryBodies> enumList = List.of(
+                AMLSupervisoryBodies.ACCA, AMLSupervisoryBodies.AAT, AMLSupervisoryBodies.ATT
+        );
+        List<String> expected = List.of(
+                "association-of-chartered-certified-accountants",
+                "association-of-accounting-technicians",
+                "association-of-taxation-technicians"
+        );
+        List<String> actual = enumTranslator.amlSupervisoryBodiesEnumArrayToStringArray(enumList);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void stringArrayToAmlSupervisoryBodiesEnumArray() {
+        List<String> stringList = List.of(
+                "association-of-chartered-certified-accountants",
+                "association-of-accounting-technicians",
+                "association-of-taxation-technicians"
+        );
+        List<AMLSupervisoryBodies> expected = List.of(
+                AMLSupervisoryBodies.ACCA, AMLSupervisoryBodies.AAT, AMLSupervisoryBodies.ATT
+        );
+        List<AMLSupervisoryBodies> actual = enumTranslator.stringArrayToAmlSupervisoryBodiesEnumArray(stringList);
+        assertEquals(expected, actual);
+    }
+
+
 }
+
 

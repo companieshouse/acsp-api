@@ -34,11 +34,15 @@ public enum AMLSupervisoryBodies {
         this.label = label;
     }
 
+    //value - association-of-chartered-certified-accountants
     public String getLabel() {
         return label;
     }
 
-    //keys
+
+
+
+    //finds enum by value
     public static AMLSupervisoryBodies findByLabel(String label) {
         for (AMLSupervisoryBodies v : values()) {
             if (v.label.equals(label)) {
@@ -47,4 +51,6 @@ public enum AMLSupervisoryBodies {
         }
         return null;
     }
+
+
 }
