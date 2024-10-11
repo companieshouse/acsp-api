@@ -15,7 +15,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     public static final String TRANSACTIONS = "/transactions/**";
     public static final String PRIVATE_TRANSACTIONS = "/private/transactions/**";
-    public static final String ACSP_API = "/acsp-api/**";
 
     @Autowired
     private TransactionInterceptor transactionInterceptor;
