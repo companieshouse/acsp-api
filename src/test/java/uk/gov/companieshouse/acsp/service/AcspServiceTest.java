@@ -392,6 +392,60 @@ class AcspServiceTest {
     }
 
     @Test
+    void noUpdateToTransactionCompanyNameNull() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setCompanyDetails(new CompanyDetails());
+        acspData.getCompanyDetails().setCompanyName(null);
+        acspData.getCompanyDetails().setCompanyNumber("12345678");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                "demo@ch.gov.uk");
+        verify(transaction).setCompanyName("Test Company");
+        verify(transaction).setCompanyNumber("12345678");
+        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void noUpdateToTransactionCompanyNumberNull() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setCompanyDetails(new CompanyDetails());
+        acspData.getCompanyDetails().setCompanyName("Test Company");
+        acspData.getCompanyDetails().setCompanyNumber(null);
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                "demo@ch.gov.uk");
+        verify(transaction).setCompanyName("Test Company");
+        verify(transaction).setCompanyNumber("12345678");
+        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
     void updateAcspCompanyDetailsRemainTheSame() throws Exception {
         AcspDataDto acspData = new AcspDataDto();
         acspData.setCompanyDetails(new CompanyDetails());
