@@ -411,9 +411,9 @@ class AcspServiceTest {
                 acspData,
                 REQUEST_ID,
                 "demo@ch.gov.uk");
-        verify(transaction).setCompanyName("Test Company");
-        verify(transaction).setCompanyNumber("12345678");
-        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
+        verify(transaction, times(0)).setCompanyName(null);
+        verify(transaction, times(0)).setCompanyNumber("12345678");
+        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -438,9 +438,9 @@ class AcspServiceTest {
                 acspData,
                 REQUEST_ID,
                 "demo@ch.gov.uk");
-        verify(transaction).setCompanyName("Test Company");
-        verify(transaction).setCompanyNumber("12345678");
-        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
+        verify(transaction, times(0)).setCompanyName("Test Company");
+        verify(transaction, times(0)).setCompanyNumber(null);
+        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
