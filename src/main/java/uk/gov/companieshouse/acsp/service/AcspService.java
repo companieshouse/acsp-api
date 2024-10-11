@@ -109,6 +109,7 @@ public class AcspService {
                 transactionService.updateTransaction(requestId, transaction);
         } else if (acspDataDto.getBusinessName() != null && !acspDataDto.getBusinessName().equals(transaction.getCompanyName())) {
                 transaction.setCompanyName(acspDataDto.getBusinessName());
+                transaction.setCompanyNumber(null);
                 transactionService.updateTransaction(requestId, transaction);
         } else {
             LOGGER.debug("No company details found in acspDataDto");

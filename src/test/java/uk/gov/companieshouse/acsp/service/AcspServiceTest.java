@@ -468,6 +468,7 @@ class AcspServiceTest {
                 REQUEST_ID,
                 "demo@ch.gov.uk");
         verify(transaction).setCompanyName("Test Business Name");
+        verify(transaction).setCompanyNumber(null);
         verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
