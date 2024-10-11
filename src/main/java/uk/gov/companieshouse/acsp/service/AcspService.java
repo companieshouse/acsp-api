@@ -102,11 +102,13 @@ public class AcspService {
                     "Can't update transaction with stastus: %s ", transaction.getStatus().toString()));
         }
 
-        if (acspDataDto.getCompanyDetails() != null && (!acspDataDto.getCompanyDetails().getCompanyName().equals(transaction.getCompanyName()) ||
-                !acspDataDto.getCompanyDetails().getCompanyNumber().equals(transaction.getCompanyNumber()))) {
+        if (acspDataDto.getCompanyDetails() != null && acspDataDto.getCompanyDetails().getCompanyName() != null && acspDataDto.getCompanyDetails().getCompanyNumber() != null) {
+            if (!acspDataDto.getCompanyDetails().getCompanyName().equals(transaction.getCompanyName()) ||
+                !acspDataDto.getCompanyDetails().getCompanyNumber().equals(transaction.getCompanyNumber())) {
                 transaction.setCompanyName(acspDataDto.getCompanyDetails().getCompanyName());
                 transaction.setCompanyNumber(acspDataDto.getCompanyDetails().getCompanyNumber());
                 transactionService.updateTransaction(requestId, transaction);
+            }
         } else if (acspDataDto.getBusinessName() != null && !acspDataDto.getBusinessName().equals(transaction.getCompanyName())) {
                 transaction.setCompanyName(acspDataDto.getBusinessName());
                 transaction.setCompanyNumber(null);
