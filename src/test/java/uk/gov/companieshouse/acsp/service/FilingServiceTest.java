@@ -111,6 +111,7 @@ class FilingServiceTest {
         acspDataDto.getApplicantDetails().setLastName(LAST_NAME);
         acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildCorrespondenceAddress());
         acspDataDto.getApplicantDetails().setCountryOfResidence("United Kingdom");
+        acspDataDto.getApplicantDetails().setCorrespondenceEmail("test@email.com");
 
         NationalityDto nationalityDto = new NationalityDto();
         nationalityDto.setFirstNationality("British");
@@ -449,6 +450,7 @@ class FilingServiceTest {
                 }
         );
         Assertions.assertNull(response.getData().get("company_number"));
+        Assertions.assertEquals("TEST@EMAIL.COM", response.getData().get("email"));
     }
 
 
