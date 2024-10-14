@@ -111,6 +111,7 @@ class FilingServiceTest {
         acspDataDto.getApplicantDetails().setLastName(LAST_NAME);
         acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildCorrespondenceAddress());
         acspDataDto.getApplicantDetails().setCountryOfResidence("United Kingdom");
+        acspDataDto.getApplicantDetails().setCorrespondenceEmail("test@email.com");
 
         NationalityDto nationalityDto = new NationalityDto();
         nationalityDto.setFirstNationality("British");
@@ -146,6 +147,15 @@ class FilingServiceTest {
         acspDataDto.getApplicantDetails().setFirstName(null);
         acspDataDto.getApplicantDetails().setLastName(null);
         acspDataDto.setId(null);
+        ReflectionTestUtils.setField(filingsService,
+                "filingDescriptionIdentifier",null);
+        ReflectionTestUtils.setField(filingsService,
+                "filingDescription",null);
+    }
+
+    private void setACSPDataDtoWithoutApplicantDetails() {
+        setACSPDataDto();
+        acspDataDto.setApplicantDetails(null);
         ReflectionTestUtils.setField(filingsService,
                 "filingDescriptionIdentifier",null);
         ReflectionTestUtils.setField(filingsService,
@@ -241,6 +251,27 @@ class FilingServiceTest {
         Assertions.assertNull(response.getData().get("company_number"));
         Assertions.assertNull(response.getData().get("company_name"));
 
+    }
+
+    @Test
+    void tesGenerateAcspApplicationFilingNullApplicantDetails() throws Exception {
+        initTransactionPaymentLinkMocks();
+        initGetPaymentMocks();
+
+        setACSPDataDtoWithoutApplicantDetails();
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        Assertions.assertEquals("100", response.getCost());
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(PAYMENT_REFERENCE.toUpperCase(), response.getData().get("payment_reference"));
+        Assertions.assertEquals(PAYMENT_METHOD.toUpperCase(), response.getData().get("payment_method"));
+        Assertions.assertNotNull(response.getData().get("presenter"));
+        Assertions.assertNull(((Presenter) response.getData().get("presenter")).getFirstName());
+        Assertions.assertNull(((Presenter) response.getData().get("presenter")).getLastName());
+        Assertions.assertNotNull(response.getData().get("submission"));
+        Assertions.assertEquals("acsp", response.getKind());
     }
 
     @Test
@@ -449,6 +480,7 @@ class FilingServiceTest {
                 }
         );
         Assertions.assertNull(response.getData().get("company_number"));
+        Assertions.assertEquals("TEST@EMAIL.COM", response.getData().get("email"));
     }
 
 
