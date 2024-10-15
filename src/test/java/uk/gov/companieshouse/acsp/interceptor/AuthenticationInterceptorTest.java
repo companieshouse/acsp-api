@@ -52,7 +52,7 @@ class AuthenticationInterceptorTest {
     void preHandleWithIncorrectEricIdentityTypeReturns401() {
         final var request = new MockHttpServletRequest();
         request.addHeader("Eric-Identity", "abcd123456");
-        request.addHeader("Eric-Identity-Type", "key");
+        request.addHeader("Eric-Identity-Type", "random");
 
         final var response = new MockHttpServletResponse();
         assertFalse( authenticationInterceptor.preHandle(request, response, null ) );
@@ -64,6 +64,16 @@ class AuthenticationInterceptorTest {
         final var request = new MockHttpServletRequest();
         request.addHeader("Eric-identity", "111");
         request.addHeader("Eric-identity-type", "oauth2");
+
+        final var response = new MockHttpServletResponse();
+        assertTrue( authenticationInterceptor.preHandle(request, response, null ) );
+    }
+
+    @Test
+    void preHandleShouldReturnTrueWhenAuthHeaderAndAuthHeaderTypeKeyAreProvided() {
+        final var request = new MockHttpServletRequest();
+        request.addHeader("Eric-identity", "111");
+        request.addHeader("Eric-identity-type", "key");
 
         final var response = new MockHttpServletResponse();
         assertTrue( authenticationInterceptor.preHandle(request, response, null ) );
