@@ -9,8 +9,6 @@ import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 
-import java.sql.Array;
-
 @Service
 public class EnumTranslator {
 

@@ -116,15 +116,12 @@ public class AcspService {
         } else {
             LOGGER.debug("No company details found in acspDataDto");
         }
-
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
 
         var updatedSubmission = acspRepository.save(acspDataDao);
         ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                 transaction.getId(), updatedSubmission.getId()));
-
         acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
-
         return ResponseEntity.ok().body(acspDataDto);
     }
 
