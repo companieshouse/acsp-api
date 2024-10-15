@@ -116,12 +116,32 @@ public class AcspService {
         } else {
             LOGGER.debug("No company details found in acspDataDto");
         }
+
+        if(acspDataDto != null && acspDataDto.getAmlSupervisoryBodies() != null){
+            for(int i=0; i<acspDataDto.getAmlSupervisoryBodies().length; i++){
+                System.out.println("element1a------->" +  acspDataDto.getAmlSupervisoryBodies()[i].getAmlSupervisoryBody());
+            }
+        }
+
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
 
         var updatedSubmission = acspRepository.save(acspDataDao);
         ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                 transaction.getId(), updatedSubmission.getId()));
+        if(acspDataDao != null && acspDataDao.getAmlSupervisoryBodies() != null) {
+            for (int i = 0; i < acspDataDao.getAmlSupervisoryBodies().length; i++) {
+                System.out.println("element2a------->" + acspDataDao.getAmlSupervisoryBodies()[i].getAmlSupervisoryBody());
+            }
+        }
+
         acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
+
+        if(acspDataDto != null && acspDataDto.getAmlSupervisoryBodies() != null) {
+            for (int i = 0; i < acspDataDto.getAmlSupervisoryBodies().length; i++) {
+                System.out.println("element3a------->" + acspDataDto.getAmlSupervisoryBodies()[i].getAmlSupervisoryBody());
+            }
+        }
+
         return ResponseEntity.ok().body(acspDataDto);
     }
 
