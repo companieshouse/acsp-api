@@ -68,6 +68,7 @@ public class EnumTranslator {
             for(int i=0; i<inputStr.length; i++){
                 amlSupervisoryBodiesDto[i] = new AMLSupervisoryBodiesDto();
                 amlSupervisoryBodiesDto[i].setAmlSupervisoryBody(AMLSupervisoryBodies.findByLabel(inputStr[i].getAmlSupervisoryBody()).getName());
+                amlSupervisoryBodiesDto[i].setAmlAcronym(AMLSupervisoryBodies.findByLabel(inputStr[i].getAmlSupervisoryBody()).toString());
                 amlSupervisoryBodiesDto[i].setMembershipId(inputStr[i].getMembershipId());
             }
             return amlSupervisoryBodiesDto;

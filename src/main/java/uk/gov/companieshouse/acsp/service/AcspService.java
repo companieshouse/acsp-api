@@ -139,6 +139,9 @@ public class AcspService {
         if(acspDataDto != null && acspDataDto.getAmlSupervisoryBodies() != null) {
             for (int i = 0; i < acspDataDto.getAmlSupervisoryBodies().length; i++) {
                 System.out.println("element3a------->" + acspDataDto.getAmlSupervisoryBodies()[i].getAmlSupervisoryBody());
+                if(acspDataDto.getAmlSupervisoryBodies()[i].getAmlAcronym() != null){
+                    System.out.println("element3b------->" + acspDataDto.getAmlSupervisoryBodies()[i].getAmlAcronym());
+                }
             }
         }
 
