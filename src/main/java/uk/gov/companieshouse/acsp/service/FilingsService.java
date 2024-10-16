@@ -140,14 +140,13 @@ public class FilingsService {
             TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
             TypeOfBusiness.UNINCORPORATED.equals(acspDataDto.getTypeOfBusiness())) {
       data.put("registered_office_address", buildRegisteredOfficeAddress(acspDataDto));
-    }
-    if(acspDataDto.getRegisteredOfficeAddress() != null &&
-            acspDataDto.getApplicantDetails() != null &&
-            acspDataDto.getRegisteredOfficeAddress().equals(acspDataDto.getApplicantDetails().getCorrespondenceAddress())) {
-      data.put("service_address",buildServiceAddress(null, true));
+      data.put("service_address",buildServiceAddress(acspDataDto));
+    } else if (TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
+      data.put("registered_office_address", buildCorrespondenAddress(acspDataDto));
     } else {
-      data.put("service_address",buildServiceAddress(acspDataDto, false));
+      data.put("service_address",buildServiceAddress(acspDataDto));
     }
+
     if(transaction.getStatus() != null &&
             TransactionStatus.CLOSED.equals(transaction.getStatus())) {
       setPaymentData(data, transaction, passThroughTokenHeader);
@@ -247,32 +246,34 @@ public class FilingsService {
   }
 
   private void buildCompanyDetails(AcspDataDto acspDataDto, Map<String, Object>data) {
-
-    if (acspDataDto.getCompanyDetails() != null) {
-      data.put("company_name", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyName())
-                            .map(String::toUpperCase).orElse(null));
-    }
     if (acspDataDto.getTypeOfBusiness() != null) {
       switch (acspDataDto.getTypeOfBusiness()) {
         case LC, LLP, CORPORATE_BODY:
           if (acspDataDto.getCompanyDetails() != null) {
             data.put("company_number", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyNumber())
                     .map(String::toUpperCase).orElse(null));
+            data.put("company_name", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyName())
+                    .map(String::toUpperCase).orElse(null));
           }
           break;
         default:
           data.put("business_name", Optional.ofNullable(acspDataDto.getBusinessName())
                             .map(String::toUpperCase).orElse(null));
+          break;
       }
     }
   }
 
-  private ServiceAddress buildServiceAddress(AcspDataDto acspDataDto, boolean isServiceAddressROA) {
+  private ServiceAddress buildServiceAddress(AcspDataDto acspDataDto) {
     var serviceAddress = new ServiceAddress();
-    if(acspDataDto != null) {
-      serviceAddress.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
+    if(acspDataDto != null && acspDataDto.getApplicantDetails() != null) {
+      if (acspDataDto.getApplicantDetails().getCorrespondenceAddressIsSameAsRegisteredOfficeAddress()) {
+        serviceAddress.setServiceAddressROA(true);
+      } else {
+        serviceAddress.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
+        serviceAddress.setServiceAddressROA(false);
+      }
     }
-    serviceAddress.setServiceAddressROA(isServiceAddressROA);
     return serviceAddress;
   }
 
