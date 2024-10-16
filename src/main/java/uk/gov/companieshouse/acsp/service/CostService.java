@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.payment.Cost;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Service
@@ -17,7 +18,7 @@ public class CostService {
     public Cost getCosts() {
         var cost = new Cost();
         cost.setAmount(costAmount);
-        cost.setAvailablePaymentMethods(Collections.singletonList("credit-card"));
+        cost.setAvailablePaymentMethods(Arrays.asList());
         cost.setClassOfPayment(Collections.singletonList(PAYMENT_ACCOUNT));
         cost.setDescription(COST_DESC);
         cost.setDescriptionIdentifier("description-identifier");
