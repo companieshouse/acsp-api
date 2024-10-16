@@ -52,7 +52,7 @@ class FilingServiceTest {
     private static final String FIRST_NAME = "firstName";
     private static final String MIDDLE_NAME = "middleName";
     private static final String LAST_NAME = "lastName";
-    private static final String PAYMENT_METHOD = "credit-card";
+    private static final String PAYMENT_METHOD = "";
     private static final String PAYMENT_REFERENCE = "PAYMENT_REFERENCE";
     private static final String COUNTRY_OF_RESIDENCE = "United Kingdom";
 
@@ -470,7 +470,7 @@ class FilingServiceTest {
                 TypeOfBusiness.LC.name().toUpperCase());
         Assertions.assertNotNull(response.getData().get("aml"));
         Assertions.assertEquals("WORK SECTOR", response.getData().get("business_sector"));
-        Assertions.assertEquals("CREDIT-CARD", response.getData().get("payment_method"));
+        Assertions.assertEquals("", response.getData().get("payment_method"));
         Assertions.assertEquals("PAYMENT_REFERENCE", response.getData().get("payment_reference"));
         Assertions.assertNull(response.getData().get("business_name"));
         Arrays.stream(((Aml)response.getData().get("aml")).getAmlMemberships()).forEach(
