@@ -45,12 +45,12 @@ public class EnumTranslator {
 
     @Named("amlSupervisoryBodiesNameToLabel")
     public AMLSupervisoryBodiesDao[] amlSupervisoryBodiesNameToLabel(AMLSupervisoryBodiesDto[] nameArray) {
-        AMLSupervisoryBodiesDao[] amlSupervisoryBodiesDao = new AMLSupervisoryBodiesDao[0];
+        var amlSupervisoryBodiesDao = new AMLSupervisoryBodiesDao[0];
         if(nameArray != null){
            amlSupervisoryBodiesDao = new AMLSupervisoryBodiesDao[nameArray.length];
-           for(int i=0; i<nameArray.length; i++){
+           for(var i=0; i<nameArray.length; i++){
                amlSupervisoryBodiesDao[i] = new AMLSupervisoryBodiesDao();
-               amlSupervisoryBodiesDao[i].setAmlSupervisoryBody(AMLSupervisoryBodies.findByName(nameArray[i].getAmlSupervisoryBody()).getLabel());
+               amlSupervisoryBodiesDao[i].setAmlSupervisoryBody(AMLSupervisoryBodies.findByweblabel(nameArray[i].getAmlSupervisoryBody()).getDblabel());
                amlSupervisoryBodiesDao[i].setMembershipId(nameArray[i].getMembershipId());
            }
            return amlSupervisoryBodiesDao;
@@ -60,13 +60,13 @@ public class EnumTranslator {
 
     @Named("amlSupervisoryBodiesLabelToName")
     public AMLSupervisoryBodiesDto[] amlSupervisoryBodiesLabelToName(AMLSupervisoryBodiesDao[] labelArray) {
-        AMLSupervisoryBodiesDto[] amlSupervisoryBodiesDto = new AMLSupervisoryBodiesDto[0];
+        var amlSupervisoryBodiesDto = new AMLSupervisoryBodiesDto[0];
         if(labelArray != null){
             amlSupervisoryBodiesDto = new AMLSupervisoryBodiesDto[labelArray.length];
-            for(int i=0; i<labelArray.length; i++){
+            for(var i=0; i<labelArray.length; i++){
                 amlSupervisoryBodiesDto[i] = new AMLSupervisoryBodiesDto();
-                amlSupervisoryBodiesDto[i].setAmlSupervisoryBody(AMLSupervisoryBodies.findByLabel(labelArray[i].getAmlSupervisoryBody()).getName());
-                amlSupervisoryBodiesDto[i].setAmlAcronym(AMLSupervisoryBodies.findByLabel(labelArray[i].getAmlSupervisoryBody()).toString());
+                amlSupervisoryBodiesDto[i].setAmlSupervisoryBody(AMLSupervisoryBodies.findBydblabel(labelArray[i].getAmlSupervisoryBody()).getWeblabel());
+                amlSupervisoryBodiesDto[i].setAmlAcronym(AMLSupervisoryBodies.findBydblabel(labelArray[i].getAmlSupervisoryBody()).toString());
                 amlSupervisoryBodiesDto[i].setMembershipId(labelArray[i].getMembershipId());
             }
             return amlSupervisoryBodiesDto;
