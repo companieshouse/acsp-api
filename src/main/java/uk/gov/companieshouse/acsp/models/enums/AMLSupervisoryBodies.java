@@ -28,33 +28,33 @@ public enum AMLSupervisoryBodies {
     SRA("Solicitors Regulation Authority (SRA) Solicitors in England and Wales","solicitors-regulation-authority-solicitors-in-england-and-wales"),
     HMRC("HMRC","her-majesty's-revenue-and-customs");
 
-    public final String dblabel;
-    public final String weblabel;
+    public final String dbValue;
+    public final String displayLabel;
 
-    private AMLSupervisoryBodies(String weblabel,String dblabel) {
-        this.weblabel = weblabel;
-        this.dblabel = dblabel;
+    private AMLSupervisoryBodies(String displayLabel,String dbValue) {
+        this.displayLabel = displayLabel;
+        this.dbValue = dbValue;
     }
 
-    public String getDblabel() {
-        return dblabel;
+    public String getDbValue() {
+        return dbValue;
     }
-    public String getWeblabel() {
-        return weblabel;
+    public String getDisplayLabel() {
+        return displayLabel;
     }
 
-    public static AMLSupervisoryBodies findBydblabel(String label) {
+    public static AMLSupervisoryBodies findByDbValue(String dbValue) {
         for (AMLSupervisoryBodies v : values()) {
-            if (v.dblabel.equals(label)) {
+            if (v.dbValue.equals(dbValue)) {
                 return v;
             }
         }
         return null;
     }
 
-    public static AMLSupervisoryBodies findByweblabel(String name) {
+    public static AMLSupervisoryBodies findByDisplayLabel(String displayLabel) {
         for (AMLSupervisoryBodies v : values()) {
-            if (v.weblabel.equals(name)) {
+            if (v.displayLabel.equals(displayLabel)) {
                 return v;
             }
         }

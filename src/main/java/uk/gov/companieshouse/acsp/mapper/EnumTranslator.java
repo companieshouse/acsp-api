@@ -43,14 +43,14 @@ public class EnumTranslator {
         return BusinessSector.findByLabel(inputStr);
     }
 
-    @Named("amlSupervisoryBodiesWebLabelToDbLabel")
-    public AMLSupervisoryBodiesDao[] amlSupervisoryBodiesWebLabelToDbLabel(AMLSupervisoryBodiesDto[] webLabelArray) {
+    @Named("amlSupervisoryBodiesDisplayLabelToDbValue")
+    public AMLSupervisoryBodiesDao[] amlSupervisoryBodiesDisplayLabelToDbValue(AMLSupervisoryBodiesDto[] webLabelArray) {
         var amlSupervisoryBodiesDao = new AMLSupervisoryBodiesDao[0];
         if(webLabelArray != null){
            amlSupervisoryBodiesDao = new AMLSupervisoryBodiesDao[webLabelArray.length];
            for(var i=0; i<webLabelArray.length; i++){
                amlSupervisoryBodiesDao[i] = new AMLSupervisoryBodiesDao();
-               amlSupervisoryBodiesDao[i].setAmlSupervisoryBody(AMLSupervisoryBodies.findByweblabel(webLabelArray[i].getAmlSupervisoryBody()).getDblabel());
+               amlSupervisoryBodiesDao[i].setAmlSupervisoryBody(AMLSupervisoryBodies.findByDisplayLabel(webLabelArray[i].getAmlSupervisoryBody()).getDbValue());
                amlSupervisoryBodiesDao[i].setMembershipId(webLabelArray[i].getMembershipId());
            }
            return amlSupervisoryBodiesDao;
@@ -58,15 +58,15 @@ public class EnumTranslator {
         return amlSupervisoryBodiesDao;
     }
 
-    @Named("amlSupervisoryBodiesDbLabelToWebLabel")
-    public AMLSupervisoryBodiesDto[] amlSupervisoryBodiesDbLabelToWebLabel(AMLSupervisoryBodiesDao[] dbLabelArray) {
+    @Named("amlSupervisoryBodiesDbValueToDisplayLabel")
+    public AMLSupervisoryBodiesDto[] amlSupervisoryBodiesDbValueToDisplayLabel(AMLSupervisoryBodiesDao[] dbLabelArray) {
         var amlSupervisoryBodiesDto = new AMLSupervisoryBodiesDto[0];
         if(dbLabelArray != null){
             amlSupervisoryBodiesDto = new AMLSupervisoryBodiesDto[dbLabelArray.length];
             for(var i=0; i<dbLabelArray.length; i++){
                 amlSupervisoryBodiesDto[i] = new AMLSupervisoryBodiesDto();
-                amlSupervisoryBodiesDto[i].setAmlSupervisoryBody(AMLSupervisoryBodies.findBydblabel(dbLabelArray[i].getAmlSupervisoryBody()).getWeblabel());
-                amlSupervisoryBodiesDto[i].setAmlAcronym(AMLSupervisoryBodies.findBydblabel(dbLabelArray[i].getAmlSupervisoryBody()).toString());
+                amlSupervisoryBodiesDto[i].setAmlSupervisoryBody(AMLSupervisoryBodies.findByDbValue(dbLabelArray[i].getAmlSupervisoryBody()).getDisplayLabel());
+                amlSupervisoryBodiesDto[i].setAmlAcronym(AMLSupervisoryBodies.findByDbValue(dbLabelArray[i].getAmlSupervisoryBody()).toString());
                 amlSupervisoryBodiesDto[i].setMembershipId(dbLabelArray[i].getMembershipId());
             }
             return amlSupervisoryBodiesDto;
