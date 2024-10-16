@@ -9,6 +9,14 @@ public class AMLSupervisoryBodiesDao {
     @JsonProperty("membership_id")
     private String membershipId;
 
+    public AMLSupervisoryBodiesDao() {
+    }
+
+    public AMLSupervisoryBodiesDao(String amlSupervisoryBody, String membershipId) {
+        this.amlSupervisoryBody = amlSupervisoryBody;
+        this.membershipId = membershipId;
+    }
+
     public String getMembershipId() {
         return membershipId;
     }

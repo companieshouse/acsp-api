@@ -13,6 +13,15 @@ public class AMLSupervisoryBodiesDto {
 
     private String amlAcronym;
 
+    public AMLSupervisoryBodiesDto() {
+    }
+
+    public AMLSupervisoryBodiesDto(String amlSupervisoryBody, String membershipId, String amlAcronym) {
+        this.amlSupervisoryBody = amlSupervisoryBody;
+        this.membershipId = membershipId;
+        this.amlAcronym = amlAcronym;
+    }
+
     public String getMembershipId() {
         return membershipId;
     }
