@@ -43,8 +43,8 @@ public class EnumTranslator {
         return BusinessSector.findByLabel(inputStr);
     }
 
-    @Named("amlSupervisoryBodiesNameToLabel")
-    public AMLSupervisoryBodiesDao[] amlSupervisoryBodiesNameToLabel(AMLSupervisoryBodiesDto[] nameArray) {
+    @Named("amlSupervisoryBodiesWebLabelToDbLabel")
+    public AMLSupervisoryBodiesDao[] amlSupervisoryBodiesWebLabelToDbLabel(AMLSupervisoryBodiesDto[] nameArray) {
         var amlSupervisoryBodiesDao = new AMLSupervisoryBodiesDao[0];
         if(nameArray != null){
            amlSupervisoryBodiesDao = new AMLSupervisoryBodiesDao[nameArray.length];
@@ -58,8 +58,8 @@ public class EnumTranslator {
         return amlSupervisoryBodiesDao;
     }
 
-    @Named("amlSupervisoryBodiesLabelToName")
-    public AMLSupervisoryBodiesDto[] amlSupervisoryBodiesLabelToName(AMLSupervisoryBodiesDao[] labelArray) {
+    @Named("amlSupervisoryBodiesDbLabelToWebLabel")
+    public AMLSupervisoryBodiesDto[] amlSupervisoryBodiesDbLabelToWebLabel(AMLSupervisoryBodiesDao[] labelArray) {
         var amlSupervisoryBodiesDto = new AMLSupervisoryBodiesDto[0];
         if(labelArray != null){
             amlSupervisoryBodiesDto = new AMLSupervisoryBodiesDto[labelArray.length];

@@ -105,7 +105,7 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
                 new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.FA.getDblabel(),"345")
         };
 
-        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesNameToLabel(nameArray);
+        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesWebLabelToDbLabel(nameArray);
 
         assertEquals(expectedArray[0].getAmlSupervisoryBody(), actualArray[0].getAmlSupervisoryBody());
         assertEquals(expectedArray[0].getMembershipId(), actualArray[0].getMembershipId());
@@ -117,7 +117,7 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
     void AmlSupervisoryBodiesNameToLabelForNullInputArray() {
         AMLSupervisoryBodiesDto[] nameArray = new AMLSupervisoryBodiesDto[ ]{ };
         AMLSupervisoryBodiesDao[] expectedArray = new AMLSupervisoryBodiesDao[0];
-        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesNameToLabel(nameArray);
+        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesWebLabelToDbLabel(nameArray);
         assertArrayEquals(expectedArray,actualArray);
     }
 
@@ -133,7 +133,7 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
                 new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.FA.getWeblabel(),"345", "FA")
         };
 
-        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesLabelToName(labelArray);
+        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesDbLabelToWebLabel(labelArray);
 
         assertEquals(expectedArray[0].getAmlSupervisoryBody(), actualArray[0].getAmlSupervisoryBody());
         assertEquals(expectedArray[0].getMembershipId(), actualArray[0].getMembershipId());
@@ -147,7 +147,7 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
     void AmlSupervisoryBodiesLabelToNameForNullInputArray() {
         AMLSupervisoryBodiesDao[] labelArray = new AMLSupervisoryBodiesDao[ ]{ };
         AMLSupervisoryBodiesDto[] expectedArray = new AMLSupervisoryBodiesDto[0];
-        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesLabelToName(labelArray);
+        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesDbLabelToWebLabel(labelArray);
         assertArrayEquals(expectedArray,actualArray);
     }
 }
