@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.acsp.models.dao.AMLSupervisoryBodiesDao;
+import uk.gov.companieshouse.acsp.models.dto.AMLSupervisoryBodiesDto;
+import uk.gov.companieshouse.acsp.models.enums.AMLSupervisoryBodies;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
@@ -90,5 +93,64 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
         assertEquals(expected, actual);
     }
 
+    @Test
+    void AmlSupervisoryBodiesDisplayLabelToDbValue() {
+        AMLSupervisoryBodiesDto[] nameArray = new AMLSupervisoryBodiesDto[ ]{
+                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.ATT.getDisplayLabel(),"123", null),
+                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.FA.getDisplayLabel(),"345", null)
+        };
+
+        AMLSupervisoryBodiesDao[] expectedArray = new AMLSupervisoryBodiesDao[ ]{
+                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.ATT.getDbValue(),"123"),
+                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.FA.getDbValue(),"345")
+        };
+
+        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesDisplayLabelToDbValue(nameArray);
+
+        assertEquals(expectedArray[0].getAmlSupervisoryBody(), actualArray[0].getAmlSupervisoryBody());
+        assertEquals(expectedArray[0].getMembershipId(), actualArray[0].getMembershipId());
+        assertEquals(expectedArray[1].getAmlSupervisoryBody(), actualArray[1].getAmlSupervisoryBody());
+        assertEquals(expectedArray[1].getMembershipId(), actualArray[1].getMembershipId());
+    }
+
+    @Test
+    void AmlSupervisoryBodiesDisplayLabelToDbValueForNullInputArray() {
+        AMLSupervisoryBodiesDto[] nameArray = new AMLSupervisoryBodiesDto[ ]{ };
+        AMLSupervisoryBodiesDao[] expectedArray = new AMLSupervisoryBodiesDao[0];
+        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesDisplayLabelToDbValue(nameArray);
+        assertArrayEquals(expectedArray,actualArray);
+    }
+
+    @Test
+    void AmlSupervisoryBodiesDbValueToDisplayLabel() {
+        AMLSupervisoryBodiesDao[] labelArray = new AMLSupervisoryBodiesDao[ ]{
+                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.ATT.getDbValue(),"123"),
+                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.FA.getDbValue(),"345")
+        };
+
+        AMLSupervisoryBodiesDto[] expectedArray = new AMLSupervisoryBodiesDto[ ]{
+                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.ATT.getDisplayLabel(),"123", "ATT"),
+                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.FA.getDisplayLabel(),"345", "FA")
+        };
+
+        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesDbValueToDisplayLabel(labelArray);
+
+        assertEquals(expectedArray[0].getAmlSupervisoryBody(), actualArray[0].getAmlSupervisoryBody());
+        assertEquals(expectedArray[0].getMembershipId(), actualArray[0].getMembershipId());
+        assertEquals(expectedArray[0].getAmlAcronym(), actualArray[0].getAmlAcronym());
+        assertEquals(expectedArray[1].getAmlSupervisoryBody(), actualArray[1].getAmlSupervisoryBody());
+        assertEquals(expectedArray[1].getMembershipId(), actualArray[1].getMembershipId());
+        assertEquals(expectedArray[1].getAmlAcronym(), actualArray[1].getAmlAcronym());
+    }
+
+    @Test
+    void AmlSupervisoryBodiesDbValueToDisplayLabelForNullInputArray() {
+        AMLSupervisoryBodiesDao[] labelArray = new AMLSupervisoryBodiesDao[ ]{ };
+        AMLSupervisoryBodiesDto[] expectedArray = new AMLSupervisoryBodiesDto[0];
+        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesDbValueToDisplayLabel(labelArray);
+        assertArrayEquals(expectedArray,actualArray);
+    }
 }
+
+
 

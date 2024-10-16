@@ -3,7 +3,6 @@ package uk.gov.companieshouse.acsp.models.dao;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 public class AcspDataSubmissionDao {
 
