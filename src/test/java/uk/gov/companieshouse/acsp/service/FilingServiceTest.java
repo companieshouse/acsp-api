@@ -457,6 +457,7 @@ class FilingServiceTest {
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setAmlAcronym("HMRC");
         amlSupervisoryBodies1.setMembershipId("12345678");
         AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
@@ -497,6 +498,7 @@ class FilingServiceTest {
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setAmlAcronym("HMRC");
         amlSupervisoryBodies1.setMembershipId("12345678");
         AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
@@ -539,6 +541,7 @@ class FilingServiceTest {
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setAmlAcronym("HMRC");
         amlSupervisoryBodies1.setMembershipId("12345678");
         AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
@@ -549,6 +552,7 @@ class FilingServiceTest {
         Assertions.assertNull( response.getData().get("business_name"));
         Assertions.assertNotNull(response.getData().get("registered_office_address"));
         Assertions.assertNull(response.getData().get("service_address"));
+        Assertions.assertEquals("HMRC" , Arrays.stream(((Aml)response.getData().get("aml")).getAmlMemberships()).findFirst().get().getSupervisoryBody());
         Assertions.assertNull(((STPersonalInformation)response.getData().get("st_personal_information")).getBirthDate());
         Assertions.assertNull(((STPersonalInformation)response.getData().get("st_personal_information")).getUsualResidence());
     }
@@ -572,6 +576,7 @@ class FilingServiceTest {
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setAmlAcronym("HMRC");
         amlSupervisoryBodies1.setMembershipId("12345678");
         AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
@@ -582,6 +587,7 @@ class FilingServiceTest {
         Assertions.assertEquals("businessName".toUpperCase(), response.getData().get("business_name"));
         Assertions.assertNotNull(response.getData().get("registered_office_address"));
         Assertions.assertNull(response.getData().get("service_address"));
+        Assertions.assertEquals("HMRC" , Arrays.stream(((Aml)response.getData().get("aml")).getAmlMemberships()).findFirst().get().getSupervisoryBody());
         Assertions.assertEquals(FIRST_NAME.toUpperCase(),
                 ((STPersonalInformation)response.getData().get("st_personal_information")).getPersonName().getFirstName());
         Assertions.assertEquals("1984-10-31",
@@ -612,6 +618,7 @@ class FilingServiceTest {
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setAmlAcronym("HMRC");
         amlSupervisoryBodies1.setMembershipId("12345678");
         AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
@@ -619,6 +626,7 @@ class FilingServiceTest {
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.LP);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        Assertions.assertEquals("HMRC" , Arrays.stream(((Aml)response.getData().get("aml")).getAmlMemberships()).findFirst().get().getSupervisoryBody());
         Assertions.assertNotNull(response.getData().get("registered_office_address"));
         Assertions.assertNull(response.getData().get("st_personal_information"));
 
@@ -640,6 +648,7 @@ class FilingServiceTest {
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setAmlAcronym("HMRC");
         amlSupervisoryBodies1.setMembershipId("12345678");
         AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
@@ -668,6 +677,7 @@ class FilingServiceTest {
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setAmlAcronym("HMRC");
         amlSupervisoryBodies1.setMembershipId("12345678");
         AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
@@ -697,6 +707,7 @@ class FilingServiceTest {
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setAmlAcronym("HMRC");
         amlSupervisoryBodies1.setMembershipId("12345678");
         AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
@@ -730,6 +741,7 @@ class FilingServiceTest {
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setAmlAcronym("HMRC");
         amlSupervisoryBodies1.setMembershipId("12345678");
         AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
@@ -760,6 +772,7 @@ class FilingServiceTest {
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
         amlSupervisoryBodies1.setAmlSupervisoryBody("hmrc");
+        amlSupervisoryBodies1.setAmlAcronym("HMRC");
         amlSupervisoryBodies1.setMembershipId("12345678");
         AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
         acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
