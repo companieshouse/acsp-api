@@ -107,7 +107,7 @@ public class FilingsService {
       presenter.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
               .map(String::toUpperCase).orElse(null));
     }
-    presenter.setUserId(Optional.ofNullable(acspDataDto.getId())
+    presenter.setUserId(Optional.ofNullable(acspDataDto.getAcspDataSubmission().getLastModifiedByUserId())
             .map(String::toUpperCase).orElse(null));
 
     // presenter.setLanguage(); // add language in acspDataModel
