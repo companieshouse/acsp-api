@@ -16,7 +16,7 @@ public enum AMLSupervisoryBodies {
     GC("Gambling Commission","gambling-commission"),
     GCB("General Council of the Bar","general-council-of-the-bar"),
     BONI("General Council of the Bar of Northern Ireland","general-council-of-the-bar-of-northern-ireland"),
-    IAB("Institute of Accountants and Bookk   eepers (IAB)","institute-of-accountants-and-bookkeepers"),
+    IAB("Institute of Accountants and Bookkeepers (IAB)","institute-of-accountants-and-bookkeepers"),
     IPA("Insolvency Practitioners Association (IPA)","insolvency-practitioners-association"),
     ICB("Institute of Certified Bookkeepers","institute-of-certified-bookkeepers"),
     ICAEW("Institute of Chartered Accountants in England and Wales (ICAEW)","institute-of-chartered-accountants-in-england-and-wales"),
