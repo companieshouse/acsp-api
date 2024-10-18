@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,13 +21,14 @@ class CostServiceTest {
     @BeforeEach
     void init() {
         ReflectionTestUtils.setField(costService, "costAmount", "20.00");
+        ReflectionTestUtils.setField(costService, "paymentTypes", Arrays.asList("debit-card", "credit-card"));
     }
     @Test
     void getCosts() {
         var result = costService.getCosts();
 
         assertEquals("20.00", result.getAmount());
-        assertEquals(Collections.singletonList("credit-card"), result.getAvailablePaymentMethods());
+        assertEquals(Arrays.asList("debit-card", "credit-card"), result.getAvailablePaymentMethods());
         assertEquals(Collections.singletonList("data-maintenance"), result.getClassOfPayment());
     }
 }
