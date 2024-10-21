@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.payment.Cost;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,7 +12,7 @@ public class CostService {
 
     @Value("${ACSP01_COST}")
     private String costAmount;
-    @Value("${ACSP01_TYPES}")
+    @Value("${ACSP01_PAYMENT_METHODS}")
     private List<String> paymentTypes;
     private static final String COST_DESC = "Acsp fee";
     private static final String PAYMENT_ACCOUNT = "data-maintenance";
