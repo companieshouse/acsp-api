@@ -13,14 +13,14 @@ public class CostService {
     @Value("${ACSP01_COST}")
     private String costAmount;
     @Value("${ACSP01_PAYMENT_METHODS}")
-    private List<String> acspPaymentTypes;
+    private List<String> paymentMethods;
     private static final String COST_DESC = "Acsp fee";
     private static final String PAYMENT_ACCOUNT = "data-maintenance";
 
     public Cost getCosts() {
         var cost = new Cost();
         cost.setAmount(costAmount);
-        cost.setAvailablePaymentMethods(acspPaymentTypes);
+        cost.setAvailablePaymentMethods(paymentMethods);
         cost.setClassOfPayment(Collections.singletonList(PAYMENT_ACCOUNT));
         cost.setDescription(COST_DESC);
         cost.setDescriptionIdentifier("description-identifier");
