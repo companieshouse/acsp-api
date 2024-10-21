@@ -21,7 +21,7 @@ class CostServiceTest {
     @BeforeEach
     void init() {
         ReflectionTestUtils.setField(costService, "costAmount", "20.00");
-        ReflectionTestUtils.setField(costService, "paymentTypes", Arrays.asList("debit-card", "credit-card"));
+        ReflectionTestUtils.setField(costService, "acspPaymentTypes", Arrays.asList("debit-card", "credit-card"));
     }
     @Test
     void getCosts() {
