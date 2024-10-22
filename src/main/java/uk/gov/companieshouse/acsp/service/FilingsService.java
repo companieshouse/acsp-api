@@ -182,7 +182,7 @@ public class FilingsService {
     Arrays.stream(acspDataDto.getAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
       var membership = new AmlMembership();
       membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
-      membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlAcronym().toUpperCase());
+      membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().name());
       amlMemberships.add(membership);
     });
     var amlMembershipsArray = new AmlMembership[amlMemberships.size()];
