@@ -21,18 +21,28 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        return isOauth2User(request, response);
-    }
-
-    private boolean isOauth2User(HttpServletRequest request, HttpServletResponse response) {
         final var hasEricIdentity = Objects.nonNull( request.getHeader( "Eric-Identity" ) );
         final var hasEricIdentityType = Objects.nonNull( request.getHeader( "Eric-Identity-Type" ) );
-        if ( hasEricIdentity && hasEricIdentityType && AuthorisationUtil.isOauth2User(request) ) {
+
+        if (!hasEricIdentityType || !hasEricIdentity){
+            LOGGER.debugRequest(request, "AuthenticationInterceptor error: no authorised identity or identity type", null);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return false;
+        }
+
+        if (isOauth2User(request) || isApiKeyUser(request)) {
             return true;
         }
 
         LOGGER.debugRequest(request, "AuthenticationInterceptor error: user not authorised", null);
-        response.setStatus(401);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         return false;
+    }
+
+    private boolean isOauth2User(HttpServletRequest request) {
+        return AuthorisationUtil.isOauth2User(request);
+    }
+    private boolean isApiKeyUser(HttpServletRequest request) {
+        return request.getHeader("Eric-Identity-Type").equals("key");
     }
 }

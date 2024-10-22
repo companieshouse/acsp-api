@@ -1,4 +1,3 @@
-
 package uk.gov.companieshouse.acsp.mapper;
 
 import org.mapstruct.Named;
@@ -48,13 +47,13 @@ public class EnumTranslator {
     public AMLSupervisoryBodiesDao[] amlSupervisoryBodiesEnumToString(AMLSupervisoryBodiesDto[] inputEnumArray) {
         var amlSupervisoryBodiesDao = new AMLSupervisoryBodiesDao[0];
         if(inputEnumArray != null){
-            amlSupervisoryBodiesDao = new AMLSupervisoryBodiesDao[inputEnumArray.length];
-            for(var i=0; i<inputEnumArray.length; i++){
-                amlSupervisoryBodiesDao[i] = new AMLSupervisoryBodiesDao();
-                amlSupervisoryBodiesDao[i].setAmlSupervisoryBody(inputEnumArray[i].getAmlSupervisoryBody().getLabel());
-                amlSupervisoryBodiesDao[i].setMembershipId(inputEnumArray[i].getMembershipId());
-            }
-            return amlSupervisoryBodiesDao;
+           amlSupervisoryBodiesDao = new AMLSupervisoryBodiesDao[inputEnumArray.length];
+           for(var i=0; i<inputEnumArray.length; i++){
+               amlSupervisoryBodiesDao[i] = new AMLSupervisoryBodiesDao();
+               amlSupervisoryBodiesDao[i].setAmlSupervisoryBody(inputEnumArray[i].getAmlSupervisoryBody().getLabel());
+               amlSupervisoryBodiesDao[i].setMembershipId(inputEnumArray[i].getMembershipId());
+           }
+           return amlSupervisoryBodiesDao;
         }
         return amlSupervisoryBodiesDao;
     }
