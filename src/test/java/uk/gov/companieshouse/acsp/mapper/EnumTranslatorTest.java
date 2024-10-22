@@ -94,18 +94,18 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
     }
 
     @Test
-    void AmlSupervisoryBodiesDisplayLabelToDbValue() {
-        AMLSupervisoryBodiesDto[] nameArray = new AMLSupervisoryBodiesDto[ ]{
-                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.ATT.getDisplayLabel(),"123", null),
-                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.FA.getDisplayLabel(),"345", null)
+    void AmlSupervisoryBodiesEnumToString() {
+        AMLSupervisoryBodiesDto[] inputEnumArray = new AMLSupervisoryBodiesDto[ ]{
+                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.AAT,"123"),
+                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.FA,"345")
         };
 
         AMLSupervisoryBodiesDao[] expectedArray = new AMLSupervisoryBodiesDao[ ]{
-                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.ATT.getDbValue(),"123"),
-                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.FA.getDbValue(),"345")
+                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.AAT.getLabel(),"123"),
+                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.FA.getLabel(),"345")
         };
 
-        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesDisplayLabelToDbValue(nameArray);
+        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesEnumToString(inputEnumArray);
 
         assertEquals(expectedArray[0].getAmlSupervisoryBody(), actualArray[0].getAmlSupervisoryBody());
         assertEquals(expectedArray[0].getMembershipId(), actualArray[0].getMembershipId());
@@ -114,40 +114,38 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
     }
 
     @Test
-    void AmlSupervisoryBodiesDisplayLabelToDbValueForNullInputArray() {
-        AMLSupervisoryBodiesDto[] nameArray = new AMLSupervisoryBodiesDto[ ]{ };
+    void AmlSupervisoryBodiesEnumToStringForNullInputArray() {
+        AMLSupervisoryBodiesDto[] inputEnumArray = new AMLSupervisoryBodiesDto[ ]{ };
         AMLSupervisoryBodiesDao[] expectedArray = new AMLSupervisoryBodiesDao[0];
-        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesDisplayLabelToDbValue(nameArray);
+        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesEnumToString(inputEnumArray);
         assertArrayEquals(expectedArray,actualArray);
     }
 
     @Test
-    void AmlSupervisoryBodiesDbValueToDisplayLabel() {
-        AMLSupervisoryBodiesDao[] labelArray = new AMLSupervisoryBodiesDao[ ]{
-                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.ATT.getDbValue(),"123"),
-                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.FA.getDbValue(),"345")
+    void AmlSupervisoryBodiesStringToEnum() {
+        AMLSupervisoryBodiesDao[] inputStrArray = new AMLSupervisoryBodiesDao[ ]{
+                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.ATT.getLabel(),"123"),
+                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.FA.getLabel(),"345")
         };
 
         AMLSupervisoryBodiesDto[] expectedArray = new AMLSupervisoryBodiesDto[ ]{
-                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.ATT.getDisplayLabel(),"123", "ATT"),
-                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.FA.getDisplayLabel(),"345", "FA")
+                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.ATT,"123"),
+                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.FA,"345")
         };
 
-        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesDbValueToDisplayLabel(labelArray);
+        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesStringToEnum(inputStrArray);
 
         assertEquals(expectedArray[0].getAmlSupervisoryBody(), actualArray[0].getAmlSupervisoryBody());
         assertEquals(expectedArray[0].getMembershipId(), actualArray[0].getMembershipId());
-        assertEquals(expectedArray[0].getAmlAcronym(), actualArray[0].getAmlAcronym());
         assertEquals(expectedArray[1].getAmlSupervisoryBody(), actualArray[1].getAmlSupervisoryBody());
         assertEquals(expectedArray[1].getMembershipId(), actualArray[1].getMembershipId());
-        assertEquals(expectedArray[1].getAmlAcronym(), actualArray[1].getAmlAcronym());
     }
 
     @Test
     void AmlSupervisoryBodiesDbValueToDisplayLabelForNullInputArray() {
-        AMLSupervisoryBodiesDao[] labelArray = new AMLSupervisoryBodiesDao[ ]{ };
+        AMLSupervisoryBodiesDao[] inputStrArray = new AMLSupervisoryBodiesDao[ ]{ };
         AMLSupervisoryBodiesDto[] expectedArray = new AMLSupervisoryBodiesDto[0];
-        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesDbValueToDisplayLabel(labelArray);
+        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesStringToEnum(inputStrArray);
         assertArrayEquals(expectedArray,actualArray);
     }
 }
