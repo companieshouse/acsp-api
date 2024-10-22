@@ -66,7 +66,6 @@ public class AcspService {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(dataMapper);
 
-
         try {
             var insertedSubmission = acspRepository.insert(acspDataDao);
 
