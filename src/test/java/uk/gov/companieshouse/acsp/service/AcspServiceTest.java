@@ -111,7 +111,7 @@ class AcspServiceTest {
 
 
 
-        when(acspRegDataDtoDaoMapper.dtoToDao(dataMapper)).thenReturn(acspDataDao);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
         when(acspRepository.insert((AcspDataDao) any())).thenReturn(acspDataDao);
         doNothing().when(transactionService).updateTransaction(any(), any());
         ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
@@ -132,7 +132,7 @@ class AcspServiceTest {
         dataMapper.setData(acspData);
         dataMapper.setId("demo@ch.gov.uk");
 
-        when(acspRegDataDtoDaoMapper.dtoToDao(dataMapper)).thenReturn(acspDataDao);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
         when(acspRepository.insert((AcspDataDao) any())).thenThrow(DuplicateKeyException.class);
         ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
                 acspData,
@@ -152,7 +152,7 @@ class AcspServiceTest {
         dataMapper.setData(acspData);
         dataMapper.setId("demo@ch.gov.uk");
 
-        when(acspRegDataDtoDaoMapper.dtoToDao(dataMapper)).thenReturn(acspDataDao);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
         when(acspRepository.insert((AcspDataDao) any())).thenThrow(MongoSocketWriteException.class);
         ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
                 acspData,
