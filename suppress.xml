@@ -8,7 +8,7 @@
     </suppress>
     <suppress until="2024-12-01Z">
         <notes><![CDATA[
-   file name: spring-webmvc-6.1.12.jar
+   file name: spring-webmvc-6.1.13.jar
    ]]></notes>
         <cve>CVE-2024-38819</cve>
     </suppress>
