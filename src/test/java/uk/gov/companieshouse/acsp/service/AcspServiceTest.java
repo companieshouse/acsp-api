@@ -62,10 +62,6 @@ class AcspServiceTest {
 
     @Mock
     private AcspDataDto acspDataDto;
-    @Mock
-    private DataDao dataDao;
-    @Mock
-    private DataMapper dataMapper;
 
     @Mock
     private ACSPRegDataDtoDaoMapper acspRegDataDtoDaoMapper;
@@ -97,8 +93,8 @@ class AcspServiceTest {
     @Test
     void createAcspSuccess() throws Exception {
 
-        AcspDataDto acspData = new AcspDataDto();
-        acspData.setId("demo@ch.gov.uk");
+        AcspDataDto acspDataDto = new AcspDataDto();
+        acspDataDto.setId("demo@ch.gov.uk");
 
         DataDao data  = new DataDao();
         AcspDataDao acspDataDao = new AcspDataDao();
@@ -107,7 +103,7 @@ class AcspServiceTest {
 
         DataMapper dataMapper = new DataMapper();
         dataMapper.setId("demo@ch.gov.uk");
-        dataMapper.setData(acspData);
+        dataMapper.setData(acspDataDto);
 
 
 
@@ -115,7 +111,7 @@ class AcspServiceTest {
         when(acspRepository.insert((AcspDataDao) any())).thenReturn(acspDataDao);
         doNothing().when(transactionService).updateTransaction(any(), any());
         ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
-                acspData,
+                acspDataDto,
                 REQUEST_ID);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
@@ -142,506 +138,521 @@ class AcspServiceTest {
 
     @Test
     void createAcspException() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        acspDataDto.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+
+        DataMapper dataMapper = new DataMapper();
+        dataMapper.setData(acspDataDto);
+        dataMapper.setId("demo@ch.gov.uk");
+
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
+        when(acspRepository.insert((AcspDataDao) any())).thenThrow(MongoSocketWriteException.class);
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspDataDto,
+                REQUEST_ID);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    void updateAcsp() throws Exception {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        acspDataDto.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+
+        DataMapper dataMapper = new DataMapper();
+        dataMapper.setData(acspDataDto);
+        dataMapper.setId("demo@ch.gov.uk");
+
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspDataDto,
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+
+    @Test
+    void updateAcspWhenTransactionisPendingPayment() throws Exception {
         AcspDataDto acspData = new AcspDataDto();
         acspData.setId("demo@ch.gov.uk");
 
         AcspDataDao acspDataDao = new AcspDataDao();
         acspDataDao.setId("demo@ch.gov.uk");
 
-        DataMapper dataMapper = new DataMapper();
-        dataMapper.setData(acspData);
-        dataMapper.setId("demo@ch.gov.uk");
-
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
         when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
-        when(acspRepository.insert((AcspDataDao) any())).thenThrow(MongoSocketWriteException.class);
-        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+        when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED_PENDING_PAYMENT);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
                 acspData,
-                REQUEST_ID);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+                REQUEST_ID,
+                USER_ID);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-//    @Test
-//    void updateAcsp() throws Exception {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setId("demo@ch.gov.uk");
-//
-//        AcspDataDao acspDataDao = new AcspDataDao();
-//        acspDataDao.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
-//        when(acspRepository.save(any())).thenReturn(acspDataDao);
-//
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
-//        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
-//                acspData,
-//                REQUEST_ID,
-//                USER_ID);
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
-//
-//
-//    @Test
-//    void updateAcspWhenTransactionisPendingPayment() throws Exception {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setId("demo@ch.gov.uk");
-//
-//        AcspDataDao acspDataDao = new AcspDataDao();
-//        acspDataDao.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
-//        when(acspRepository.save(any())).thenReturn(acspDataDao);
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED_PENDING_PAYMENT);
-//
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
-//        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
-//                acspData,
-//                REQUEST_ID,
-//                USER_ID);
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
-//
-//    @Test
-//    void updateAcspFailWhenTransactionStatusIsClosed() {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED);
-//
-//        assertThrows(InvalidTransactionStatusException.class, () -> {
-//            acspService.updateACSPDetails(transaction,
-//                    acspData,
-//                    REQUEST_ID,
-//                    USER_ID);
-//        });
-//    }
-//
-//    @Test
-//    void updateAcspFailWhenTransactionStatusIsDeleted() {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.DELETED);
-//
-//        assertThrows(InvalidTransactionStatusException.class, () -> {
-//            acspService.updateACSPDetails(transaction,
-//                    acspData,
-//                    REQUEST_ID,
-//                    USER_ID);
-//        });
-//    }
-//
-//    @Test
-//    void testUpdateAcspFailsWhenNoLickedTransaction() {
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(false);
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setId("demo@ch.gov.uk");
-//
-//        assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
-//            acspService.updateACSPDetails(transaction,
-//                    acspData,
-//                    REQUEST_ID,
-//                    USER_ID);
-//        });
-//    }
-//
-//    @Test
-//    void getAcspApplicationStatusNoApplication() {
-//        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        when(acspRepository.findById(USER_ID)).thenReturn(Optional.empty());
-//        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
-//        assertEquals(expectedResponse, response);
-//    }
-//
-//    @Test
-//    void getAcspApplicationStatusOpenTransaction() throws ServiceException {
-//        var application = new AcspDataDao();
-//        var data = application.getData();
-//        var submissionData = new AcspDataSubmissionDao();
-//        Map<String, String> links = new HashMap<>();
-//        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
-//        data.setLinks(links);
-//        data.setAcspDataSubmission(submissionData);
-//        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        Transaction transaction = new Transaction();
-//        transaction.setStatus(TransactionStatus.OPEN);
-//
-//        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
-//        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
-//        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
-//        assertEquals(expectedResponse, response);
-//    }
-//
-//    @Test
-//    void getAcspApplicationStatusTransactionClosedAndRejected() throws ServiceException {
-//        var application = new AcspDataDao();
-//        var data = application.getData();
-//        var submissionData = new AcspDataSubmissionDao();
-//        Map<String, String> links = new HashMap<>();
-//        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
-//        data.setLinks(links);
-//        data.setAcspDataSubmission(submissionData);
-//        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        Transaction transaction = new Transaction();
-//        transaction.setStatus(TransactionStatus.CLOSED);
-//        Map<String, Filing> filingsMap = new HashMap<>();
-//        Filing filing = new Filing();
-//        filing.setStatus("rejected");
-//        filingsMap.put(TRANSACTION_ID + "-1", filing);
-//        transaction.setFilings(filingsMap);
-//
-//        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
-//        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
-//        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
-//        assertEquals(expectedResponse, response);
-//        verify(acspRepository, times(1)).delete(application);
-//    }
-//
-//    @Test
-//    void getAcspApplicationStatusTransactionClosedAndProcessing() throws ServiceException {
-//        var application = new AcspDataDao();
-//        var data = application.getData();
-//        var submissionData = new AcspDataSubmissionDao();
-//        Map<String, String> links = new HashMap<>();
-//        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
-//        data.setLinks(links);
-//        data.setAcspDataSubmission(submissionData);
-//        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//        Transaction transaction = new Transaction();
-//        transaction.setStatus(TransactionStatus.CLOSED);
-//        Map<String, Filing> filingsMap = new HashMap<>();
-//        Filing filing = new Filing();
-//        filing.setStatus("processing");
-//        filingsMap.put(TRANSACTION_ID + "-1", filing);
-//        transaction.setFilings(filingsMap);
-//
-//        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
-//        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
-//        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
-//        assertEquals(expectedResponse, response);
-//    }
-//
-//    @Test
-//    void getAcspApplicationStatusError() throws ServiceException {
-//        var application = new AcspDataDao();
-//        var data = application.getData();
-//        var submissionData = new AcspDataSubmissionDao();
-//        Map<String, String> links = new HashMap<>();
-//        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
-//        data.setLinks(links);
-//        data.setAcspDataSubmission(submissionData);
-//        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//
-//        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
-//        doThrow(ServiceException.class).when(transactionService).getTransaction(REQUEST_ID, TRANSACTION_ID);
-//        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
-//        assertEquals(expectedResponse, response);
-//    }
-//
-//    @Test
-//    void testGetSavedAcspWhenFoundSuccessfully() throws SubmissionNotLinkedToTransactionException {
-//        var acspDataDao = new AcspDataDao();
-//        acspDataDao.setId(SUBMISSION_ID);
-//        when(acspRepository.findById(SUBMISSION_ID)
-//        ).thenReturn(Optional.of(acspDataDao));
-//        when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao.getData())
-//        ).thenReturn(acspDataDto);
-//
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        var response = acspService.getAcsp(SUBMISSION_ID, transaction);
-//        assertNotNull(response);
-//    }
-//
-//    @Test
-//    void testGetSavedAcspReturnsNullWhenNoLickedTransaction() {
-//        var acspDataDao = new AcspDataDao();
-//        acspDataDao.setId(SUBMISSION_ID);
-//        when(acspRepository.findById(SUBMISSION_ID)).thenReturn(Optional.of(acspDataDao));
-//        when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao.getData())).thenReturn(acspDataDto);
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(false);
-//        transaction.setId("1234");
-//        assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
-//            acspService.getAcsp(SUBMISSION_ID, transaction);
-//        });
-//    }
-//
-//    private Transaction buildTransaction() {
-//        Transaction transaction = new Transaction();
-//        transaction.setId(TRANSACTION_ID);
-//        return transaction;
-//    }
-//
-//    @Test
-//    void deleteSavedApplicationSuccess() {
-//        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
-//        verify(acspRepository, times(1)).deleteById(USER_ID);
-//        assertEquals(expectedResponse, response);
-//    }
-//
-//    @Test
-//    void deleteSavedApplicationErrorReadingFromDB() {
-//        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//        doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(USER_ID);
-//        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
-//        assertEquals(expectedResponse, response);
-//    }
-//
-//
-//    @Test
-//    void updateAcspCompanyDetails() throws Exception {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setCompanyDetails(new CompanyDetails());
-//        acspData.getCompanyDetails().setCompanyName("Test Company");
-//        acspData.getCompanyDetails().setCompanyNumber("12345678");
-//
-//        AcspDataDao acspDataDao = new AcspDataDao();
-//        acspDataDao.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
-//        when(acspRepository.save(any())).thenReturn(acspDataDao);
-//
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
-//
-//        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
-//                acspData,
-//                REQUEST_ID,
-//                "demo@ch.gov.uk");
-//        verify(transaction).setCompanyName("Test Company");
-//        verify(transaction).setCompanyNumber("12345678");
-//        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
-//
-//    @Test
-//    void noUpdateToTransactionCompanyNameNull() throws Exception {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setCompanyDetails(new CompanyDetails());
-//        acspData.getCompanyDetails().setCompanyName(null);
-//        acspData.getCompanyDetails().setCompanyNumber("12345678");
-//
-//        AcspDataDao acspDataDao = new AcspDataDao();
-//        acspDataDao.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
-//        when(acspRepository.save(any())).thenReturn(acspDataDao);
-//
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
-//
-//        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
-//                acspData,
-//                REQUEST_ID,
-//                "demo@ch.gov.uk");
-//        verify(transaction, times(0)).setCompanyName(null);
-//        verify(transaction, times(0)).setCompanyNumber("12345678");
-//        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
-//
-//    @Test
-//    void noUpdateToTransactionCompanyNumberNull() throws Exception {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setCompanyDetails(new CompanyDetails());
-//        acspData.getCompanyDetails().setCompanyName("Test Company");
-//        acspData.getCompanyDetails().setCompanyNumber(null);
-//
-//        AcspDataDao acspDataDao = new AcspDataDao();
-//        acspDataDao.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
-//        when(acspRepository.save(any())).thenReturn(acspDataDao);
-//
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
-//
-//        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
-//                acspData,
-//                REQUEST_ID,
-//                "demo@ch.gov.uk");
-//        verify(transaction, times(0)).setCompanyName("Test Company");
-//        verify(transaction, times(0)).setCompanyNumber(null);
-//        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
-//
-//    @Test
-//    void updateAcspCompanyDetailsRemainTheSame() throws Exception {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setCompanyDetails(new CompanyDetails());
-//        acspData.getCompanyDetails().setCompanyName("Test Company");
-//        acspData.getCompanyDetails().setCompanyNumber("12345678");
-//
-//        AcspDataDao acspDataDao = new AcspDataDao();
-//        acspDataDao.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
-//        when(acspRepository.save(any())).thenReturn(acspDataDao);
-//
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
-//        when(transaction.getCompanyName()).thenReturn("Test Company");
-//        when(transaction.getCompanyNumber()).thenReturn("12345678");
-//
-//        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
-//                acspData,
-//                REQUEST_ID,
-//                "demo@ch.gov.uk");
-//        verify(transaction, times(0)).setCompanyName("Test Company");
-//        verify(transaction, times(0)).setCompanyNumber("12345678");
-//        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
-//
-//    @Test
-//    void updateAcspCompanyDetailsCompanyNumberChange() throws Exception {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setCompanyDetails(new CompanyDetails());
-//        acspData.getCompanyDetails().setCompanyName("Test Company");
-//        acspData.getCompanyDetails().setCompanyNumber("12345678");
-//
-//        AcspDataDao acspDataDao = new AcspDataDao();
-//        acspDataDao.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
-//        when(acspRepository.save(any())).thenReturn(acspDataDao);
-//
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
-//        when(transaction.getCompanyName()).thenReturn("Test Company");
-//        when(transaction.getCompanyNumber()).thenReturn("12345679");
-//
-//        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
-//                acspData,
-//                REQUEST_ID,
-//                "demo@ch.gov.uk");
-//        verify(transaction).setCompanyName("Test Company");
-//        verify(transaction).setCompanyNumber("12345678");
-//        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
-//
-//    @Test
-//    void updateAcspBusinessName() throws Exception {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setBusinessName("Test Business Name");
-//
-//        AcspDataDao acspDataDao = new AcspDataDao();
-//        acspDataDao.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
-//        when(acspRepository.save(any())).thenReturn(acspDataDao);
-//
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
-//
-//        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
-//                acspData,
-//                REQUEST_ID,
-//                "demo@ch.gov.uk");
-//        verify(transaction).setCompanyName("Test Business Name");
-//        verify(transaction).setCompanyNumber(null);
-//        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
-//
-//    @Test
-//    void updateAcspBusinessNameRemainsTheSame() throws Exception {
-//        AcspDataDto acspData = new AcspDataDto();
-//        acspData.setBusinessName("Test Business Name");
-//
-//        AcspDataDao acspDataDao = new AcspDataDao();
-//        acspDataDao.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
-//        when(acspRepository.save(any())).thenReturn(acspDataDao);
-//
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
-//        when(transaction.getCompanyName()).thenReturn("Test Business Name");
-//
-//        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
-//                acspData,
-//                REQUEST_ID,
-//                "demo@ch.gov.uk");
-//        verify(transaction, times(0)).setCompanyName("Test Business Name");
-//        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
-//
-//    @Test
-//    void updateAcspWithNullCompanyDetailsAndBusinessName() throws Exception {
-//        AcspDataDto acspData = new AcspDataDto();
-//        // No companyDetails or businessName set
-//        AcspDataDao acspDataDao = new AcspDataDao();
-//        acspDataDao.setId("demo@ch.gov.uk");
-//        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
-//                .thenReturn(true);
-//        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
-//        when(acspRepository.save(any())).thenReturn(acspDataDao);
-//
-//        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
-//
-//        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
-//                acspData,
-//                REQUEST_ID,
-//                "demo@ch.gov.uk");
-//        verify(transaction, times(0)).setCompanyName(anyString());
-//        verify(transaction, times(0)).setCompanyNumber(anyString());
-//        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
-//
-//    @Test
-//    void deleteAcspApplicationAndTransactionSuccess() throws ServiceException {
-//
-//        doNothing().when(acspRepository).deleteById(USER_ID);
-//        doNothing().when(transactionService).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
-//
-//        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(PASS_THROUGH_HEADER, USER_ID, TRANSACTION_ID);
-//
-//        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-//        verify(acspRepository, times(1)).deleteById(USER_ID);
-//        verify(transactionService, times(1)).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
-//    }
-//
-//    @Test
-//    void deleteAcspApplicationAndTransactionErrorApplication() throws ServiceException {
-//        doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(USER_ID);
-//
-//        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(PASS_THROUGH_HEADER, USER_ID, TRANSACTION_ID);
-//
-//        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-//        verify(acspRepository, times(1)).deleteById(USER_ID);
-//        verify(transactionService, times(0)).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
-//    }
-//
-//    @Test
-//    void deleteAcspApplicationAndTransactionErrorDeletingTransaction() throws ServiceException {
-//
-//        doNothing().when(acspRepository).deleteById(USER_ID);
-//        doThrow(ServiceException.class).when(transactionService).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
-//
-//        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(PASS_THROUGH_HEADER, USER_ID, TRANSACTION_ID);
-//
-//        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-//        verify(acspRepository, times(1)).deleteById(USER_ID);
-//        verify(transactionService, times(1)).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
-//    }
+    @Test
+    void updateAcspFailWhenTransactionStatusIsClosed() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED);
+
+        assertThrows(InvalidTransactionStatusException.class, () -> {
+            acspService.updateACSPDetails(transaction,
+                    acspData,
+                    REQUEST_ID,
+                    USER_ID);
+        });
+    }
+
+    @Test
+    void updateAcspFailWhenTransactionStatusIsDeleted() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(transaction.getStatus()).thenReturn(TransactionStatus.DELETED);
+
+        assertThrows(InvalidTransactionStatusException.class, () -> {
+            acspService.updateACSPDetails(transaction,
+                    acspData,
+                    REQUEST_ID,
+                    USER_ID);
+        });
+    }
+
+    @Test
+    void testUpdateAcspFailsWhenNoLickedTransaction() {
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(false);
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
+            acspService.updateACSPDetails(transaction,
+                    acspData,
+                    REQUEST_ID,
+                    USER_ID);
+        });
+    }
+
+    @Test
+    void getAcspApplicationStatusNoApplication() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.empty());
+        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void getAcspApplicationStatusOpenTransaction() throws ServiceException {
+
+        var application = new AcspDataDao();
+        var dataDao = new DataDao();
+        application.setData(dataDao);
+        var submissionData = new AcspDataSubmissionDao();
+
+        Map<String, String> links = new HashMap<>();
+        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
+        dataDao.setLinks(links);
+        dataDao.setAcspDataSubmission(submissionData);
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Transaction transaction = new Transaction();
+        transaction.setStatus(TransactionStatus.OPEN);
+
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
+        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
+        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void getAcspApplicationStatusTransactionClosedAndRejected() throws ServiceException {
+        var application = new AcspDataDao();
+        var dataDao = new DataDao();
+        application.setData(dataDao);
+        var submissionData = new AcspDataSubmissionDao();
+
+        Map<String, String> links = new HashMap<>();
+        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
+        dataDao.setLinks(links);
+        dataDao.setAcspDataSubmission(submissionData);
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Transaction transaction = new Transaction();
+        transaction.setStatus(TransactionStatus.CLOSED);
+        Map<String, Filing> filingsMap = new HashMap<>();
+        Filing filing = new Filing();
+        filing.setStatus("rejected");
+        filingsMap.put(TRANSACTION_ID + "-1", filing);
+        transaction.setFilings(filingsMap);
+
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
+        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
+        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
+        assertEquals(expectedResponse, response);
+        verify(acspRepository, times(1)).delete(application);
+    }
+
+    @Test
+    void getAcspApplicationStatusTransactionClosedAndProcessing() throws ServiceException {
+        var application = new AcspDataDao();
+        var dataDao = new DataDao();
+        application.setData(dataDao);
+        var submissionData = new AcspDataSubmissionDao();
+
+        Map<String, String> links = new HashMap<>();
+        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
+        dataDao.setLinks(links);
+        dataDao.setAcspDataSubmission(submissionData);
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        Transaction transaction = new Transaction();
+        transaction.setStatus(TransactionStatus.CLOSED);
+        Map<String, Filing> filingsMap = new HashMap<>();
+        Filing filing = new Filing();
+        filing.setStatus("processing");
+        filingsMap.put(TRANSACTION_ID + "-1", filing);
+        transaction.setFilings(filingsMap);
+
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
+        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
+        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void getAcspApplicationStatusError() throws ServiceException {
+        var application = new AcspDataDao();
+        var dataDao = new DataDao();
+        application.setData(dataDao);
+        var submissionData = new AcspDataSubmissionDao();
+
+        Map<String, String> links = new HashMap<>();
+        links.put("self", "/transaction/" + TRANSACTION_ID + "/");
+        dataDao.setLinks(links);
+        dataDao.setAcspDataSubmission(submissionData);
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(application));
+        doThrow(ServiceException.class).when(transactionService).getTransaction(REQUEST_ID, TRANSACTION_ID);
+        ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void testGetSavedAcspWhenFoundSuccessfully() throws SubmissionNotLinkedToTransactionException {
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setId(SUBMISSION_ID);
+        when(acspRepository.findById(SUBMISSION_ID)
+        ).thenReturn(Optional.of(acspDataDao));
+        when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao.getData())
+        ).thenReturn(acspDataDto);
+
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        var response = acspService.getAcsp(SUBMISSION_ID, transaction);
+        assertNotNull(response);
+    }
+
+    @Test
+    void testGetSavedAcspReturnsNullWhenNoLickedTransaction() {
+        var acspDataDao = new AcspDataDao();
+        acspDataDao.setId(SUBMISSION_ID);
+        when(acspRepository.findById(SUBMISSION_ID)).thenReturn(Optional.of(acspDataDao));
+        when(acspRegDataDtoDaoMapper.daoToDto(acspDataDao.getData())).thenReturn(acspDataDto);
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(false);
+        transaction.setId("1234");
+        assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
+            acspService.getAcsp(SUBMISSION_ID, transaction);
+        });
+    }
+
+    private Transaction buildTransaction() {
+        Transaction transaction = new Transaction();
+        transaction.setId(TRANSACTION_ID);
+        return transaction;
+    }
+
+    @Test
+    void deleteSavedApplicationSuccess() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        verify(acspRepository, times(1)).deleteById(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void deleteSavedApplicationErrorReadingFromDB() {
+        ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(USER_ID);
+        ResponseEntity<Object> response = acspService.deleteAcspApplication(USER_ID);
+        assertEquals(expectedResponse, response);
+    }
+
+
+    @Test
+    void updateAcspCompanyDetails() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setCompanyDetails(new CompanyDetails());
+        acspData.getCompanyDetails().setCompanyName("Test Company");
+        acspData.getCompanyDetails().setCompanyNumber("12345678");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                "demo@ch.gov.uk");
+        verify(transaction).setCompanyName("Test Company");
+        verify(transaction).setCompanyNumber("12345678");
+        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void noUpdateToTransactionCompanyNameNull() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setCompanyDetails(new CompanyDetails());
+        acspData.getCompanyDetails().setCompanyName(null);
+        acspData.getCompanyDetails().setCompanyNumber("12345678");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                "demo@ch.gov.uk");
+        verify(transaction, times(0)).setCompanyName(null);
+        verify(transaction, times(0)).setCompanyNumber("12345678");
+        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void noUpdateToTransactionCompanyNumberNull() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setCompanyDetails(new CompanyDetails());
+        acspData.getCompanyDetails().setCompanyName("Test Company");
+        acspData.getCompanyDetails().setCompanyNumber(null);
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                "demo@ch.gov.uk");
+        verify(transaction, times(0)).setCompanyName("Test Company");
+        verify(transaction, times(0)).setCompanyNumber(null);
+        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void updateAcspCompanyDetailsRemainTheSame() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setCompanyDetails(new CompanyDetails());
+        acspData.getCompanyDetails().setCompanyName("Test Company");
+        acspData.getCompanyDetails().setCompanyNumber("12345678");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+        when(transaction.getCompanyName()).thenReturn("Test Company");
+        when(transaction.getCompanyNumber()).thenReturn("12345678");
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                "demo@ch.gov.uk");
+        verify(transaction, times(0)).setCompanyName("Test Company");
+        verify(transaction, times(0)).setCompanyNumber("12345678");
+        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void updateAcspCompanyDetailsCompanyNumberChange() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setCompanyDetails(new CompanyDetails());
+        acspData.getCompanyDetails().setCompanyName("Test Company");
+        acspData.getCompanyDetails().setCompanyNumber("12345678");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+        when(transaction.getCompanyName()).thenReturn("Test Company");
+        when(transaction.getCompanyNumber()).thenReturn("12345679");
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                "demo@ch.gov.uk");
+        verify(transaction).setCompanyName("Test Company");
+        verify(transaction).setCompanyNumber("12345678");
+        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void updateAcspBusinessName() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setBusinessName("Test Business Name");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                "demo@ch.gov.uk");
+        verify(transaction).setCompanyName("Test Business Name");
+        verify(transaction).setCompanyNumber(null);
+        verify(transactionService).updateTransaction((REQUEST_ID), (transaction));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void updateAcspBusinessNameRemainsTheSame() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setBusinessName("Test Business Name");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+        when(transaction.getCompanyName()).thenReturn("Test Business Name");
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                "demo@ch.gov.uk");
+        verify(transaction, times(0)).setCompanyName("Test Business Name");
+        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void updateAcspWithNullCompanyDetailsAndBusinessName() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        // No companyDetails or businessName set
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
+                .thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
+        when(acspRepository.save(any())).thenReturn(acspDataDao);
+
+        when(transaction.getStatus()).thenReturn(TransactionStatus.OPEN);
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction,
+                acspData,
+                REQUEST_ID,
+                "demo@ch.gov.uk");
+        verify(transaction, times(0)).setCompanyName(anyString());
+        verify(transaction, times(0)).setCompanyNumber(anyString());
+        verify(transactionService, times(0)).updateTransaction((REQUEST_ID), (transaction));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void deleteAcspApplicationAndTransactionSuccess() throws ServiceException {
+
+        doNothing().when(acspRepository).deleteById(USER_ID);
+        doNothing().when(transactionService).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
+
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(PASS_THROUGH_HEADER, USER_ID, TRANSACTION_ID);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(acspRepository, times(1)).deleteById(USER_ID);
+        verify(transactionService, times(1)).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
+    }
+
+    @Test
+    void deleteAcspApplicationAndTransactionErrorApplication() throws ServiceException {
+        doThrow(MongoSocketWriteException.class).when(acspRepository).deleteById(USER_ID);
+
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(PASS_THROUGH_HEADER, USER_ID, TRANSACTION_ID);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        verify(acspRepository, times(1)).deleteById(USER_ID);
+        verify(transactionService, times(0)).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
+    }
+
+    @Test
+    void deleteAcspApplicationAndTransactionErrorDeletingTransaction() throws ServiceException {
+
+        doNothing().when(acspRepository).deleteById(USER_ID);
+        doThrow(ServiceException.class).when(transactionService).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
+
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(PASS_THROUGH_HEADER, USER_ID, TRANSACTION_ID);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        verify(acspRepository, times(1)).deleteById(USER_ID);
+        verify(transactionService, times(1)).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
+    }
 
 }
