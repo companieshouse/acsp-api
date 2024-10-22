@@ -72,7 +72,7 @@ public class AcspService {
 
             String submissionId = insertedSubmission.getId();
             final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
-            updateAcspRegWithMetaData(insertedSubmission, submissionUri, requestId);
+            updateAcspRegWithMetaData(insertedSubmission, transaction, submissionUri, requestId);
             acspRepository.save(insertedSubmission);
             // create the Resource to be added to the Transaction (includes various links to the resource)
             var acspTransactionResource = createAcspTransactionResource(submissionUri);
@@ -82,7 +82,6 @@ public class AcspService {
                     transaction.getId(), insertedSubmission.getId()));
 
             acspDataDto = acspRegDataDtoDaoMapper.daoToDto(insertedSubmission.getData());
-            System.out.println("aaaaaaaaaaaaaaa  " + acspDataDto);
 
             return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
         } catch (DuplicateKeyException e) {
@@ -140,13 +139,14 @@ public class AcspService {
 
 
     private void updateAcspRegWithMetaData(AcspDataDao acspData,
+                                           Transaction transaction,
                                            String submissionUri,
                                            String requestId) {
         var data = acspData.getData();
         var submission = new AcspDataSubmissionDao();
         submission.setCreatedAt(LocalDateTime.now());
         submission.setHttpRequestId(requestId);
-        submission.setLastModifiedByUserId(acspData.getId());
+        submission.setLastModifiedByUserId(transaction.getCreatedBy().get("id"));
         data.setAcspDataSubmission(submission);
         data.setLinks(Collections.singletonMap(LINK_SELF, submissionUri));
         acspData.setData(data);

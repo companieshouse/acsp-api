@@ -14,10 +14,12 @@ public interface ACSPRegDataDtoDaoMapper {
       @Mapping(source = "typeOfBusiness", target = "typeOfBusiness", qualifiedByName = "TypeOfBusinessStringToEnum")
       @Mapping(source = "roleType", target = "roleType", qualifiedByName = "RoleTypeStringToEnum")
       @Mapping(source = "workSector", target = "workSector", qualifiedByName = "WorkSectorStringToEnum")
+      @Mapping(source = "amlSupervisoryBodies", target = "amlSupervisoryBodies", qualifiedByName = "amlSupervisoryBodiesStringToEnum")
       AcspDataDto daoToDto(DataDao dataDao);
 
       @Mapping(source = "data.typeOfBusiness", target = "data.typeOfBusiness", qualifiedByName = "TypeOfBusinessEnumToString")
       @Mapping(source = "data.roleType", target = "data.roleType", qualifiedByName = "RoleTypeEnumToString")
       @Mapping(source = "data.workSector", target = "data.workSector", qualifiedByName = "WorkSectorEnumToString")
+      @Mapping(source = "data.amlSupervisoryBodies", target = "data.amlSupervisoryBodies", qualifiedByName = "amlSupervisoryBodiesEnumToString")
       AcspDataDao dtoToDao(DataMapper dataMapper);
 }
