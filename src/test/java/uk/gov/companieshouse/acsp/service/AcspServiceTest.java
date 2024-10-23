@@ -16,8 +16,8 @@ import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.models.dao.DataDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.dto.AcspDataDtoWrapper;
 import uk.gov.companieshouse.acsp.models.dto.CompanyDto;
-import uk.gov.companieshouse.acsp.models.dto.DataMapper;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
 import uk.gov.companieshouse.api.model.transaction.Filing;
@@ -101,9 +101,9 @@ class AcspServiceTest {
         acspDataDao.setData(data);
         acspDataDao.setId("demo@ch.gov.uk");
 
-        DataMapper dataMapper = new DataMapper();
-        dataMapper.setId("demo@ch.gov.uk");
-        dataMapper.setData(acspDataDto);
+        AcspDataDtoWrapper acspDataDtoWrapper = new AcspDataDtoWrapper();
+        acspDataDtoWrapper.setId("demo@ch.gov.uk");
+        acspDataDtoWrapper.setData(acspDataDto);
 
 
 
@@ -124,9 +124,9 @@ class AcspServiceTest {
         AcspDataDao acspDataDao = new AcspDataDao();
         acspDataDao.setId("demo@ch.gov.uk");
 
-        DataMapper dataMapper = new DataMapper();
-        dataMapper.setData(acspData);
-        dataMapper.setId("demo@ch.gov.uk");
+        AcspDataDtoWrapper acspDataDtoWrapper = new AcspDataDtoWrapper();
+        acspDataDtoWrapper.setData(acspData);
+        acspDataDtoWrapper.setId("demo@ch.gov.uk");
 
         when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
         when(acspRepository.insert((AcspDataDao) any())).thenThrow(DuplicateKeyException.class);
@@ -144,9 +144,9 @@ class AcspServiceTest {
         AcspDataDao acspDataDao = new AcspDataDao();
         acspDataDao.setId("demo@ch.gov.uk");
 
-        DataMapper dataMapper = new DataMapper();
-        dataMapper.setData(acspDataDto);
-        dataMapper.setId("demo@ch.gov.uk");
+        AcspDataDtoWrapper acspDataDtoWrapper = new AcspDataDtoWrapper();
+        acspDataDtoWrapper.setData(acspDataDto);
+        acspDataDtoWrapper.setId("demo@ch.gov.uk");
 
         when(acspRegDataDtoDaoMapper.dtoToDao(any())).thenReturn(acspDataDao);
         when(acspRepository.insert((AcspDataDao) any())).thenThrow(MongoSocketWriteException.class);
@@ -164,9 +164,9 @@ class AcspServiceTest {
         AcspDataDao acspDataDao = new AcspDataDao();
         acspDataDao.setId("demo@ch.gov.uk");
 
-        DataMapper dataMapper = new DataMapper();
-        dataMapper.setData(acspDataDto);
-        dataMapper.setId("demo@ch.gov.uk");
+        AcspDataDtoWrapper acspDataDtoWrapper = new AcspDataDtoWrapper();
+        acspDataDtoWrapper.setData(acspDataDto);
+        acspDataDtoWrapper.setId("demo@ch.gov.uk");
 
         when(transactionUtils.isTransactionLinkedToAcspSubmission(eq(transaction), any(AcspDataDto.class)))
                 .thenReturn(true);
