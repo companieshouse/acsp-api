@@ -5,11 +5,13 @@
    file name: spring-webmvc-6.1.10.jar
    ]]></notes>
         <cve>CVE-2024-38816</cve>
+        <cve>CVE-2024-38820</cve>
     </suppress>
     <suppress until="2024-12-01Z">
         <notes><![CDATA[
    file name: spring-webmvc-6.1.13.jar
    ]]></notes>
         <cve>CVE-2024-38819</cve>
+        <cve>CVE-2024-38820</cve>
     </suppress>
 </suppressions>
