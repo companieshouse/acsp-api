@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dao.DataDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
-import uk.gov.companieshouse.acsp.models.dto.AcspDataDtoWrapper;
+import uk.gov.companieshouse.acsp.models.dto.AcspDataWrapperDto;
 
 @Component
 @Mapper(componentModel = "spring", uses = EnumTranslator.class)
@@ -21,5 +21,5 @@ public interface ACSPRegDataDtoDaoMapper {
       @Mapping(source = "data.roleType", target = "data.roleType", qualifiedByName = "RoleTypeEnumToString")
       @Mapping(source = "data.workSector", target = "data.workSector", qualifiedByName = "WorkSectorEnumToString")
       @Mapping(source = "data.amlSupervisoryBodies", target = "data.amlSupervisoryBodies", qualifiedByName = "amlSupervisoryBodiesEnumToString")
-      AcspDataDao dtoToDao(AcspDataDtoWrapper acspDataDtoWrapper);
+      AcspDataDao dtoToDao(AcspDataWrapperDto acspDataWrapperDto);
 }

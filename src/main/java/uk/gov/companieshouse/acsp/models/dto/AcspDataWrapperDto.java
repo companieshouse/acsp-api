@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.data.annotation.Id;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class AcspDataDtoWrapper {
+public class AcspDataWrapperDto {
    @Id
     private String id;
 

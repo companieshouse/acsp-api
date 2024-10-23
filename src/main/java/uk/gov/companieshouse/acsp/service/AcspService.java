@@ -12,7 +12,7 @@ import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
-import uk.gov.companieshouse.acsp.models.dto.AcspDataDtoWrapper;
+import uk.gov.companieshouse.acsp.models.dto.AcspDataWrapperDto;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.ApiLogger;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
@@ -60,7 +60,7 @@ public class AcspService {
                                                                 AcspDataDto acspDataDto,
                                                                 String requestId) {
 
-        var dataMapper = new AcspDataDtoWrapper();
+        var dataMapper = new AcspDataWrapperDto();
         dataMapper.setId(acspDataDto.getId());
         dataMapper.setData(acspDataDto);
 
@@ -123,7 +123,7 @@ public class AcspService {
             LOGGER.debug("No company details found in acspDataDto");
         }
 
-        var dataMapper = new AcspDataDtoWrapper();
+        var dataMapper = new AcspDataWrapperDto();
         dataMapper.setId(acspDataDto.getId());
         dataMapper.setData(acspDataDto);
 
