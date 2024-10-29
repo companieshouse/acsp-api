@@ -12,7 +12,6 @@ import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
-import uk.gov.companieshouse.acsp.models.dto.AcspDataWrapperDto;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.ApiLogger;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
@@ -60,12 +59,7 @@ public class AcspService {
                                                                 AcspDataDto acspDataDto,
                                                                 String requestId) {
 
-        var dataMapper = new AcspDataWrapperDto();
-        dataMapper.setId(acspDataDto.getId());
-        dataMapper.setData(acspDataDto);
-
-        var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(dataMapper);
-
+        var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         try {
             var insertedSubmission = acspRepository.insert(acspDataDao);
 
@@ -80,7 +74,7 @@ public class AcspService {
             ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                     transaction.getId(), insertedSubmission.getId()));
 
-            acspDataDto = acspRegDataDtoDaoMapper.daoToDto(insertedSubmission.getData());
+            acspDataDto = acspRegDataDtoDaoMapper.daoToDto(insertedSubmission);
 
             return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
         } catch (DuplicateKeyException e) {
@@ -122,17 +116,12 @@ public class AcspService {
         } else {
             LOGGER.debug("No company details found in acspDataDto");
         }
-
-        var dataMapper = new AcspDataWrapperDto();
-        dataMapper.setId(acspDataDto.getId());
-        dataMapper.setData(acspDataDto);
-
-        var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(dataMapper);
+        var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
 
         var updatedSubmission = acspRepository.save(acspDataDao);
         ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                 transaction.getId(), updatedSubmission.getId()));
-        acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao.getData());
+        acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
         return ResponseEntity.ok().body(acspDataDto);
     }
 
@@ -141,14 +130,12 @@ public class AcspService {
                                            Transaction transaction,
                                            String submissionUri,
                                            String requestId) {
-        var data = acspData.getData();
         var submission = new AcspDataSubmissionDao();
         submission.setCreatedAt(LocalDateTime.now());
         submission.setHttpRequestId(requestId);
         submission.setLastModifiedByUserId(transaction.getCreatedBy().get("id"));
-        data.setAcspDataSubmission(submission);
-        data.setLinks(Collections.singletonMap(LINK_SELF, submissionUri));
-        acspData.setData(data);
+        acspData.setAcspDataSubmission(submission);
+        acspData.setLinks(Collections.singletonMap(LINK_SELF, submissionUri));
     }
 
     public Optional<AcspDataDto> getAcsp(String acspId, Transaction transaction) throws SubmissionNotLinkedToTransactionException {
@@ -156,7 +143,7 @@ public class AcspService {
         Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
         if (acspData.isPresent()) {
             var acspDataDao = acspData.get();
-            var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao.getData());
+            var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
             if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
                 throw new SubmissionNotLinkedToTransactionException(String.format(
                         "Transaction id: %s does not have a resource that matches acsp id: %s", transaction.getId(), acspId));
@@ -175,8 +162,7 @@ public class AcspService {
                 LOGGER.info("No application found for userId: " + userId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-
-            String transactionId = application.get().getData().getLinks().get("self").split("/")[2];
+            String transactionId = application.get().getLinks().get("self").split("/")[2];
             var transaction = transactionService.getTransaction(requestId, transactionId);
             if(!TransactionStatus.CLOSED.equals(transaction.getStatus())) {
                 LOGGER.info("Open application found for userId: " + userId);
