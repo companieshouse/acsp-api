@@ -14,7 +14,7 @@ public class CostService {
     private String costAmount;
     @Value("${ACSP01_PAYMENT_METHODS}")
     private List<String> paymentMethods;
-    private static final String COST_DESC = "Acsp fee";
+    private static final String COST_DESC = "Register ACSP fee";
     private static final String PAYMENT_ACCOUNT = "data-maintenance";
 
     public Cost getCosts() {
@@ -26,8 +26,8 @@ public class CostService {
         cost.setDescriptionIdentifier("description-identifier");
         cost.setDescriptionValues(Collections.singletonMap("Key", "Value"));
         cost.setKind("payment-session#payment-session");
-        cost.setResourceKind("resource-kind");
-        cost.setProductType("confirmation-statement");
+        cost.setResourceKind("register-acsp");
+        cost.setProductType("register-acsp");
 
         return cost;
     }
