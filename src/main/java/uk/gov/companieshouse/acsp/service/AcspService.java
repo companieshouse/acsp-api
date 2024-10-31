@@ -63,13 +63,13 @@ public class AcspService {
     }
 
     private String autoGenerateId() {
-        SecureRandom random = new SecureRandom();
-        byte[] values = new byte[4];
+        var random = new SecureRandom();
+        var values = new byte[4];
         random.nextBytes(values);
-        String rand = String.format("%010d", random.nextInt(Integer.MAX_VALUE));
-        String time = String.format("%08d", Calendar.getInstance().getTimeInMillis() / 100000L);
-        String rawId = rand + time;
-        String[] acspId = rawId.split("(?<=\\G.{6})");
+        var rand = String.format("%010d", random.nextInt(Integer.MAX_VALUE));
+        var time = String.format("%08d", Calendar.getInstance().getTimeInMillis() / 100000L);
+        var rawId = rand + time;
+        var acspId = rawId.split("(?<=\\G.{6})");
         return String.join("-", acspId);
     }
     private ResponseEntity<Object> createDataAndUpdateTransaction(Transaction transaction,
