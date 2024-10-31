@@ -22,14 +22,21 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.net.URI;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Calendar;
+
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
-import static uk.gov.companieshouse.acsp.util.Constants.*;
+import static uk.gov.companieshouse.acsp.util.Constants.LINK_SELF;
+import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
+import static uk.gov.companieshouse.acsp.util.Constants.COSTS_URI_SUFFIX;
+import static uk.gov.companieshouse.acsp.util.Constants.RESUME_JOURNEY_URI_PATTERN;
+import static uk.gov.companieshouse.acsp.util.Constants.SUBMISSION_URI_PATTERN;
 
 @Service
 public class AcspService {
@@ -55,11 +62,22 @@ public class AcspService {
         return createDataAndUpdateTransaction(transaction, acspData, requestId);
     }
 
+    private String autoGenerateId() {
+        var random = new SecureRandom();
+        var values = new byte[4];
+        random.nextBytes(values);
+        var rand = String.format("%010d", random.nextInt(Integer.MAX_VALUE));
+        var time = String.format("%08d", Calendar.getInstance().getTimeInMillis() / 100000L);
+        var rawId = rand + time;
+        var acspId = rawId.split("(?<=\\G.{6})");
+        return String.join("-", acspId);
+    }
     private ResponseEntity<Object> createDataAndUpdateTransaction(Transaction transaction,
                                                                 AcspDataDto acspDataDto,
                                                                 String requestId) {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
+        acspDataDao.setId(autoGenerateId());
         try {
             var insertedSubmission = acspRepository.insert(acspDataDao);
 
