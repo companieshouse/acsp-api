@@ -2,6 +2,7 @@ package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 
@@ -23,7 +24,7 @@ public class AcspDataDto {
 
     private String businessName;
 
-    private String workSector;
+    private BusinessSector workSector;
 
     private AMLSupervisoryBodiesDto[] amlSupervisoryBodies;
 
@@ -95,11 +96,11 @@ public class AcspDataDto {
         this.businessName = businessName;
     }
 
-    public String getWorkSector() {
+    public BusinessSector getWorkSector() {
         return workSector;
     }
 
-    public void setWorkSector(String workSector) {
+    public void setWorkSector(BusinessSector workSector) {
         this.workSector = workSector;
     }
 

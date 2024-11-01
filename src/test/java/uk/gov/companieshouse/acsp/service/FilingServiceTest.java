@@ -15,6 +15,7 @@ import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
 import uk.gov.companieshouse.acsp.models.dto.AddressDto;
 import uk.gov.companieshouse.acsp.models.dto.ApplicantDetailsDto;
 import uk.gov.companieshouse.acsp.models.enums.AMLSupervisoryBodies;
+import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.Aml;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
@@ -452,7 +453,7 @@ class FilingServiceTest {
 
         setACSPDataDto();
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
-        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setWorkSector(BusinessSector.AIP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
 
@@ -468,7 +469,7 @@ class FilingServiceTest {
         Assertions.assertEquals(response.getData().get("acsp_type").toString().toUpperCase(),
                 TypeOfBusiness.LC.name().toUpperCase());
         Assertions.assertNotNull(response.getData().get("aml"));
-        Assertions.assertEquals("WORK SECTOR", response.getData().get("business_sector"));
+        Assertions.assertEquals(BusinessSector.AIP.toString(), response.getData().get("business_sector"));
         Assertions.assertEquals("CREDIT-CARD", response.getData().get("payment_method"));
         Assertions.assertEquals("PAYMENT_REFERENCE", response.getData().get("payment_reference"));
         Assertions.assertNull(response.getData().get("business_name"));
@@ -491,7 +492,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setWorkSector(BusinessSector.ILP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.getApplicantDetails().setDateOfBirth(localDate);
@@ -526,7 +527,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setWorkSector(BusinessSector.TCSP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         LocalDate localDate = LocalDate.parse("1984-10-31");
         acspDataDto.getApplicantDetails().setDateOfBirth(localDate);
@@ -563,7 +564,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setWorkSector(BusinessSector.TCSP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
@@ -603,7 +604,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setWorkSector(BusinessSector.ILP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
@@ -635,7 +636,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setWorkSector(BusinessSector.HVD);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
@@ -662,7 +663,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setWorkSector(BusinessSector.CASINOS);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
@@ -691,7 +692,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setWorkSector(BusinessSector.PNTS);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
@@ -721,7 +722,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setWorkSector(BusinessSector.CI);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.getApplicantDetails().setFirstName(null);
         acspDataDto.getApplicantDetails().setLastName(null);
@@ -754,7 +755,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
-        acspDataDto.setWorkSector("Work Sector");
+        acspDataDto.setWorkSector(BusinessSector.AIP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
         LocalDate localDate = LocalDate.parse("1984-10-31");
