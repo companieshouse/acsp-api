@@ -9,6 +9,7 @@ import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
+import uk.gov.companieshouse.acsp.models.dao.Acsp;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
@@ -78,12 +79,15 @@ public class AcspService {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         acspDataDao.setId(autoGenerateId());
+        var acsp = new Acsp();
+        acsp.setAcspDataDao(acspDataDao);
+        acsp.setId(acspDataDao.getId());
         try {
-            var insertedSubmission = acspRepository.insert(acspDataDao);
+            var insertedSubmission = acspRepository.insert(acsp);
 
             String submissionId = insertedSubmission.getId();
             final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
-            updateAcspRegWithMetaData(insertedSubmission, transaction, submissionUri, requestId);
+            updateAcspRegWithMetaData(insertedSubmission.getAcspDataDao(), transaction, submissionUri, requestId);
             acspRepository.save(insertedSubmission);
             // create the Resource to be added to the Transaction (includes various links to the resource)
             var acspTransactionResource = createAcspTransactionResource(submissionUri);
@@ -92,7 +96,7 @@ public class AcspService {
             ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                     transaction.getId(), insertedSubmission.getId()));
 
-            acspDataDto = acspRegDataDtoDaoMapper.daoToDto(insertedSubmission);
+            acspDataDto = acspRegDataDtoDaoMapper.daoToDto(insertedSubmission.getAcspDataDao());
 
             return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
         } catch (DuplicateKeyException e) {
@@ -135,8 +139,11 @@ public class AcspService {
             LOGGER.debug("No company details found in acspDataDto");
         }
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
+        var acsp = new Acsp();
+        acsp.setAcspDataDao(acspDataDao);
+        acsp.setId(acspDataDao.getId());
 
-        var updatedSubmission = acspRepository.save(acspDataDao);
+        var updatedSubmission = acspRepository.save(acsp);
         ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                 transaction.getId(), updatedSubmission.getId()));
         acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
@@ -158,9 +165,9 @@ public class AcspService {
 
     public Optional<AcspDataDto> getAcsp(String acspId, Transaction transaction) throws SubmissionNotLinkedToTransactionException {
 
-        Optional<AcspDataDao> acspData = acspRepository.findById(acspId);
+        Optional<Acsp> acspData = acspRepository.findById(acspId);
         if (acspData.isPresent()) {
-            var acspDataDao = acspData.get();
+            var acspDataDao = acspData.get().getAcspDataDao();
             var acspDataDto = acspRegDataDtoDaoMapper.daoToDto(acspDataDao);
             if (!transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)) {
                 throw new SubmissionNotLinkedToTransactionException(String.format(
@@ -180,7 +187,7 @@ public class AcspService {
                 LOGGER.info("No application found for userId: " + userId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            String transactionId = application.get().getLinks().get("self").split("/")[2];
+            String transactionId = application.get().getAcspDataDao().getLinks().get("self").split("/")[2];
             var transaction = transactionService.getTransaction(requestId, transactionId);
             if(!TransactionStatus.CLOSED.equals(transaction.getStatus())) {
                 LOGGER.info("Open application found for userId: " + userId);
