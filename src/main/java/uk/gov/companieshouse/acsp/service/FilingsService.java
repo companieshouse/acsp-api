@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
 import uk.gov.companieshouse.acsp.models.filing.Aml;
@@ -157,7 +158,12 @@ public class FilingsService {
     if(acspDataDto.getCompanyDetails() != null || acspDataDto.getBusinessName() != null) {
       buildCompanyDetails(acspDataDto, data);
     }
-    data.put("business_sector", Optional.ofNullable(acspDataDto.getWorkSector()).map((String::toUpperCase)).orElse(null));
+
+    if(BusinessSector.PNTS.equals(acspDataDto.getWorkSector())) {
+      data.put("business_sector", null);
+    } else {
+      data.put("business_sector", Optional.ofNullable(acspDataDto.getWorkSector()).map((BusinessSector::name)).orElse(null));
+    }
 
     if(acspDataDto.getAmlSupervisoryBodies() != null) {
       data.put("aml", buildAml(acspDataDto));

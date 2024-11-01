@@ -62,8 +62,8 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
     }
     @Test
     void workSectorStringToEnum() {
-        String inputEnum = BusinessSector.AIA.label;
-        BusinessSector expected = BusinessSector.AIA;
+        String inputEnum = BusinessSector.AIP.label;
+        BusinessSector expected = BusinessSector.AIP;
         BusinessSector actual = enumTranslator.businessSectorStringToEnum(inputEnum);
 
         assertEquals(expected, actual);

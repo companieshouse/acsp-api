@@ -1,14 +1,15 @@
 package uk.gov.companieshouse.acsp.models.enums;
 
 public enum BusinessSector {
-    AIA("auditors, insolvency-practitioners, external-accountants-and-tax-advisers"),
+    AIP("auditors, insolvency-practitioners, external-accountants-and-tax-advisers"),
     ILP("independent-legal-professionals"),
     TCSP("trust-or-company-service-providers"),
     CI("credit-institutions"),
     FI("financial-institutions"),
     EA("estate-agents"),
     HVD("high-value-dealers"),
-    CASINOS("casinos");
+    CASINOS("casinos"),
+    PNTS("prefer-not-to-say");
 
     public final String label;
 
