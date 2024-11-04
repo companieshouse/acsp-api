@@ -30,5 +30,8 @@ class CostServiceTest {
         assertEquals("20.00", result.getAmount());
         assertEquals(Arrays.asList("debit-card", "credit-card"), result.getAvailablePaymentMethods());
         assertEquals(Collections.singletonList("data-maintenance"), result.getClassOfPayment());
+        assertEquals("Register ACSP fee", result.getDescription());
+        assertEquals("register-acsp", result.getResourceKind());
+        assertEquals("register-acsp", result.getProductType());
     }
 }
