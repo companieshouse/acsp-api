@@ -38,6 +38,8 @@ public class AcspDataDto {
 
     private String howAreYouRegisteredWithAml;
 
+    private String acspType;
+
     // Getters and Setters
 
     public String getId() {
@@ -150,5 +152,13 @@ public class AcspDataDto {
 
     public void setHowAreYouRegisteredWithAml(String howAreYouRegisteredWithAml) {
         this.howAreYouRegisteredWithAml = howAreYouRegisteredWithAml;
+    }
+
+    public String getAcspType() {
+        return acspType;
+    }
+
+    public void setAcspType(String acspType) {
+        this.acspType = acspType;
     }
 }
