@@ -4,10 +4,7 @@ import org.mapstruct.Named;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.models.dao.AMLSupervisoryBodiesDao;
 import uk.gov.companieshouse.acsp.models.dto.AMLSupervisoryBodiesDto;
-import uk.gov.companieshouse.acsp.models.enums.AMLSupervisoryBodies;
-import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
-import uk.gov.companieshouse.acsp.models.enums.RoleType;
-import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
+import uk.gov.companieshouse.acsp.models.enums.*;
 
 @Service
 public class EnumTranslator {
@@ -71,6 +68,16 @@ public class EnumTranslator {
             return amlSupervisoryBodiesDto;
         }
         return amlSupervisoryBodiesDto;
+    }
+
+    @Named("AcspTypeEnumToString")
+    public String acspTypeEnumToString(AcspType inputEnum) {
+        return inputEnum != null ? inputEnum.getLabel() : "";
+    }
+
+    @Named("AcspTypeStringToEnum")
+    public AcspType acspTypeStringToEnum(String inputStr) {
+        return AcspType.findByLabel(inputStr);
     }
 
 }
