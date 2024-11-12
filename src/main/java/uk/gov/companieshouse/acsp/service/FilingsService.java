@@ -353,7 +353,12 @@ public class FilingsService {
       filing.setDescriptionIdentifier(filingDescriptionIdentifier.toUpperCase());
     }
     if(filingDescription != null) {
-      filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
+      if (transaction.getCompanyNumber() != null){
+        filingDescription = filingDescription + " LIMITED";
+        filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
+      } else {
+        filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
+      }
     }
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
