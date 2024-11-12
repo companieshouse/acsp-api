@@ -8,10 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.acsp.models.dao.AMLSupervisoryBodiesDao;
 import uk.gov.companieshouse.acsp.models.dto.AMLSupervisoryBodiesDto;
-import uk.gov.companieshouse.acsp.models.enums.AMLSupervisoryBodies;
-import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
-import uk.gov.companieshouse.acsp.models.enums.RoleType;
-import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
+import uk.gov.companieshouse.acsp.models.enums.*;
 
 @ExtendWith(MockitoExtension.class)
  class EnumTranslatorTest {
@@ -147,6 +144,32 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
         AMLSupervisoryBodiesDto[] expectedArray = new AMLSupervisoryBodiesDto[0];
         AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesStringToEnum(inputStrArray);
         assertArrayEquals(expectedArray,actualArray);
+    }
+
+    @Test
+    void acspTypeEnumToString() {
+        AcspType inputEnum = AcspType.REGISTER_ACSP;
+        String expected = "register-acsp";
+        String actual = enumTranslator.acspTypeEnumToString(inputEnum);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void acspTypeEnumToStringNull() {
+        String expected = "";
+        String actual = enumTranslator.acspTypeEnumToString(null);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void acspTypeStringToEnum() {
+        String inputEnum = AcspType.REGISTER_ACSP.label;
+        AcspType expected = AcspType.REGISTER_ACSP;
+        AcspType actual = enumTranslator.acspTypeStringToEnum(inputEnum);
+
+        assertEquals(expected, actual);
     }
 }
 

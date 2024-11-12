@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import uk.gov.companieshouse.acsp.models.enums.RoleType;
-import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
+import uk.gov.companieshouse.acsp.models.enums.AcspType;
 
 import java.util.Map;
 
@@ -53,6 +52,9 @@ public class AcspDataDao {
 
     @JsonProperty("how_are_you_registered_with_aml")
     private String howAreYouRegisteredWithAml;
+
+    @JsonProperty("acsp_type")
+    private String acspType;
 
     public String getId() {
         return id;
@@ -163,5 +165,13 @@ public class AcspDataDao {
 
     public void setHowAreYouRegisteredWithAml(String howAreYouRegisteredWithAml) {
         this.howAreYouRegisteredWithAml = howAreYouRegisteredWithAml;
+    }
+
+    public String getAcspType() {
+        return acspType;
+    }
+
+    public void setAcspType(String acspType) {
+        this.acspType = acspType;
     }
 }

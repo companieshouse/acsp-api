@@ -2,6 +2,7 @@ package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import uk.gov.companieshouse.acsp.models.enums.AcspType;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
@@ -37,6 +38,8 @@ public class AcspDataDto {
     private Map<String, String> links;
 
     private String howAreYouRegisteredWithAml;
+
+    private AcspType acspType;
 
     // Getters and Setters
 
@@ -150,5 +153,13 @@ public class AcspDataDto {
 
     public void setHowAreYouRegisteredWithAml(String howAreYouRegisteredWithAml) {
         this.howAreYouRegisteredWithAml = howAreYouRegisteredWithAml;
+    }
+
+    public AcspType getAcspType() {
+        return acspType;
+    }
+
+    public void setAcspType(AcspType acspType) {
+        this.acspType = acspType;
     }
 }
