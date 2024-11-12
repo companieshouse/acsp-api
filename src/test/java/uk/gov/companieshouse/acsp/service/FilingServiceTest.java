@@ -101,6 +101,10 @@ class FilingServiceTest {
         filingsService = new FilingsService(transactionService, acspService, apiClientService);
     }
 
+    private void addCompanyNumberToTransaction(Transaction transaction){
+        transaction.setCompanyNumber("12345678");
+    }
+
     private void setACSPDataDto() {
         acspDataDto = new AcspDataDto();
         acspDataDto.setId(ACSP_ID);
@@ -354,6 +358,7 @@ class FilingServiceTest {
     void tesGenerateAcspApplicationFilingWithCompanyDetails() throws Exception {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
+        addCompanyNumberToTransaction(transaction);
 
         setACSPDataDtoWithCompanyDetails();
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
@@ -375,6 +380,7 @@ class FilingServiceTest {
         Assertions.assertEquals("COMPANY", response.getData().get("company_name"));
         Assertions.assertNotEquals("company", response.getData().get("company_name"));
         Assertions.assertEquals("12345678", response.getData().get("company_number"));
+        Assertions.assertEquals("ACSP APPLICATION MADE ON  LIMITED", response.getDescription());
     }
 
     @Test
