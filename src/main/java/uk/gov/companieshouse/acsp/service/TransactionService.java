@@ -83,7 +83,7 @@ public class TransactionService {
     public void deleteTransaction(String passThroughHeader, String transactionId) throws ServiceException {
         try {
             var uri = "/transactions/" + transactionId;
-            var resp = apiClientService.getApiClient(passThroughHeader)
+            var resp = apiClientService.getInternalApiClient()
                     .transactions().delete(uri)
                     .execute();
             if (resp.getStatusCode() != 204) {
