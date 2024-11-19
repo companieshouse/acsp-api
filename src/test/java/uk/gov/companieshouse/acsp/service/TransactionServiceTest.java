@@ -231,8 +231,8 @@ class TransactionServiceTest {
 
     @Test
     void deleteTransactionSuccess() throws IOException, URIValidationException {
-        when(apiClientService.getApiClient(PASSTHROUGH_HEADER)).thenReturn(apiClient);
-        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
+        when(internalApiClient.transactions()).thenReturn(transactionsResourceHandler);
         when(transactionsResourceHandler.delete("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsDelete);
         when(transactionsDelete.execute()).thenReturn(new ApiResponse<>(204, null));
 
@@ -244,8 +244,8 @@ class TransactionServiceTest {
 
     @Test
     void deleteTransactionThrowsApiErrorResponseException() throws IOException, URIValidationException {
-        when(apiClientService.getApiClient(PASSTHROUGH_HEADER)).thenReturn(apiClient);
-        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
+        when(internalApiClient.transactions()).thenReturn(transactionsResourceHandler);
         when(transactionsResourceHandler.delete("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsDelete);
         when(transactionsDelete.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
 
@@ -254,8 +254,8 @@ class TransactionServiceTest {
 
     @Test
     void deleteTransactionThrowsUriValidationException() throws IOException, URIValidationException {
-        when(apiClientService.getApiClient(PASSTHROUGH_HEADER)).thenReturn(apiClient);
-        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
+        when(internalApiClient.transactions()).thenReturn(transactionsResourceHandler);
         when(transactionsResourceHandler.delete("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsDelete);
         when(transactionsDelete.execute()).thenThrow(new URIValidationException("ERROR"));
 
@@ -264,8 +264,8 @@ class TransactionServiceTest {
 
     @Test
     void deleteTransactionInvalidStatusCode() throws IOException, URIValidationException {
-        when(apiClientService.getApiClient(PASSTHROUGH_HEADER)).thenReturn(apiClient);
-        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(apiClientService.getInternalApiClient()).thenReturn(internalApiClient);
+        when(internalApiClient.transactions()).thenReturn(transactionsResourceHandler);
         when(transactionsResourceHandler.delete("/transactions/" + TRANSACTION_ID)).thenReturn(transactionsDelete);
         when(transactionsDelete.execute()).thenReturn(new ApiResponse<>(500, null));
 
