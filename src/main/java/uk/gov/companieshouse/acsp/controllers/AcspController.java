@@ -83,14 +83,6 @@ public class AcspController {
         }
     }
 
-    @GetMapping("/acsp-api/user/{acsp_application_id}/application")
-    public ResponseEntity<Object> checkHasApplication(@PathVariable("acsp_application_id") String acspId,
-                                                      HttpServletRequest request){
-        LOGGER.info("received request to check for user applications");
-        String requestId = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-        return acspService.getAcspApplicationStatus(acspId, requestId);
-    }
-
     @DeleteMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/authorised-corporate-service-provider-applications/{acsp_application_id}")
     public ResponseEntity<Object> deleteApplication(@PathVariable("acsp_application_id") String acspId,
                                                         @RequestAttribute(value = TRANSACTION_KEY) Transaction transaction,
