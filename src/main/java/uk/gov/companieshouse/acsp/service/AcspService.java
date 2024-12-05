@@ -5,6 +5,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.acsp.exception.DuplicateApplicationForTransactionException;
 import uk.gov.companieshouse.acsp.exception.InvalidTransactionStatusException;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
@@ -60,7 +61,7 @@ public class AcspService {
 
     public ResponseEntity<Object> createAcspRegData(Transaction transaction, AcspDataDto acspData,
                                                   String requestId) {
-        return createDataAndUpdateTransaction(transaction, acspData, requestId);
+        return createApplicationAndUpdateTransaction(transaction, acspData, requestId);
     }
 
     private String autoGenerateId() {
@@ -73,9 +74,9 @@ public class AcspService {
         var acspId = rawId.split("(?<=\\G.{6})");
         return String.join("-", acspId);
     }
-    private ResponseEntity<Object> createDataAndUpdateTransaction(Transaction transaction,
-                                                                AcspDataDto acspDataDto,
-                                                                String requestId) {
+    private ResponseEntity<Object> createApplicationAndUpdateTransaction(Transaction transaction,
+                                                                         AcspDataDto acspDataDto,
+                                                                         String requestId) {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         acspDataDao.setId(autoGenerateId());
@@ -83,6 +84,9 @@ public class AcspService {
         acsp.setAcspDataDao(acspDataDao);
         acsp.setId(acspDataDao.getId());
         try {
+            if (!transaction.getResources().isEmpty()) {
+                throw new DuplicateApplicationForTransactionException("An application already exists for this transaction " + transaction.getId());
+            }
             var insertedSubmission = acspRepository.insert(acsp);
 
             String submissionId = insertedSubmission.getId();
@@ -101,6 +105,9 @@ public class AcspService {
             return ResponseEntity.created(URI.create(submissionUri)).body(acspDataDto);
         } catch (DuplicateKeyException e) {
             LOGGER.error("A document already exist with this id " + acspDataDao.getId());
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (DuplicateApplicationForTransactionException e) {
+            LOGGER.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (Exception e) {
             LOGGER.error("An error occurred for transaction " + transaction.getId() + ", " + e);
