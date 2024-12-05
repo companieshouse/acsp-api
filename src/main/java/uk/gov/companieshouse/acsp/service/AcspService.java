@@ -61,7 +61,7 @@ public class AcspService {
 
     public ResponseEntity<Object> createAcspRegData(Transaction transaction, AcspDataDto acspData,
                                                   String requestId) {
-        return createDataAndUpdateTransaction(transaction, acspData, requestId);
+        return createApplicationAndUpdateTransaction(transaction, acspData, requestId);
     }
 
     private String autoGenerateId() {
@@ -74,9 +74,9 @@ public class AcspService {
         var acspId = rawId.split("(?<=\\G.{6})");
         return String.join("-", acspId);
     }
-    private ResponseEntity<Object> createDataAndUpdateTransaction(Transaction transaction,
-                                                                AcspDataDto acspDataDto,
-                                                                String requestId) {
+    private ResponseEntity<Object> createApplicationAndUpdateTransaction(Transaction transaction,
+                                                                         AcspDataDto acspDataDto,
+                                                                         String requestId) {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         acspDataDao.setId(autoGenerateId());

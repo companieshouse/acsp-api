@@ -20,6 +20,7 @@ import uk.gov.companieshouse.acsp.models.dto.CompanyDto;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
 import uk.gov.companieshouse.api.model.transaction.Filing;
+import uk.gov.companieshouse.api.model.transaction.Resource;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.acsp.mapper.ACSPRegDataDtoDaoMapper;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
@@ -122,6 +123,33 @@ class AcspServiceTest {
 
         when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
         when(acspRepository.insert((Acsp) any())).thenThrow(DuplicateKeyException.class);
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspData,
+                REQUEST_ID);
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
+
+    @Test
+    void createAcspDuplicateApplication() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+
+        var acsp = new Acsp();
+        acsp.setAcspDataDao(acspDataDao);
+        acsp.setId(acspDataDao.getId());
+
+        transaction = new Transaction();
+
+        Map<String, Resource> resourceMap = new HashMap<>();
+        resourceMap.put("Resource 1", new Resource());
+
+        transaction.setResources(resourceMap);
+
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+
         ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
                 acspData,
                 REQUEST_ID);
