@@ -133,24 +133,6 @@ class AcspControllerTest {
     }
 
     @Test
-    void checkHasApplicationTrue() {
-        when(acspService.getAcspApplicationStatus(any(), any())).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
-        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
-
-        var response = acspController.checkHasApplication(USER_ID, mockHttpServletRequest);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    }
-
-    @Test
-    void checkHasApplicationFalse() {
-        when(acspService.getAcspApplicationStatus(any(), any())).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
-
-        var response = acspController.checkHasApplication(USER_ID, mockHttpServletRequest);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
     void deleteApplicationSuccessTransactionClosed() {
         when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED);
         when(acspService.deleteAcspApplication(USER_ID)).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));

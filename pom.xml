@@ -13,10 +13,10 @@
 	<description>ACSP workstream</description>
 	<properties>
 		<java.version>21</java.version>
-		<spring.boot.version>3.3.4</spring.boot.version>
+		<spring.boot.version>3.3.6</spring.boot.version>
 		<main.class>uk.gov.companieshouse.acsp.AcspApplication</main.class>
-		<spring-boot-dependencies.version>3.3.4</spring-boot-dependencies.version>
-		<spring-boot-maven-plugin.version>3.3.4</spring-boot-maven-plugin.version>
+		<spring-boot-dependencies.version>3.3.6</spring-boot-dependencies.version>
+		<spring-boot-maven-plugin.version>3.3.6</spring-boot-maven-plugin.version>
 		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 		<org.mapstruct.version>1.6.0.Beta1</org.mapstruct.version>
 		<private-api-sdk-java.version>4.0.4</private-api-sdk-java.version>
@@ -158,12 +158,6 @@
 			<groupId>org.testcontainers</groupId>
 			<artifactId>mongodb</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.mapstruct</groupId>
-			<artifactId>mapstruct</artifactId>
-			<version>${org.mapstruct.version}</version>
 		</dependency>
 
 	</dependencies>
