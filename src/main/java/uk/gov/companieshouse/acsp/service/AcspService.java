@@ -84,7 +84,7 @@ public class AcspService {
         acsp.setAcspDataDao(acspDataDao);
         acsp.setId(acspDataDao.getId());
         try {
-            if (!transaction.getResources().isEmpty()) {
+            if (transaction.getResources() != null && !transaction.getResources().isEmpty()) {
                 throw new DuplicateApplicationForTransactionException("An application already exists for this transaction " + transaction.getId());
             }
             var insertedSubmission = acspRepository.insert(acsp);
