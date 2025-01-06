@@ -12,3 +12,4 @@ required_cpus = 512
 required_memory = 1024
 eric_cpus = 512
 eric_memory = 1024
+service_autoscale_target_value_cpu = 70
