@@ -14,7 +14,7 @@ public enum AMLSupervisoryBodies {
     FO("faculty-office-of-the-archbishop-of-canterbury"),
     FCA("financial-conduct-authority"),
     GC("gambling-commission"),
-    GCB("general-council-of-the-bar"),
+    BSB("bar-standards-board"),
     BONI("general-council-of-the-bar-of-northern-ireland"),
     IAB("institute-of-accountants-and-bookkeepers"),
     IPA("insolvency-practitioners-association"),
