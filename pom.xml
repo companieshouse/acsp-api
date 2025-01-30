@@ -27,6 +27,8 @@
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
 		<sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
+		<email-producer-java-version>3.0.2</email-producer-java-version>
+		<kafka-clients-version>3.1.0</kafka-clients-version>
 	</properties>
 	<profiles>
 		<profile>
@@ -108,6 +110,26 @@
 			<groupId>uk.gov.companieshouse</groupId>
 			<artifactId>rest-service-common-library</artifactId>
 			<version>${rest-service-common-library-version}</version>
+		</dependency>
+
+		<!-- Email producer -->
+		<dependency>
+			<groupId>uk.gov.companieshouse</groupId>
+			<artifactId>email-producer-java</artifactId>
+			<version>${email-producer-java-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.kafka</groupId>
+					<artifactId>kafka-clients</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Kafka -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>${kafka-clients-version}</version>
 		</dependency>
 
 		<!-- Test dependencies -->
