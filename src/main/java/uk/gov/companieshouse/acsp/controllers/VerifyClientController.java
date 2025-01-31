@@ -9,7 +9,7 @@ import uk.gov.companieshouse.acsp.models.email.ClientVerificationEmailData;
 import uk.gov.companieshouse.acsp.service.EmailService;
 
 @RestController
-@RequestMapping("/acsp-api")
+@RequestMapping("/acsp-api/verify-client-identity")
 public class VerifyClientController {
 
     private final EmailService emailService;
