@@ -91,7 +91,7 @@ public class AcspService {
             var acsp = new Acsp();
             acsp.setId(submissionId);
             acsp.setAcspDataDao(acspDataDao);
-            Acsp insertedSubmission = acspRepository.insert(acsp);
+            var insertedSubmission = acspRepository.insert(acsp);
             // create the Resource to be added to the Transaction (includes various links to the resource)
             var acspTransactionResource = createAcspTransactionResource(submissionUri);
 
