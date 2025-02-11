@@ -80,19 +80,18 @@ public class AcspService {
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         acspDataDao.setId(autoGenerateId());
-        var acsp = new Acsp();
-        acsp.setAcspDataDao(acspDataDao);
-        acsp.setId(acspDataDao.getId());
         try {
             if (transaction.getResources() != null && !transaction.getResources().isEmpty()) {
                 throw new DuplicateApplicationForTransactionException("An application already exists for this transaction " + transaction.getId());
             }
-            var insertedSubmission = acspRepository.insert(acsp);
 
-            String submissionId = insertedSubmission.getId();
+            String submissionId = acspDataDao.getId();
             final String submissionUri = getSubmissionUri(transaction.getId(), submissionId);
-            updateAcspRegWithMetaData(insertedSubmission.getAcspDataDao(), transaction, submissionUri, requestId);
-            acspRepository.save(insertedSubmission);
+            updateAcspRegWithMetaData(acspDataDao, transaction, submissionUri, requestId);
+            var acsp = new Acsp();
+            acsp.setId(submissionId);
+            acsp.setAcspDataDao(acspDataDao);
+            Acsp insertedSubmission = acspRepository.insert(acsp);
             // create the Resource to be added to the Transaction (includes various links to the resource)
             var acspTransactionResource = createAcspTransactionResource(submissionUri);
 
