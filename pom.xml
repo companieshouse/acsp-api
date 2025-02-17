@@ -18,7 +18,7 @@
 		<spring-boot-dependencies.version>3.3.6</spring-boot-dependencies.version>
 		<spring-boot-maven-plugin.version>3.3.6</spring-boot-maven-plugin.version>
 		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-		<org.mapstruct.version>1.6.0.Beta1</org.mapstruct.version>
+		<org.mapstruct.version>1.6.3</org.mapstruct.version>
 		<private-api-sdk-java.version>4.0.4</private-api-sdk-java.version>
 		<api-sdk-manager-java-library.version>3.0.5</api-sdk-manager-java-library.version>
 		<structured-logging.version>3.0.1</structured-logging.version>
