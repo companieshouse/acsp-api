@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import uk.gov.companieshouse.acsp.models.enums.AcspType;
 
 import java.util.Map;
 
@@ -37,6 +36,9 @@ public class AcspDataDao {
 
     @Field("aml_supervisory_bodies")
     private AMLSupervisoryBodiesDao[] amlSupervisoryBodies;
+
+    @Field("removed_aml_supervisory_bodies")
+    private AMLSupervisoryBodiesDao[] removedAmlSupervisoryBodies;
 
     @Field("company_details")
     private CompanyDao companyDetails;
@@ -126,6 +128,14 @@ public class AcspDataDao {
 
     public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDao[] amlSupervisoryBodies) {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
+    }
+
+    public AMLSupervisoryBodiesDao[] getRemovedAmlSupervisoryBodies() {
+        return removedAmlSupervisoryBodies;
+    }
+
+    public void setRemovedAmlSupervisoryBodies(AMLSupervisoryBodiesDao[] removedAmlSupervisoryBodies) {
+        this.removedAmlSupervisoryBodies = removedAmlSupervisoryBodies;
     }
 
     public CompanyDao getCompanyDetails() {

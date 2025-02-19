@@ -12,7 +12,7 @@ public class EnumTranslator {
 
     @Named("TypeOfBusinessEnumToString")
     public String typeOfBusinessEnumToString(TypeOfBusiness inputEnum) {
-        return inputEnum.getLabel();
+        return inputEnum != null ? inputEnum.getLabel() : "";
     }
 
     @Named("TypeOfBusinessStringToEnum")

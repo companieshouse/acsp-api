@@ -29,6 +29,8 @@ public class AcspDataDto {
 
     private AMLSupervisoryBodiesDto[] amlSupervisoryBodies;
 
+    private AMLSupervisoryBodiesDto[] removedAmlSupervisoryBodies;
+
     private CompanyDto companyDetails;
 
     private boolean companyAuthCodeProvided;
@@ -113,6 +115,14 @@ public class AcspDataDto {
 
     public void setAmlSupervisoryBodies(AMLSupervisoryBodiesDto[] amlSupervisoryBodies) {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
+    }
+
+    public AMLSupervisoryBodiesDto[] getRemovedAmlSupervisoryBodies() {
+        return removedAmlSupervisoryBodies;
+    }
+
+    public void setRemovedAmlSupervisoryBodies(AMLSupervisoryBodiesDto[] removedAmlSupervisoryBodies) {
+        this.removedAmlSupervisoryBodies = removedAmlSupervisoryBodies;
     }
 
     public CompanyDto getCompanyDetails() {
