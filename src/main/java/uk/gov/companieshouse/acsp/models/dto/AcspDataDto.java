@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import uk.gov.companieshouse.acsp.models.enums.AcspType;
@@ -9,6 +10,7 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 
 import java.util.Map;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AcspDataDto {
 
     private String id;
