@@ -176,4 +176,12 @@ public class AcspDataDto {
     public void setAcspType(AcspType acspType) {
         this.acspType = acspType;
     }
+
+    public String getAcspId() {
+        return acspId;
+    }
+
+    public void setAcspId(String acspId) {
+        this.acspId = acspId;
+    }
 }

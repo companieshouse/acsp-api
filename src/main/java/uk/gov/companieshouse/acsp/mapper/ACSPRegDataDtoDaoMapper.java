@@ -1,6 +1,9 @@
 package uk.gov.companieshouse.acsp.mapper;
 
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.NullValueCheckStrategy;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
