@@ -58,6 +58,9 @@ public class AcspDataDao {
     @JsonProperty("acsp_type")
     private String acspType;
 
+    @JsonProperty("acsp_id")
+    private String acspId;
+
     public String getId() {
         return id;
     }

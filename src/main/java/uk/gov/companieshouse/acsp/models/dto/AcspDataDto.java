@@ -43,6 +43,8 @@ public class AcspDataDto {
 
     private AcspType acspType;
 
+    private String acspId;
+
     // Getters and Setters
 
     public String getId() {
