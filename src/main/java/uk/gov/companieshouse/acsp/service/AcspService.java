@@ -78,7 +78,7 @@ public class AcspService {
     private ResponseEntity<Object> createApplicationAndUpdateTransaction(Transaction transaction,
                                                                          AcspDataDto acspDataDto,
                                                                          String requestId) {
-        boolean isRegistration = acspDataDto.getAcspType().equals(AcspType.REGISTER_ACSP);
+        boolean isRegistration = AcspType.REGISTER_ACSP.equals(acspDataDto.getAcspType());
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         acspDataDao.setId(autoGenerateId());
