@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import uk.gov.companieshouse.acsp.models.enums.AcspType;
@@ -9,6 +10,7 @@ import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 
 import java.util.Map;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AcspDataDto {
 
     private String id;
@@ -29,6 +31,8 @@ public class AcspDataDto {
 
     private AMLSupervisoryBodiesDto[] amlSupervisoryBodies;
 
+    private AMLSupervisoryBodiesDto[] removedAmlSupervisoryBodies;
+
     private CompanyDto companyDetails;
 
     private boolean companyAuthCodeProvided;
@@ -40,6 +44,8 @@ public class AcspDataDto {
     private String howAreYouRegisteredWithAml;
 
     private AcspType acspType;
+
+    private String acspId;
 
     // Getters and Setters
 
@@ -115,6 +121,14 @@ public class AcspDataDto {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
+    public AMLSupervisoryBodiesDto[] getRemovedAmlSupervisoryBodies() {
+        return removedAmlSupervisoryBodies;
+    }
+
+    public void setRemovedAmlSupervisoryBodies(AMLSupervisoryBodiesDto[] removedAmlSupervisoryBodies) {
+        this.removedAmlSupervisoryBodies = removedAmlSupervisoryBodies;
+    }
+
     public CompanyDto getCompanyDetails() {
         return companyDetails;
     }
@@ -161,5 +175,13 @@ public class AcspDataDto {
 
     public void setAcspType(AcspType acspType) {
         this.acspType = acspType;
+    }
+
+    public String getAcspId() {
+        return acspId;
+    }
+
+    public void setAcspId(String acspId) {
+        this.acspId = acspId;
     }
 }
