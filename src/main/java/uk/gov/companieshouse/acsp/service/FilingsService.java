@@ -63,6 +63,10 @@ public class FilingsService {
 
   private static final String SUBMISSION = "submission";
 
+  private static final String REGISTERED_OFFICE_ADDRESS = "registered_office_address";
+
+  private static final String SERVICE_ADDRESS = "service_address";
+
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
   @Autowired
@@ -96,7 +100,7 @@ public class FilingsService {
     }
   }
 
-  private void buildFilingStatus(FilingApi filing, Boolean isRegistration) {
+  private void buildFilingStatus(FilingApi filing, boolean isRegistration) {
     filing.setKind(FILING_KIND_ACSP);
     if (isRegistration) {
       filing.setCost(costAmount);
@@ -127,7 +131,7 @@ public class FilingsService {
   }
 
   private Map<String, Object> buildData(AcspDataDto acspDataDto, String transactionId, Transaction transaction,
-                                            String passThroughTokenHeader, Boolean isRegistration) throws ServiceException {
+                                            String passThroughTokenHeader, boolean isRegistration) throws ServiceException {
     Map<String, Object> data = new HashMap<>();
     if (!isRegistration) {
       buildUpdateAcspData(data, acspDataDto);
@@ -148,12 +152,12 @@ public class FilingsService {
     if(TypeOfBusiness.LP.equals(acspDataDto.getTypeOfBusiness()) ||
             TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
             TypeOfBusiness.UNINCORPORATED.equals(acspDataDto.getTypeOfBusiness())) {
-      data.put("registered_office_address", buildRegisteredOfficeAddress(acspDataDto));
-      data.put("service_address",buildServiceAddress(acspDataDto));
+      data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
+      data.put(SERVICE_ADDRESS,buildServiceAddress(acspDataDto));
     } else if (TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
-      data.put("registered_office_address", buildCorrespondenAddress(acspDataDto));
+      data.put(REGISTERED_OFFICE_ADDRESS, buildCorrespondenAddress(acspDataDto));
     } else {
-      data.put("service_address",buildServiceAddress(acspDataDto));
+      data.put(SERVICE_ADDRESS,buildServiceAddress(acspDataDto));
     }
 
     if(transaction.getStatus() != null &&
@@ -195,11 +199,11 @@ public class FilingsService {
     data.put("acsp_details", buildUpdateAmlDetails(acspDataDto));
 
     if(acspDataDto.getRegisteredOfficeAddress() != null) {
-      data.put("registered_office_address", buildRegisteredOfficeAddress(acspDataDto));
+      data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
     }
 
     if(acspDataDto.getApplicantDetails() != null && acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
-      data.put("service_address", buildServiceAddress(acspDataDto));
+      data.put(SERVICE_ADDRESS, buildServiceAddress(acspDataDto));
     }
 
     if(acspDataDto.getTypeOfBusiness() != null &&
