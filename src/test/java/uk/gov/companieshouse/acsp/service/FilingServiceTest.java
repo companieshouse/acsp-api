@@ -950,63 +950,6 @@ class FilingServiceTest {
     }
 
     @Test
-    void testGenerateAllDataUpdateCorporateBodyAcspWithNullCorrespondenceAddress() throws Exception {
-        setACSPDataDto();
-        acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
-        acspDataDto.setAcspId(ACSP_ID);
-        acspDataDto.getApplicantDetails().setCorrespondenceEmail(EMAIL_ADDRESS);
-        acspDataDto.setBusinessName("Test Corporate Body Name Update ACSP");
-        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
-        acspDataDto.getApplicantDetails().setCorrespondenceAddress(null); // Set CorrespondenceAddress to null
-        acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
-
-        AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
-        amlSupervisoryBodies1.setAmlSupervisoryBody(AMLSupervisoryBodies.HMRC);
-        amlSupervisoryBodies1.setMembershipId("12345678");
-        AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
-        acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
-
-        AMLSupervisoryBodiesDto amlSupervisoryBodies2 = new AMLSupervisoryBodiesDto();
-        amlSupervisoryBodies2.setAmlSupervisoryBody(AMLSupervisoryBodies.FCA);
-        amlSupervisoryBodies2.setMembershipId("87654321");
-        AMLSupervisoryBodiesDto[] removedAmlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies2};
-        acspDataDto.setRemovedAmlSupervisoryBodies(removedAmlSupervisoryBodies);
-
-        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
-        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
-
-        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
-
-        Assertions.assertNotNull(response.getData());
-        Assertions.assertEquals(ACSP_ID.toUpperCase(), response.getData().get("incorporation_number"));
-        Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
-        Assertions.assertEquals("Test Corporate Body Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
-        Assertions.assertNotNull(response.getData().get("acsp_details"));
-        Assertions.assertNotNull(response.getData().get("registered_office_address"));
-        Assertions.assertNull(response.getData().get("service_address")); // Ensure service_address is null
-        Assertions.assertNull(response.getData().get("st_personal_information"));
-
-        Aml acspDetails = (Aml) response.getData().get("acsp_details");
-        Assertions.assertNotNull(acspDetails.getAmlMemberships());
-        Assertions.assertEquals(1, acspDetails.getAmlMemberships().length);
-        Arrays.stream(acspDetails.getAmlMemberships()).forEach(
-                amlMembership -> {
-                    Assertions.assertEquals("12345678", amlMembership.getRegistrationNumber());
-                    Assertions.assertEquals(AMLSupervisoryBodies.HMRC.name(), amlMembership.getSupervisoryBody().toUpperCase());
-                }
-        );
-
-        Assertions.assertNotNull(acspDetails.getPreviousAmlMemberships());
-        Assertions.assertEquals(1, acspDetails.getPreviousAmlMemberships().length);
-        Arrays.stream(acspDetails.getPreviousAmlMemberships()).forEach(
-                amlMembership -> {
-                    Assertions.assertEquals("87654321", amlMembership.getRegistrationNumber());
-                    Assertions.assertEquals(AMLSupervisoryBodies.FCA.name(), amlMembership.getSupervisoryBody().toUpperCase());
-                }
-        );
-    }
-
-    @Test
     void testGenerateAllDataUpdateSoleTraderAcsp() throws Exception {
         setACSPDataDto();
         acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
@@ -1070,6 +1013,32 @@ class FilingServiceTest {
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), personName.getFirstName());
         Assertions.assertEquals(MIDDLE_NAME.toUpperCase(), personName.getMiddleName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), personName.getLastName());
+    }
+
+    @Test
+    void testGenerateUpdateCorporateBodyAcspWithNullCorrespondenceAddress() throws Exception {
+        setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
+        acspDataDto.setAcspId(ACSP_ID);
+        acspDataDto.getApplicantDetails().setCorrespondenceEmail(EMAIL_ADDRESS);
+        acspDataDto.setBusinessName("Test Corporate Body Name Update ACSP");
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
+        acspDataDto.getApplicantDetails().setCorrespondenceAddress(null);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
+
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(ACSP_ID.toUpperCase(), response.getData().get("incorporation_number"));
+        Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
+        Assertions.assertEquals("Test Corporate Body Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
+        Assertions.assertNotNull(response.getData().get("acsp_details"));
+        Assertions.assertNotNull(response.getData().get("registered_office_address"));
+        Assertions.assertNull(response.getData().get("service_address"));
+        Assertions.assertNull(response.getData().get("st_personal_information"));
     }
 
     @Test

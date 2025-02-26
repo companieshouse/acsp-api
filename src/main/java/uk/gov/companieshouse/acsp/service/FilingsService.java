@@ -202,7 +202,7 @@ public class FilingsService {
       data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
     }
 
-    if(acspDataDto.getApplicantDetails() != null && acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
+    if(acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
       data.put(SERVICE_ADDRESS, buildServiceAddress(acspDataDto));
     }
 
