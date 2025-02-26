@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
+import static uk.gov.companieshouse.acsp.models.enums.AcspType.REGISTER_ACSP;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
 
 @Service
@@ -88,15 +89,18 @@ public class FilingsService {
     var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
     var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
-      filing.setData(buildData(acspDataDto, transactionId, transaction, passThroughTokenHeader));
+      boolean isRegistration =  REGISTER_ACSP.equals(acspDataDto.getAcspType());
+      filing.setData(buildData(acspDataDto, transactionId, transaction, passThroughTokenHeader, isRegistration));
       setDescriptionFields(filing, transaction);
-      buildFilingStatus(filing);
+      buildFilingStatus(filing, isRegistration);
     }
   }
 
-  private void buildFilingStatus(FilingApi filing) {
+  private void buildFilingStatus(FilingApi filing, Boolean isRegistration) {
     filing.setKind(FILING_KIND_ACSP);
-    filing.setCost(costAmount);
+    if (isRegistration) {
+      filing.setCost(costAmount);
+    }
   }
 
   private void buildPresenter(Map<String, Object> data, AcspDataDto acspDataDto) {
@@ -123,9 +127,13 @@ public class FilingsService {
   }
 
   private Map<String, Object> buildData(AcspDataDto acspDataDto, String transactionId, Transaction transaction,
-                                            String passThroughTokenHeader) throws ServiceException {
+                                            String passThroughTokenHeader, Boolean isRegistration) throws ServiceException {
     Map<String, Object> data = new HashMap<>();
-    buildAcspData(data, acspDataDto, transaction,passThroughTokenHeader);
+    if (!isRegistration) {
+      buildUpdateAcspData(data, acspDataDto);
+    } else {
+      buildAcspData(data, acspDataDto, transaction,passThroughTokenHeader);
+    }
     buildPresenter(data, acspDataDto);
     buildSubmission(data, acspDataDto, transactionId);
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
@@ -176,6 +184,30 @@ public class FilingsService {
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
   }
 
+  private void buildUpdateAcspData(Map<String, Object> data, AcspDataDto acspDataDto) {
+
+    data.put("incorporation_number", Optional.ofNullable(acspDataDto.getAcspId()).map(String::toUpperCase).orElse(null));
+
+    data.put("email", Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
+
+    data.put("proposed_corporate_body_name", Optional.ofNullable(acspDataDto.getBusinessName()).map(String::toUpperCase).orElse(null));
+
+    data.put("acsp_details", buildUpdateAmlDetails(acspDataDto));
+
+    if(acspDataDto.getRegisteredOfficeAddress() != null) {
+      data.put("registered_office_address", buildRegisteredOfficeAddress(acspDataDto));
+    }
+
+    if(acspDataDto.getApplicantDetails() != null && acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
+      data.put("service_address", buildServiceAddress(acspDataDto));
+    }
+
+    if(acspDataDto.getTypeOfBusiness() != null &&
+            TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
+      data.put("st_personal_information", buildStPersonalInformation(acspDataDto));
+    }
+  }
+
   private Aml buildAml(AcspDataDto acspDataDto) {
     var aml = new Aml();
     aml.setAmlMemberships(buildAmlMemberships(acspDataDto));
@@ -183,9 +215,40 @@ public class FilingsService {
     return aml;
   }
 
+  private Aml buildUpdateAmlDetails(AcspDataDto acspDataDto) {
+    var aml = new Aml();
+    if (!TypeOfBusiness.LC.equals(acspDataDto.getTypeOfBusiness()) &&
+            !TypeOfBusiness.LLP.equals(acspDataDto.getTypeOfBusiness()) &&
+            !TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness())) {
+      aml.setPersonName(buildPersonName(acspDataDto));
+    }
+    if (acspDataDto.getAmlSupervisoryBodies() != null) {
+      aml.setAmlMemberships(buildAmlMemberships(acspDataDto));
+    }
+    if (acspDataDto.getRemovedAmlSupervisoryBodies() != null) {
+      aml.setPreviousAmlMemberships(buildPreviousAmlMemberships(acspDataDto));
+    }
+    return aml;
+  }
+
   private AmlMembership[] buildAmlMemberships(AcspDataDto acspDataDto) {
     var amlMemberships = new ArrayList<AmlMembership>();
     Arrays.stream(acspDataDto.getAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
+      var membership = new AmlMembership();
+      membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
+      membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().name());
+      amlMemberships.add(membership);
+    });
+    var amlMembershipsArray = new AmlMembership[amlMemberships.size()];
+    for(var counter = 0; counter < amlMemberships.size(); counter++) {
+      amlMembershipsArray[counter] = amlMemberships.get(counter);
+    }
+    return amlMembershipsArray;
+  }
+
+  private AmlMembership[] buildPreviousAmlMemberships(AcspDataDto acspDataDto) {
+    var amlMemberships = new ArrayList<AmlMembership>();
+    Arrays.stream(acspDataDto.getRemovedAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
       var membership = new AmlMembership();
       membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
       membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().name());

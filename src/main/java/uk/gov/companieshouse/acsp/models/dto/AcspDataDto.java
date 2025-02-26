@@ -29,6 +29,8 @@ public class AcspDataDto {
 
     private AMLSupervisoryBodiesDto[] amlSupervisoryBodies;
 
+    private AMLSupervisoryBodiesDto[] removedAmlSupervisoryBodies;
+
     private CompanyDto companyDetails;
 
     private boolean companyAuthCodeProvided;
@@ -40,6 +42,8 @@ public class AcspDataDto {
     private String howAreYouRegisteredWithAml;
 
     private AcspType acspType;
+
+    private String acspId;
 
     // Getters and Setters
 
@@ -115,6 +119,14 @@ public class AcspDataDto {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
+    public AMLSupervisoryBodiesDto[] getRemovedAmlSupervisoryBodies() {
+        return removedAmlSupervisoryBodies;
+    }
+
+    public void setRemovedAmlSupervisoryBodies(AMLSupervisoryBodiesDto[] removedAmlSupervisoryBodies) {
+        this.removedAmlSupervisoryBodies = removedAmlSupervisoryBodies;
+    }
+
     public CompanyDto getCompanyDetails() {
         return companyDetails;
     }
@@ -161,5 +173,13 @@ public class AcspDataDto {
 
     public void setAcspType(AcspType acspType) {
         this.acspType = acspType;
+    }
+
+    public String getAcspId() {
+        return acspId;
+    }
+
+    public void setAcspId(String acspId) {
+        this.acspId = acspId;
     }
 }
