@@ -950,14 +950,14 @@ class FilingServiceTest {
     }
 
     @Test
-    void testGenerateAllDataUpdateCorporateBodyAcsp() throws Exception {
+    void testGenerateAllDataUpdateCorporateBodyAcspWithNullCorrespondenceAddress() throws Exception {
         setACSPDataDto();
         acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
         acspDataDto.setAcspId(ACSP_ID);
         acspDataDto.getApplicantDetails().setCorrespondenceEmail(EMAIL_ADDRESS);
         acspDataDto.setBusinessName("Test Corporate Body Name Update ACSP");
         acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
-        acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildCorrespondenceAddress());
+        acspDataDto.getApplicantDetails().setCorrespondenceAddress(null); // Set CorrespondenceAddress to null
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
 
         AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
@@ -983,7 +983,7 @@ class FilingServiceTest {
         Assertions.assertEquals("Test Corporate Body Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
         Assertions.assertNotNull(response.getData().get("acsp_details"));
         Assertions.assertNotNull(response.getData().get("registered_office_address"));
-        Assertions.assertNotNull(response.getData().get("service_address"));
+        Assertions.assertNull(response.getData().get("service_address")); // Ensure service_address is null
         Assertions.assertNull(response.getData().get("st_personal_information"));
 
         Aml acspDetails = (Aml) response.getData().get("acsp_details");
