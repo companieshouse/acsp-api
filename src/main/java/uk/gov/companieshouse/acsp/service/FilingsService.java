@@ -67,6 +67,12 @@ public class FilingsService {
 
   private static final String SERVICE_ADDRESS = "service_address";
 
+  private static final String EMAIL = "email";
+
+  private static final String BUSINESS_SECTOR = "business_sector";
+
+  private static final String ST_PERSONAL_INFORMATION = "st_personal_information";
+
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
   @Autowired
@@ -147,7 +153,7 @@ public class FilingsService {
   private void buildAcspData(Map<String, Object>data, AcspDataDto acspDataDto, Transaction transaction,
                              String passThroughTokenHeader) throws ServiceException {
     if (acspDataDto.getApplicantDetails() != null) {
-      data.put("email", Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
+      data.put(EMAIL, Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
     }
     if(TypeOfBusiness.LP.equals(acspDataDto.getTypeOfBusiness()) ||
             TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
@@ -172,9 +178,9 @@ public class FilingsService {
     }
 
     if(BusinessSector.PNTS.equals(acspDataDto.getWorkSector())) {
-      data.put("business_sector", null);
+      data.put(BUSINESS_SECTOR, null);
     } else {
-      data.put("business_sector", Optional.ofNullable(acspDataDto.getWorkSector()).map((BusinessSector::name)).orElse(null));
+      data.put(BUSINESS_SECTOR, Optional.ofNullable(acspDataDto.getWorkSector()).map((BusinessSector::name)).orElse(null));
     }
 
     if(acspDataDto.getAmlSupervisoryBodies() != null) {
@@ -183,7 +189,7 @@ public class FilingsService {
 
     if(acspDataDto.getTypeOfBusiness() != null &&
             TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
-      data.put("st_personal_information", buildStPersonalInformation(acspDataDto));
+      data.put(ST_PERSONAL_INFORMATION, buildStPersonalInformation(acspDataDto));
     }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
   }
@@ -192,11 +198,11 @@ public class FilingsService {
 
     data.put("incorporation_number", Optional.ofNullable(acspDataDto.getAcspId()).map(String::toUpperCase).orElse(null));
 
-    data.put("email", Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
+    data.put(EMAIL, Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
 
     data.put("proposed_corporate_body_name", Optional.ofNullable(acspDataDto.getBusinessName()).map(String::toUpperCase).orElse(null));
 
-    data.put("acsp_details", buildUpdateAmlDetails(acspDataDto));
+    data.put("acsp_details", buildAml(acspDataDto));
 
     if(acspDataDto.getRegisteredOfficeAddress() != null) {
       data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
@@ -208,56 +214,30 @@ public class FilingsService {
 
     if(acspDataDto.getTypeOfBusiness() != null &&
             TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
-      data.put("st_personal_information", buildStPersonalInformation(acspDataDto));
+      data.put(ST_PERSONAL_INFORMATION, buildStPersonalInformation(acspDataDto));
     }
   }
 
   private Aml buildAml(AcspDataDto acspDataDto) {
     var aml = new Aml();
-    aml.setAmlMemberships(buildAmlMemberships(acspDataDto));
+    if (acspDataDto.getRemovedAmlSupervisoryBodies() != null) {
+      aml.setPreviousAmlMemberships(buildAmlMemberships(acspDataDto, true));
+    }
+    if (acspDataDto.getAmlSupervisoryBodies() != null) {
+      aml.setAmlMemberships(buildAmlMemberships(acspDataDto, false));
+    }
     aml.setPersonName(buildPersonName(acspDataDto));
     return aml;
   }
 
-  private Aml buildUpdateAmlDetails(AcspDataDto acspDataDto) {
-    var aml = new Aml();
-    if (!TypeOfBusiness.LC.equals(acspDataDto.getTypeOfBusiness()) &&
-            !TypeOfBusiness.LLP.equals(acspDataDto.getTypeOfBusiness()) &&
-            !TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness())) {
-      aml.setPersonName(buildPersonName(acspDataDto));
-    }
-    if (acspDataDto.getAmlSupervisoryBodies() != null) {
-      aml.setAmlMemberships(buildAmlMemberships(acspDataDto));
-    }
-    if (acspDataDto.getRemovedAmlSupervisoryBodies() != null) {
-      aml.setPreviousAmlMemberships(buildPreviousAmlMemberships(acspDataDto));
-    }
-    return aml;
-  }
-
-  private AmlMembership[] buildAmlMemberships(AcspDataDto acspDataDto) {
+  private AmlMembership[] buildAmlMemberships(AcspDataDto acspDataDto, boolean isRemoved) {
     var amlMemberships = new ArrayList<AmlMembership>();
-    Arrays.stream(acspDataDto.getAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
-      var membership = new AmlMembership();
-      membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
-      membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().name());
-      amlMemberships.add(membership);
-    });
-    var amlMembershipsArray = new AmlMembership[amlMemberships.size()];
-    for(var counter = 0; counter < amlMemberships.size(); counter++) {
-      amlMembershipsArray[counter] = amlMemberships.get(counter);
-    }
-    return amlMembershipsArray;
-  }
-
-  private AmlMembership[] buildPreviousAmlMemberships(AcspDataDto acspDataDto) {
-    var amlMemberships = new ArrayList<AmlMembership>();
-    Arrays.stream(acspDataDto.getRemovedAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
-      var membership = new AmlMembership();
-      membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
-      membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().name());
-      amlMemberships.add(membership);
-    });
+    Arrays.stream(isRemoved ? acspDataDto.getRemovedAmlSupervisoryBodies() : acspDataDto.getAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
+                var membership = new AmlMembership();
+                membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
+                membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().name());
+                amlMemberships.add(membership);
+              });
     var amlMembershipsArray = new AmlMembership[amlMemberships.size()];
     for(var counter = 0; counter < amlMemberships.size(); counter++) {
       amlMembershipsArray[counter] = amlMemberships.get(counter);
