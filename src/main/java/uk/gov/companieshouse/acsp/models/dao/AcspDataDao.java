@@ -38,6 +38,9 @@ public class AcspDataDao {
     @Field("aml_supervisory_bodies")
     private AMLSupervisoryBodiesDao[] amlSupervisoryBodies;
 
+    @Field("removed_aml_supervisory_bodies")
+    private AMLSupervisoryBodiesDao[] removedAmlSupervisoryBodies;
+
     @Field("company_details")
     private CompanyDao companyDetails;
 
@@ -55,6 +58,9 @@ public class AcspDataDao {
 
     @JsonProperty("acsp_type")
     private String acspType;
+
+    @JsonProperty("acsp_id")
+    private String acspId;
 
     public String getId() {
         return id;
@@ -128,6 +134,14 @@ public class AcspDataDao {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
+    public AMLSupervisoryBodiesDao[] getRemovedAmlSupervisoryBodies() {
+        return removedAmlSupervisoryBodies;
+    }
+
+    public void setRemovedAmlSupervisoryBodies(AMLSupervisoryBodiesDao[] removedAmlSupervisoryBodies) {
+        this.removedAmlSupervisoryBodies = removedAmlSupervisoryBodies;
+    }
+
     public CompanyDao getCompanyDetails() {
         return companyDetails;
     }
@@ -173,5 +187,13 @@ public class AcspDataDao {
 
     public void setAcspType(String acspType) {
         this.acspType = acspType;
+    }
+
+    public String getAcspId() {
+        return acspId;
+    }
+
+    public void setAcspId(String acspId) {
+        this.acspId = acspId;
     }
 }
