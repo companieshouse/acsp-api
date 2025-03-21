@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
-public class VerifyClientControllerTest {
+class VerifyClientControllerTest {
 
     @Mock
     private EmailService emailService;

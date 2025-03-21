@@ -200,8 +200,7 @@ public class FilingsService {
 
   private PersonName buildPersonName(AcspDataDto acspDataDto) {
     var personName = new PersonName();
-    if (acspDataDto.getApplicantDetails() != null) {
-    if (acspDataDto.getApplicantDetails().getFirstName() != null || acspDataDto.getApplicantDetails().getLastName() != null || acspDataDto.getApplicantDetails().getMiddleName() != null) {
+    if (acspDataDto.getApplicantDetails() != null && (acspDataDto.getApplicantDetails().getFirstName() != null || acspDataDto.getApplicantDetails().getLastName() != null || acspDataDto.getApplicantDetails().getMiddleName() != null)) { {
       personName.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
               .map(String::toUpperCase).orElse(null));
       personName.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
@@ -253,19 +252,18 @@ public class FilingsService {
 
   private void buildCompanyDetails(AcspDataDto acspDataDto, Map<String, Object>data) {
     if (acspDataDto.getTypeOfBusiness() != null) {
-      switch (acspDataDto.getTypeOfBusiness()) {
-        case LC, LLP, CORPORATE_BODY:
-          if (acspDataDto.getCompanyDetails() != null) {
-            data.put("company_number", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyNumber())
-                    .map(String::toUpperCase).orElse(null));
-            data.put("company_name", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyName())
-                    .map(String::toUpperCase).orElse(null));
-          }
-          break;
-        default:
-          data.put("business_name", Optional.ofNullable(acspDataDto.getBusinessName())
-                            .map(String::toUpperCase).orElse(null));
-          break;
+      if (TypeOfBusiness.LC.equals(acspDataDto.getTypeOfBusiness()) ||
+              TypeOfBusiness.LLP.equals(acspDataDto.getTypeOfBusiness()) ||
+              TypeOfBusiness.CORPORATE_BODY.equals(acspDataDto.getTypeOfBusiness())) {
+        if (acspDataDto.getCompanyDetails() != null) {
+          data.put("company_number", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyNumber())
+                  .map(String::toUpperCase).orElse(null));
+          data.put("company_name", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyName())
+                  .map(String::toUpperCase).orElse(null));
+        }
+      } else {
+        data.put("business_name", Optional.ofNullable(acspDataDto.getBusinessName())
+                .map(String::toUpperCase).orElse(null));
       }
     }
   }
@@ -285,8 +283,7 @@ public class FilingsService {
 
   private Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
     var correspondenceAddress = new Address();
-    if (acspDataDto.getApplicantDetails() != null) {
-      if (acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
+    if (acspDataDto.getApplicantDetails() != null && acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
         correspondenceAddress.setAddressLine1(
                 Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getAddressLine1())
                         .map(String::toUpperCase).orElse(null));
@@ -308,7 +305,6 @@ public class FilingsService {
         correspondenceAddress.setLocality(
                 Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceAddress().getLocality())
                         .map(String::toUpperCase).orElse(null));
-      }
     }
     return correspondenceAddress;
   }
