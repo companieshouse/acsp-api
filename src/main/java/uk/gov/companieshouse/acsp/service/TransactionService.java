@@ -26,7 +26,6 @@ public class TransactionService {
 
     private final ApiClientService apiClientService;
     private static final UriTemplate TRANSACTIONS_URI = new UriTemplate("/transactions/{id}");
-    private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
 
     @Autowired
     public TransactionService(ApiClientService apiClientService) {

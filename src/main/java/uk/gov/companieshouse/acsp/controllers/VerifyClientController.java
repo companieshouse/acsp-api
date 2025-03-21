@@ -19,7 +19,7 @@ public class VerifyClientController {
     }
 
     @PostMapping("/send-identity-verification-email")
-    public ResponseEntity<?> sendIdentityVerificationEmail(@RequestBody ClientVerificationEmailData clientVerificationEmailDao) {
+    public ResponseEntity<String> sendIdentityVerificationEmail(@RequestBody ClientVerificationEmailData clientVerificationEmailDao) {
         try{
             emailService.sendClientVerificationEmail(
                     clientVerificationEmailDao.getTo(),
