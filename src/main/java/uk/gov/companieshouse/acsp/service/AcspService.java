@@ -35,6 +35,7 @@ import java.util.Calendar;
 
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
+import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_UPDATE_ACSP;
 import static uk.gov.companieshouse.acsp.util.Constants.LINK_SELF;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
 import static uk.gov.companieshouse.acsp.util.Constants.COSTS_URI_SUFFIX;
@@ -97,7 +98,13 @@ public class AcspService {
 
 
             // create the Resource to be added to the Transaction (includes various links to the resource)
-            var acspTransactionResource = createAcspTransactionResource(submissionUri, isRegistration);
+            var acspTransactionResource = createAcspTransactionResource(submissionUri, acspDataDto.getAcspType());
+
+            // Setting the company number to ACSP ID for update acsp
+            if (!isRegistration && acspDataDto.getAcspId() != null) {
+                transaction.setCompanyNumber(acspDataDto.getAcspId());
+            }
+
             updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId, isRegistration);
             ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                     transaction.getId(), insertedSubmission.getId()));
@@ -215,13 +222,16 @@ public class AcspService {
         }
     }
 
-    private Resource createAcspTransactionResource(String submissionUri, boolean isRegistration) {
+    private Resource createAcspTransactionResource(String submissionUri, AcspType acspType) {
         var acspResource = new Resource();
-        acspResource.setKind(FILING_KIND_ACSP);
+        switch (acspType) {
+            case REGISTER_ACSP -> acspResource.setKind(FILING_KIND_ACSP);
+            case UPDATE_ACSP -> acspResource.setKind(FILING_KIND_UPDATE_ACSP);
+        }
 
         Map<String, String> linksMap = new HashMap<>();
         linksMap.put("resource", submissionUri);
-        if (isRegistration) {
+        if (AcspType.REGISTER_ACSP.equals(acspType)) {
             linksMap.put("costs", submissionUri + COSTS_URI_SUFFIX);
         }
         acspResource.setLinks(linksMap);
