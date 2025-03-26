@@ -10,7 +10,7 @@ public class Presenter {
     @JsonProperty("surname")
     private String lastName;
 
-    @JsonProperty("userId")
+    @JsonProperty("user_id")
     private String userId;
 
     @JsonProperty("language")

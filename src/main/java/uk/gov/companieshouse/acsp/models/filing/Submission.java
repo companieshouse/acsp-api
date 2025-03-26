@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 
 public class Submission {
 
-    @JsonProperty("receivedAt")
+    @JsonProperty("received_at")
     private LocalDateTime receivedAt;
 
-    @JsonProperty("transactionId")
+    @JsonProperty("transaction_id")
     private String transactionId;
 
     public LocalDateTime getReceivedAt() {
