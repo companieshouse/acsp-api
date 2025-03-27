@@ -710,6 +710,7 @@ class AcspServiceTest {
     void createUpdateAcspSuccess() throws Exception {
         AcspDataDto acspData = new AcspDataDto();
         acspData.setId("demo@ch.gov.uk");
+        acspData.setAcspId("AP123456");
         acspData.setAcspType(AcspType.UPDATE_ACSP);
 
         AcspDataDao acspDataDao = new AcspDataDao();

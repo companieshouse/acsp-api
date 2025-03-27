@@ -224,9 +224,11 @@ public class AcspService {
 
     private Resource createAcspTransactionResource(String submissionUri, AcspType acspType) {
         var acspResource = new Resource();
-        switch (acspType) {
-            case REGISTER_ACSP -> acspResource.setKind(FILING_KIND_ACSP);
-            case UPDATE_ACSP -> acspResource.setKind(FILING_KIND_UPDATE_ACSP);
+
+        if (AcspType.REGISTER_ACSP.equals(acspType)) {
+            acspResource.setKind(FILING_KIND_ACSP);
+        } else {
+            acspResource.setKind(FILING_KIND_UPDATE_ACSP);
         }
 
         Map<String, String> linksMap = new HashMap<>();
