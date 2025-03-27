@@ -25,9 +25,8 @@ import uk.gov.companieshouse.acsp.models.enums.*;
     }
     @Test
     void typeOfBusinessEnumToStringNull() {
-        TypeOfBusiness inputEnum = TypeOfBusiness.PARTNERSHIP;
-        String expected = "non-registered-partnership";
-        String actual = enumTranslator.typeOfBusinessEnumToString(inputEnum);
+        String expected = "";
+        String actual = enumTranslator.typeOfBusinessEnumToString(null);
 
         assertEquals(expected, actual);
     }

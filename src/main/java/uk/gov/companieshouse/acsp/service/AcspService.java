@@ -14,6 +14,7 @@ import uk.gov.companieshouse.acsp.models.dao.Acsp;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataDao;
 import uk.gov.companieshouse.acsp.models.dao.AcspDataSubmissionDao;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.enums.AcspType;
 import uk.gov.companieshouse.acsp.repositories.AcspRepository;
 import uk.gov.companieshouse.acsp.util.ApiLogger;
 import uk.gov.companieshouse.acsp.util.TransactionUtils;
@@ -34,6 +35,7 @@ import java.util.Calendar;
 
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
+import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_UPDATE_ACSP;
 import static uk.gov.companieshouse.acsp.util.Constants.LINK_SELF;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
 import static uk.gov.companieshouse.acsp.util.Constants.COSTS_URI_SUFFIX;
@@ -77,6 +79,7 @@ public class AcspService {
     private ResponseEntity<Object> createApplicationAndUpdateTransaction(Transaction transaction,
                                                                          AcspDataDto acspDataDto,
                                                                          String requestId) {
+        boolean isRegistration = AcspType.REGISTER_ACSP.equals(acspDataDto.getAcspType());
 
         var acspDataDao = acspRegDataDtoDaoMapper.dtoToDao(acspDataDto);
         acspDataDao.setId(autoGenerateId());
@@ -92,12 +95,20 @@ public class AcspService {
             acsp.setId(submissionId);
             acsp.setAcspDataDao(acspDataDao);
             var insertedSubmission = acspRepository.insert(acsp);
-            // create the Resource to be added to the Transaction (includes various links to the resource)
-            var acspTransactionResource = createAcspTransactionResource(submissionUri);
 
-            updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId);
+
+            // create the Resource to be added to the Transaction (includes various links to the resource)
+            var acspTransactionResource = createAcspTransactionResource(submissionUri, acspDataDto.getAcspType());
+
+            // Setting the company number to ACSP ID for update acsp
+            if (!isRegistration && acspDataDto.getAcspId() != null) {
+                transaction.setCompanyNumber(acspDataDto.getAcspId());
+            }
+
+            updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId, isRegistration);
             ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                     transaction.getId(), insertedSubmission.getId()));
+
 
             acspDataDto = acspRegDataDtoDaoMapper.daoToDto(insertedSubmission.getAcspDataDao());
 
@@ -211,14 +222,20 @@ public class AcspService {
         }
     }
 
-    private Resource createAcspTransactionResource(String submissionUri) {
+    private Resource createAcspTransactionResource(String submissionUri, AcspType acspType) {
         var acspResource = new Resource();
-        acspResource.setKind(FILING_KIND_ACSP);
+
+        if (AcspType.REGISTER_ACSP.equals(acspType)) {
+            acspResource.setKind(FILING_KIND_ACSP);
+        } else {
+            acspResource.setKind(FILING_KIND_UPDATE_ACSP);
+        }
 
         Map<String, String> linksMap = new HashMap<>();
         linksMap.put("resource", submissionUri);
-        linksMap.put("costs", submissionUri + COSTS_URI_SUFFIX);
-
+        if (AcspType.REGISTER_ACSP.equals(acspType)) {
+            linksMap.put("costs", submissionUri + COSTS_URI_SUFFIX);
+        }
         acspResource.setLinks(linksMap);
         return acspResource;
     }
@@ -227,10 +244,13 @@ public class AcspService {
                                             String submissionId,
                                             String submissionUri,
                                             Resource resource,
-                                            String requestId) throws ServiceException {
+                                            String requestId,
+                                            boolean isRegistration) throws ServiceException {
         transaction.setResources(Collections.singletonMap(submissionUri, resource));
-        var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
-        transaction.setResumeJourneyUri(resumeJourneyUri);
+        if (isRegistration) {
+            var resumeJourneyUri = String.format(RESUME_JOURNEY_URI_PATTERN, transaction.getId(), submissionId);
+            transaction.setResumeJourneyUri(resumeJourneyUri);
+        }
         transactionService.updateTransaction(requestId,transaction);
     }
 
