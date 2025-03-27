@@ -99,12 +99,6 @@ public class AcspService {
 
             // create the Resource to be added to the Transaction (includes various links to the resource)
             var acspTransactionResource = createAcspTransactionResource(submissionUri, acspDataDto.getAcspType());
-
-            // Setting the company number to ACSP ID for update acsp
-            if (!isRegistration && acspDataDto.getAcspId() != null) {
-                transaction.setCompanyNumber(acspDataDto.getAcspId());
-            }
-
             updateTransactionWithLinks(transaction, submissionId, submissionUri, acspTransactionResource, requestId, isRegistration);
             ApiLogger.infoContext(requestId, String.format("ACSP Submission created for transaction id: %s with acsp submission id: %s",
                     transaction.getId(), insertedSubmission.getId()));
