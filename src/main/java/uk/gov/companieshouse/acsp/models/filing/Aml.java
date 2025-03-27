@@ -8,6 +8,8 @@ public class Aml {
     private AmlMembership[] amlMemberships;
     @JsonProperty("person_name")
     private PersonName personName;
+    @JsonProperty("previous_aml_memberships")
+    private AmlMembership[] previousAmlMemberships;
 
     public AmlMembership[] getAmlMemberships() {
         return amlMemberships;
@@ -23,5 +25,11 @@ public class Aml {
 
     public void setPersonName(PersonName personName) {
         this.personName = personName;
+    }
+
+    public AmlMembership[] getPreviousAmlMemberships() { return previousAmlMemberships; }
+
+    public void setPreviousAmlMemberships(AmlMembership[] previousAmlMemberships) {
+        this.previousAmlMemberships = previousAmlMemberships;
     }
 }
