@@ -13,10 +13,10 @@
 	<description>ACSP workstream</description>
 	<properties>
 		<java.version>21</java.version>
-		<spring.boot.version>3.3.6</spring.boot.version>
+		<spring.boot.version>3.3.4</spring.boot.version>
 		<main.class>uk.gov.companieshouse.acsp.AcspApplication</main.class>
-		<spring-boot-dependencies.version>3.3.6</spring-boot-dependencies.version>
-		<spring-boot-maven-plugin.version>3.3.6</spring-boot-maven-plugin.version>
+		<spring-boot-dependencies.version>3.4.4</spring-boot-dependencies.version>
+		<spring-boot-maven-plugin.version>3.4.4</spring-boot-maven-plugin.version>
 		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
 		<private-api-sdk-java.version>4.0.4</private-api-sdk-java.version>
@@ -27,7 +27,7 @@
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
 		<sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
-		<email-producer-java-version>3.0.2</email-producer-java-version>
+		<email-producer-java-version>3.0.3</email-producer-java-version>
 		<kafka-clients-version>3.1.0</kafka-clients-version>
 	</properties>
 	<profiles>
