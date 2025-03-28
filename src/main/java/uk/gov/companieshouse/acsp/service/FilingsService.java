@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.enums.AcspType;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
@@ -35,8 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
-import static uk.gov.companieshouse.acsp.models.enums.AcspType.REGISTER_ACSP;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
+import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_UPDATE_ACSP;
 
 @Service
 public class FilingsService {
@@ -52,6 +53,9 @@ public class FilingsService {
 
   @Value("${ACSP_APPLICATION_FILING_DESCRIPTION}")
   private String filingDescription;
+
+  @Value("${ACSP_UPDATE_FILING_DESCRIPTION}")
+  private String updateFilingDescription;
 
   private TransactionService transactionService;
 
@@ -99,17 +103,19 @@ public class FilingsService {
     var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
     var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
-      boolean isRegistration =  REGISTER_ACSP.equals(acspDataDto.getAcspType());
+      boolean isRegistration =  AcspType.REGISTER_ACSP.equals(acspDataDto.getAcspType());
       filing.setData(buildData(acspDataDto, transactionId, transaction, passThroughTokenHeader, isRegistration));
-      setDescriptionFields(filing, transaction);
-      buildFilingStatus(filing, isRegistration);
+      setDescriptionFields(filing, transaction, acspDataDto.getAcspType());
+      buildFilingStatus(filing, acspDataDto.getAcspType());
     }
   }
 
-  private void buildFilingStatus(FilingApi filing, boolean isRegistration) {
-    filing.setKind(FILING_KIND_ACSP);
-    if (isRegistration) {
+  private void buildFilingStatus(FilingApi filing, AcspType acspType) {
+    if (AcspType.REGISTER_ACSP.equals(acspType)) {
+      filing.setKind(FILING_KIND_ACSP);
       filing.setCost(costAmount);
+    } else {
+      filing.setKind(FILING_KIND_UPDATE_ACSP);
     }
   }
 
@@ -142,7 +148,7 @@ public class FilingsService {
     if (!isRegistration) {
       buildUpdateAcspData(data, acspDataDto);
     } else {
-      buildAcspData(data, acspDataDto, transaction,passThroughTokenHeader);
+      buildAcspData(data, acspDataDto, transaction, passThroughTokenHeader);
     }
     buildPresenter(data, acspDataDto);
     buildSubmission(data, acspDataDto, transactionId);
@@ -226,7 +232,9 @@ public class FilingsService {
     if (acspDataDto.getAmlSupervisoryBodies() != null) {
       aml.setAmlMemberships(buildAmlMemberships(acspDataDto, false));
     }
-    aml.setPersonName(buildPersonName(acspDataDto));
+    if (buildPersonName(acspDataDto) != null) {
+      aml.setPersonName(buildPersonName(acspDataDto));
+    }
     return aml;
   }
 
@@ -388,7 +396,7 @@ public class FilingsService {
     return registeredOfficeAddress;
   }
 
-  private void setDescriptionFields(FilingApi filing, Transaction transaction) {
+  private void setDescriptionFields(FilingApi filing, Transaction transaction, AcspType acspType) {
     var formattedDate = "";
     if(transaction.getClosedAt() != null) {
       var datofCreation = LocalDate.parse(
@@ -399,8 +407,14 @@ public class FilingsService {
     if(filingDescriptionIdentifier != null) {
       filing.setDescriptionIdentifier(filingDescriptionIdentifier.toUpperCase());
     }
-    if(filingDescription != null) {
-      filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
+    if (AcspType.REGISTER_ACSP.equals(acspType)) {
+      if(filingDescription != null) {
+        filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
+        }
+    } else {
+        if(updateFilingDescription != null) {
+          filing.setDescription(updateFilingDescription.replace("{date}", formattedDate).toUpperCase());
+        }
     }
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
