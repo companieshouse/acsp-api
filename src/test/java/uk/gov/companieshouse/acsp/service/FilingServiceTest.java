@@ -830,8 +830,6 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData().get("presenter"));
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
         Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
-        ReflectionTestUtils.setField(filingsService, "filingDescriptionIdentifier", "**ACSP Application** submission made");
-        ReflectionTestUtils.setField(filingsService, "updateFilingDescription", "update acsp application made on {date}");
         Assertions.assertEquals("acsp#update", response.getKind());
     }
 
