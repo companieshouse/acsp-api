@@ -407,14 +407,10 @@ public class FilingsService {
     if(filingDescriptionIdentifier != null) {
       filing.setDescriptionIdentifier(filingDescriptionIdentifier.toUpperCase());
     }
-    if (AcspType.REGISTER_ACSP.equals(acspType)) {
-      if(filingDescription != null) {
-        filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
-        }
-    } else {
-        if(updateFilingDescription != null) {
-          filing.setDescription(updateFilingDescription.replace("{date}", formattedDate).toUpperCase());
-        }
+    if (AcspType.REGISTER_ACSP.equals(acspType) && filingDescription != null) {
+      filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
+    } else if (updateFilingDescription != null) {
+      filing.setDescription(updateFilingDescription.replace("{date}", formattedDate).toUpperCase());
     }
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
