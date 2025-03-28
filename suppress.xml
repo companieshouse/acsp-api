@@ -40,14 +40,8 @@
     </suppress>
     <suppress until="2025-06-01Z">
         <notes><![CDATA[
-   file name: spring-security-core-6.4.3.jar
+   file name: commons-io-2.11.0.jar
    ]]></notes>
-        <cve>CVE-2025-22223</cve>
-    </suppress>
-    <suppress until="2025-06-01Z">
-        <notes><![CDATA[
-   file name: spring-security-crypto-6.4.3.jar
-   ]]></notes>
-        <cve>CVE-2025-22228</cve>
+        <cve>CVE-2024-47554</cve>
     </suppress>
 </suppressions>
