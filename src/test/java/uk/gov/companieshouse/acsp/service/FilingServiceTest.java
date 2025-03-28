@@ -823,14 +823,14 @@ class FilingServiceTest {
 
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNull(response.getCost());
-        Assertions.assertNotNull(response.getData());
         Assertions.assertNull(response.getData().get("payment_reference"));
         Assertions.assertNull(response.getData().get("payment_method"));
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertNotNull(response.getData().get("submission"));
         Assertions.assertNotNull(response.getData().get("presenter"));
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
-        Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
-        Assertions.assertNotNull(response.getData().get("submission"));
-        Assertions.assertEquals("acsp", response.getKind());
+        Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());;
+        Assertions.assertEquals("acsp#update", response.getKind());
     }
 
     @Test
