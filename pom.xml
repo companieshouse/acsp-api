@@ -27,7 +27,7 @@
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
 		<sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
-		<email-producer-java-version>3.0.2</email-producer-java-version>
+		<email-producer-java-version>3.0.3</email-producer-java-version>
 		<kafka-clients-version>3.1.0</kafka-clients-version>
 	</properties>
 	<profiles>
