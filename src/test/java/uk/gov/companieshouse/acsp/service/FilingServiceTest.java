@@ -1108,4 +1108,84 @@ class FilingServiceTest {
             filingsService.getPayment(paymentReference, passthroughTokenHeader);
         });
     }
+
+    @Test
+    void buildCorrespondenceAddressWithAllFields() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        ApplicantDetailsDto applicantDetails = new ApplicantDetailsDto();
+        AddressDto correspondenceAddress = new AddressDto();
+        correspondenceAddress.setAddressLine1("Line 1");
+        correspondenceAddress.setAddressLine2("Line 2");
+        correspondenceAddress.setPostalCode("Postal Code");
+        correspondenceAddress.setCountry("Country");
+        correspondenceAddress.setPremises("Premises");
+        correspondenceAddress.setRegion("Region");
+        correspondenceAddress.setLocality("Locality");
+        applicantDetails.setCorrespondenceAddress(correspondenceAddress);
+        acspDataDto.setApplicantDetails(applicantDetails);
+
+        Address result = filingsService.buildCorrespondenAddress(acspDataDto);
+
+        assertEquals("LINE 1", result.getAddressLine1());
+        assertEquals("LINE 2", result.getAddressLine2());
+        assertEquals("POSTAL CODE", result.getPostalCode());
+        assertEquals("COUNTRY", result.getCountry());
+        assertEquals("PREMISES", result.getPremises());
+        assertEquals("REGION", result.getRegion());
+        assertEquals("LOCALITY", result.getLocality());
+    }
+
+    @Test
+    void buildCorrespondenceAddressWithNullFields() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        ApplicantDetailsDto applicantDetails = new ApplicantDetailsDto();
+        AddressDto correspondenceAddress = new AddressDto();
+        applicantDetails.setCorrespondenceAddress(correspondenceAddress);
+        acspDataDto.setApplicantDetails(applicantDetails);
+
+        Address result = filingsService.buildCorrespondenAddress(acspDataDto);
+
+        assertNull(result.getAddressLine1());
+        assertNull(result.getAddressLine2());
+        assertNull(result.getPostalCode());
+        assertNull(result.getCountry());
+        assertNull(result.getPremises());
+        assertNull(result.getRegion());
+        assertNull(result.getLocality());
+    }
+
+    @Test
+    void buildCorrespondenceAddressWithNullApplicantDetails() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        acspDataDto.setApplicantDetails(null);
+
+        Address result = filingsService.buildCorrespondenAddress(acspDataDto);
+
+        assertNull(result.getAddressLine1());
+        assertNull(result.getAddressLine2());
+        assertNull(result.getPostalCode());
+        assertNull(result.getCountry());
+        assertNull(result.getPremises());
+        assertNull(result.getRegion());
+        assertNull(result.getLocality());
+    }
+
+    @Test
+    void buildCorrespondenceAddressWithNullCorrespondenceAddress() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        ApplicantDetailsDto applicantDetails = new ApplicantDetailsDto();
+        applicantDetails.setCorrespondenceAddress(null);
+        acspDataDto.setApplicantDetails(applicantDetails);
+
+        Address result = filingsService.buildCorrespondenAddress(acspDataDto);
+
+        assertNull(result.getAddressLine1());
+        assertNull(result.getAddressLine2());
+        assertNull(result.getPostalCode());
+        assertNull(result.getCountry());
+        assertNull(result.getPremises());
+        assertNull(result.getRegion());
+        assertNull(result.getLocality());
+    }
+
 }

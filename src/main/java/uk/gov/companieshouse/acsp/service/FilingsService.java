@@ -284,7 +284,7 @@ public class FilingsService {
     return serviceAddress;
   }
 
-  private Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
+  Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
     var correspondenceAddress = new Address();
     if (acspDataDto.getApplicantDetails() != null && acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
         correspondenceAddress.setAddressLine1(
