@@ -199,19 +199,22 @@ public class FilingsService {
   }
 
   private PersonName buildPersonName(AcspDataDto acspDataDto) {
+    return buildPersonNameFromApplicantDetails(acspDataDto);
+  }
+
+  private PersonName buildPersonNameFromApplicantDetails(AcspDataDto acspDataDto) {
     var personName = new PersonName();
-    if (acspDataDto.getApplicantDetails() != null && (acspDataDto.getApplicantDetails().getFirstName() != null || acspDataDto.getApplicantDetails().getLastName() != null || acspDataDto.getApplicantDetails().getMiddleName() != null)) { {
+    if (acspDataDto.getApplicantDetails() != null && (acspDataDto.getApplicantDetails().getFirstName() != null || acspDataDto.getApplicantDetails().getLastName() != null || acspDataDto.getApplicantDetails().getMiddleName() != null)) {
       personName.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
               .map(String::toUpperCase).orElse(null));
       personName.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
               .map(String::toUpperCase).orElse(null));
       personName.setMiddleName(Optional.ofNullable(acspDataDto.getApplicantDetails().getMiddleName())
               .map(String::toUpperCase).orElse(null));
-      return personName;
     }
-    }
-    return null;
+    return personName;
   }
+
   private STPersonalInformation buildStPersonalInformation(AcspDataDto acspDataDto) {
     var stPersonalInformation = new STPersonalInformation();
     stPersonalInformation.setPersonName(buildPersonName(acspDataDto));
