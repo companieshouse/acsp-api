@@ -83,8 +83,8 @@ public class FilingsService {
     return filing;
   }
 
-  private void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId,
-                                String passThroughTokenHeader) throws ServiceException, SubmissionNotLinkedToTransactionException {
+  void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId,
+                        String passThroughTokenHeader) throws ServiceException, SubmissionNotLinkedToTransactionException {
     var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
     var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
@@ -202,7 +202,7 @@ public class FilingsService {
     return buildPersonNameFromApplicantDetails(acspDataDto);
   }
 
-  private PersonName buildPersonNameFromApplicantDetails(AcspDataDto acspDataDto) {
+  PersonName buildPersonNameFromApplicantDetails(AcspDataDto acspDataDto) {
     var personName = new PersonName();
     if (acspDataDto.getApplicantDetails() != null && (acspDataDto.getApplicantDetails().getFirstName() != null || acspDataDto.getApplicantDetails().getLastName() != null || acspDataDto.getApplicantDetails().getMiddleName() != null)) {
       personName.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
