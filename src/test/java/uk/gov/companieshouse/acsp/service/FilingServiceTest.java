@@ -1048,4 +1048,64 @@ class FilingServiceTest {
 
         assertEquals("PAYMENT_REFERENCE", paymentReference);
     }
+
+    @Test
+    void getPaymentReferenceFromTransactionSuccess() throws Exception {
+        String uri = "/12345678/payment";
+        String passthroughTokenHeader = "passThroughTokenHeader";
+        TransactionPayment transactionPayment = new TransactionPayment();
+        transactionPayment.setPaymentReference("PAYMENT_REFERENCE");
+        when(apiClientService.getApiClient(passthroughTokenHeader)).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.getPayment(uri)).thenReturn(transactionsPaymentGet);
+        when(transactionsPaymentGet.execute()).thenReturn(new ApiResponse<>(200, null, transactionPayment));
+
+        String paymentReference = filingsService.getPaymentReferenceFromTransaction(uri, passthroughTokenHeader);
+
+        assertEquals("PAYMENT_REFERENCE", paymentReference);
+    }
+
+    @Test
+    void getPaymentReferenceFromTransactionThrowsServiceException() throws IOException, URIValidationException {
+        String uri = "/12345678/payment";
+        String passthroughTokenHeader = "passThroughTokenHeader";
+        when(apiClientService.getApiClient(passthroughTokenHeader)).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.getPayment(uri)).thenReturn(transactionsPaymentGet);
+        when(transactionsPaymentGet.execute()).thenThrow(new URIValidationException("API Exception"));
+
+        assertThrows(ServiceException.class, () -> {
+            filingsService.getPaymentReferenceFromTransaction(uri, passthroughTokenHeader);
+        });
+    }
+
+    @Test
+    void getPaymentSuccess() throws Exception {
+        String paymentReference = "PAYMENT_REFERENCE";
+        String passthroughTokenHeader = "passThroughTokenHeader";
+        PaymentApi paymentApi = new PaymentApi();
+        paymentApi.setPaymentMethod("credit-card");
+        when(apiClientService.getApiClient(passthroughTokenHeader)).thenReturn(apiClient);
+        when(apiClient.payment()).thenReturn(paymentResourceHandler);
+        when(paymentResourceHandler.get("/payments/" + paymentReference)).thenReturn(paymentGet);
+        when(paymentGet.execute()).thenReturn(new ApiResponse<>(200, null, paymentApi));
+
+        PaymentApi result = filingsService.getPayment(paymentReference, passthroughTokenHeader);
+
+        assertEquals("credit-card", result.getPaymentMethod());
+    }
+
+    @Test
+    void getPaymentThrowsServiceException() throws IOException, URIValidationException{
+        String paymentReference = "PAYMENT_REFERENCE";
+        String passthroughTokenHeader = "passThroughTokenHeader";
+        when(apiClientService.getApiClient(passthroughTokenHeader)).thenReturn(apiClient);
+        when(apiClient.payment()).thenReturn(paymentResourceHandler);
+        when(paymentResourceHandler.get("/payments/" + paymentReference)).thenReturn(paymentGet);
+        when(paymentGet.execute()).thenThrow(new URIValidationException("API Exception"));
+
+        assertThrows(ServiceException.class, () -> {
+            filingsService.getPayment(paymentReference, passthroughTokenHeader);
+        });
+    }
 }
