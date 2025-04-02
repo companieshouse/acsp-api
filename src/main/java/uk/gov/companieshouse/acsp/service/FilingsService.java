@@ -94,7 +94,7 @@ public class FilingsService {
     }
   }
 
-  private void buildFilingStatus(FilingApi filing) {
+  void buildFilingStatus(FilingApi filing) {
     filing.setKind(FILING_KIND_ACSP);
     filing.setCost(costAmount);
   }
@@ -340,7 +340,7 @@ public class FilingsService {
     return registeredOfficeAddress;
   }
 
-  private void setDescriptionFields(FilingApi filing, Transaction transaction) {
+  void setDescriptionFields(FilingApi filing, Transaction transaction) {
     var formattedDate = "";
     if(transaction.getClosedAt() != null) {
       var datofCreation = LocalDate.parse(
@@ -358,8 +358,8 @@ public class FilingsService {
     filing.setDescriptionValues(values);
   }
 
-  private void setPaymentData(
-          Map<String, Object>data,
+  void setPaymentData(
+          Map<String, Object> data,
           Transaction transaction,
           String passthroughTokenHeader)
           throws ServiceException {
@@ -371,7 +371,7 @@ public class FilingsService {
     data.put("payment_method", payment.getPaymentMethod().toUpperCase());
   }
 
-  private PaymentApi getPayment(String paymentReference, String passthroughTokenHeader)
+  PaymentApi getPayment(String paymentReference, String passthroughTokenHeader)
           throws ServiceException {
     try {
       return apiClientService
@@ -385,7 +385,7 @@ public class FilingsService {
     }
   }
 
-  private String getPaymentReferenceFromTransaction(String uri, String passthroughTokenHeader)
+  String getPaymentReferenceFromTransaction(String uri, String passthroughTokenHeader)
           throws ServiceException {
     try {
       var transactionPaymentInfo =

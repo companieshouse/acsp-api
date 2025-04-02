@@ -40,13 +40,16 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 class FilingServiceTest {
 
@@ -232,7 +235,7 @@ class FilingServiceTest {
     }
 
     @Test
-    void tesGenerateAcspApplicationFiling() throws Exception {
+    void testGenerateAcspApplicationFiling() throws Exception {
         initTransactionPaymentLinkMocks();
         initGetPaymentMocks();
 
@@ -875,5 +878,174 @@ class FilingServiceTest {
         Assertions.assertEquals("JOHN", personName.getFirstName());
         Assertions.assertEquals("DOE", personName.getLastName());
         Assertions.assertEquals("M", personName.getMiddleName());
+    }
+
+    @Test
+    void generateAcspApplicationFiling() throws Exception {
+        String acspApplicationId = "demo@ch.gov.uk";
+        String transactionId = "12345678";
+        String passThroughTokenHeader = "passThroughHeader";
+
+        Transaction transaction = new Transaction();
+        transaction.setStatus(TransactionStatus.CLOSED);
+        TransactionLinks transactionLinks = new TransactionLinks();
+        transactionLinks.setPayment("/12345678/payment");
+        transaction.setLinks(transactionLinks);
+
+        AcspDataDto acspDataDto = new AcspDataDto();
+        acspDataDto.setId(acspApplicationId);
+        acspDataDto.setAcspDataSubmission(new AcspDataSubmissionDto());
+
+        when(transactionService.getTransaction(passThroughTokenHeader, transactionId)).thenReturn(transaction);
+        when(acspService.getAcsp(acspApplicationId, transaction)).thenReturn(Optional.of(acspDataDto));
+        when(apiClientService.getApiClient(anyString())).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.getPayment(anyString())).thenReturn(transactionsPaymentGet);
+
+        TransactionPayment transactionPayment = new TransactionPayment();
+        transactionPayment.setPaymentReference("PAYMENT_REFERENCE");
+        when(transactionsPaymentGet.execute()).thenReturn(new ApiResponse<>(200, null, transactionPayment));
+
+        when(apiClient.payment()).thenReturn(paymentResourceHandler);
+        PaymentApi paymentApi = new PaymentApi();
+        paymentApi.setPaymentMethod("credit-card");
+        when(paymentResourceHandler.get(anyString())).thenReturn(paymentGet);
+        when(paymentGet.execute()).thenReturn(new ApiResponse<>(200, null, paymentApi));
+
+        FilingApi filing = filingsService.generateAcspApplicationFiling(acspApplicationId, transactionId, passThroughTokenHeader);
+
+        assertNotNull(filing.getData());
+        assertEquals(TransactionStatus.CLOSED, transaction.getStatus());
+    }
+
+    @Test
+    void setFilingApiDataWithNullAcspDataDto() throws Exception {
+        String acspApplicationId = "demo@ch.gov.uk";
+        String transactionId = "12345678";
+        String passThroughTokenHeader = "passThroughHeader";
+
+        Transaction transaction = new Transaction();
+        transaction.setStatus(TransactionStatus.CLOSED);
+
+        FilingApi filingApi = new FilingApi();
+
+        when(transactionService.getTransaction(passThroughTokenHeader, transactionId)).thenReturn(transaction);
+        when(acspService.getAcsp(acspApplicationId, transaction)).thenReturn(Optional.empty());
+
+        filingsService.setFilingApiData(filingApi, acspApplicationId, transactionId, passThroughTokenHeader);
+
+        assertNull(filingApi.getData());
+    }
+
+    @Test
+    void setFilingApiDataWithOpenTransaction() throws Exception {
+        String acspApplicationId = "demo@ch.gov.uk";
+        String transactionId = "12345678";
+        String passThroughTokenHeader = "passThroughHeader";
+
+        Transaction transaction = new Transaction();
+        transaction.setStatus(TransactionStatus.OPEN);
+
+        AcspDataDto acspDataDto = new AcspDataDto();
+        acspDataDto.setId(acspApplicationId);
+        acspDataDto.setAcspDataSubmission(new AcspDataSubmissionDto());
+
+        FilingApi filingApi = new FilingApi();
+
+        when(transactionService.getTransaction(passThroughTokenHeader, transactionId)).thenReturn(transaction);
+        when(acspService.getAcsp(acspApplicationId, transaction)).thenReturn(Optional.of(acspDataDto));
+
+        filingsService.setFilingApiData(filingApi, acspApplicationId, transactionId, passThroughTokenHeader);
+
+        assertNotNull(filingApi.getData());
+        assertEquals(TransactionStatus.OPEN, transaction.getStatus());
+    }
+
+    @Test
+    void setFilingApiDataWithNullTransaction() throws Exception {
+        String acspApplicationId = "demo@ch.gov.uk";
+        String transactionId = "12345678";
+        String passThroughTokenHeader = "passThroughHeader";
+
+        FilingApi filingApi = new FilingApi();
+
+        when(transactionService.getTransaction(passThroughTokenHeader, transactionId)).thenThrow(new ServiceException("Transaction not found"));
+
+        assertThrows(ServiceException.class, () -> {
+            filingsService.setFilingApiData(filingApi, acspApplicationId, transactionId, passThroughTokenHeader);
+        });
+    }
+
+    @Test
+    void buildPersonNameFromApplicantDetails() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        ApplicantDetailsDto applicantDetails = new ApplicantDetailsDto();
+        applicantDetails.setFirstName("John");
+        applicantDetails.setLastName("Doe");
+        applicantDetails.setMiddleName("M");
+        acspDataDto.setApplicantDetails(applicantDetails);
+
+        PersonName personName = filingsService.buildPersonNameFromApplicantDetails(acspDataDto);
+
+        assertNotNull(personName);
+        assertEquals("JOHN", personName.getFirstName());
+        assertEquals("DOE", personName.getLastName());
+        assertEquals("M", personName.getMiddleName());
+    }
+
+    @Test
+    void setPaymentData() throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        Transaction transaction = new Transaction();
+        TransactionLinks transactionLinks = new TransactionLinks();
+        transactionLinks.setPayment("/12345678/payment");
+        transaction.setLinks(transactionLinks);
+
+        TransactionPayment transactionPayment = new TransactionPayment();
+        transactionPayment.setPaymentReference("PAYMENT_REFERENCE");
+        when(apiClientService.getApiClient(anyString())).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.getPayment(anyString())).thenReturn(transactionsPaymentGet);
+        when(transactionsPaymentGet.execute()).thenReturn(new ApiResponse<>(200, null, transactionPayment));
+
+        PaymentApi paymentApi = new PaymentApi();
+        paymentApi.setPaymentMethod("credit-card");
+        when(apiClient.payment()).thenReturn(paymentResourceHandler);
+        when(paymentResourceHandler.get(anyString())).thenReturn(paymentGet);
+        when(paymentGet.execute()).thenReturn(new ApiResponse<>(200, null, paymentApi));
+
+        filingsService.setPaymentData(data, transaction, "passThroughTokenHeader");
+
+        assertEquals("PAYMENT_REFERENCE", data.get("payment_reference"));
+        assertEquals("CREDIT-CARD", data.get("payment_method"));
+    }
+
+    @Test
+    void getPayment() throws Exception {
+        when(apiClientService.getApiClient(anyString())).thenReturn(apiClient);
+        when(apiClient.payment()).thenReturn(paymentResourceHandler);
+        when(paymentResourceHandler.get(anyString())).thenReturn(paymentGet);
+
+        PaymentApi paymentApi = new PaymentApi();
+        paymentApi.setPaymentMethod("credit-card");
+        when(paymentGet.execute()).thenReturn(new ApiResponse<>(200, null, paymentApi));
+
+        PaymentApi result = filingsService.getPayment("PAYMENT_REFERENCE", "passThroughTokenHeader");
+
+        assertEquals("credit-card", result.getPaymentMethod());
+    }
+
+    @Test
+    void getPaymentReferenceFromTransaction() throws Exception {
+        TransactionPayment transactionPayment = new TransactionPayment();
+        transactionPayment.setPaymentReference("PAYMENT_REFERENCE");
+        when(apiClientService.getApiClient(anyString())).thenReturn(apiClient);
+        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
+        when(transactionsResourceHandler.getPayment(anyString())).thenReturn(transactionsPaymentGet);
+        when(transactionsPaymentGet.execute()).thenReturn(new ApiResponse<>(200, null, transactionPayment));
+
+        String paymentReference = filingsService.getPaymentReferenceFromTransaction("/12345678/payment", "passThroughTokenHeader");
+
+        assertEquals("PAYMENT_REFERENCE", paymentReference);
     }
 }
