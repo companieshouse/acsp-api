@@ -1124,7 +1124,7 @@ class FilingServiceTest {
         applicantDetails.setCorrespondenceAddress(correspondenceAddress);
         acspDataDto.setApplicantDetails(applicantDetails);
 
-        Address result = filingsService.buildCorrespondenAddress(acspDataDto);
+        Address result = filingsService.buildCorrespondenceAddress(acspDataDto);
 
         assertEquals("LINE 1", result.getAddressLine1());
         assertEquals("LINE 2", result.getAddressLine2());
@@ -1143,7 +1143,7 @@ class FilingServiceTest {
         applicantDetails.setCorrespondenceAddress(correspondenceAddress);
         acspDataDto.setApplicantDetails(applicantDetails);
 
-        Address result = filingsService.buildCorrespondenAddress(acspDataDto);
+        Address result = filingsService.buildCorrespondenceAddress(acspDataDto);
 
         assertNull(result.getAddressLine1());
         assertNull(result.getAddressLine2());
@@ -1159,7 +1159,7 @@ class FilingServiceTest {
         AcspDataDto acspDataDto = new AcspDataDto();
         acspDataDto.setApplicantDetails(null);
 
-        Address result = filingsService.buildCorrespondenAddress(acspDataDto);
+        Address result = filingsService.buildCorrespondenceAddress(acspDataDto);
 
         assertNull(result.getAddressLine1());
         assertNull(result.getAddressLine2());
@@ -1177,7 +1177,7 @@ class FilingServiceTest {
         applicantDetails.setCorrespondenceAddress(null);
         acspDataDto.setApplicantDetails(applicantDetails);
 
-        Address result = filingsService.buildCorrespondenAddress(acspDataDto);
+        Address result = filingsService.buildCorrespondenceAddress(acspDataDto);
 
         assertNull(result.getAddressLine1());
         assertNull(result.getAddressLine2());
@@ -1204,6 +1204,58 @@ class FilingServiceTest {
 
         assertEquals("TEST COMPANY", data.get("company_name"));
         assertEquals("12345678", data.get("company_number"));
+    }
+
+    @Test
+    void testBuildRegisteredOfficeAddress() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        AddressDto registeredOfficeAddress = new AddressDto();
+        registeredOfficeAddress.setAddressLine1("Line 1");
+        registeredOfficeAddress.setAddressLine2("Line 2");
+        registeredOfficeAddress.setPostalCode("Postal Code");
+        registeredOfficeAddress.setCountry("Country");
+        registeredOfficeAddress.setPremises("Premises");
+        registeredOfficeAddress.setRegion("Region");
+        registeredOfficeAddress.setLocality("Locality");
+        acspDataDto.setRegisteredOfficeAddress(registeredOfficeAddress);
+
+        Address result = filingsService.buildRegisteredOfficeAddress(acspDataDto);
+
+        assertEquals("LINE 1", result.getAddressLine1());
+        assertEquals("LINE 2", result.getAddressLine2());
+        assertEquals("POSTAL CODE", result.getPostalCode());
+        assertEquals("COUNTRY", result.getCountry());
+        assertEquals("PREMISES", result.getPremises());
+        assertEquals("REGION", result.getRegion());
+        assertEquals("LOCALITY", result.getLocality());
+    }
+
+    @Test
+    void testBuildServiceAddress() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        ApplicantDetailsDto applicantDetails = new ApplicantDetailsDto();
+        applicantDetails.setCorrespondenceAddressIsSameAsRegisteredOfficeAddress(true);
+        acspDataDto.setApplicantDetails(applicantDetails);
+
+        ServiceAddress serviceAddress = filingsService.buildServiceAddress(acspDataDto);
+
+        assertEquals(true, serviceAddress.getIsServiceAddressROA());
+    }
+
+    @Test
+    void testBuildServiceAddressWithDifferentAddresses() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        ApplicantDetailsDto applicantDetails = new ApplicantDetailsDto();
+        applicantDetails.setCorrespondenceAddressIsSameAsRegisteredOfficeAddress(false);
+        AddressDto correspondenceAddress = new AddressDto();
+        correspondenceAddress.setAddressLine1("123 Test St");
+        applicantDetails.setCorrespondenceAddress(correspondenceAddress);
+        acspDataDto.setApplicantDetails(applicantDetails);
+
+        ServiceAddress serviceAddress = filingsService.buildServiceAddress(acspDataDto);
+
+        assertEquals(false, serviceAddress.getIsServiceAddressROA());
+        assertEquals("123 TEST ST", serviceAddress.getCorrespondenceAddress().getAddressLine1());
     }
 
 }

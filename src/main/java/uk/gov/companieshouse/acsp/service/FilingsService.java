@@ -143,7 +143,7 @@ public class FilingsService {
       data.put("registered_office_address", buildRegisteredOfficeAddress(acspDataDto));
       data.put("service_address",buildServiceAddress(acspDataDto));
     } else if (TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
-      data.put("registered_office_address", buildCorrespondenAddress(acspDataDto));
+      data.put("registered_office_address", buildCorrespondenceAddress(acspDataDto));
     } else {
       data.put("service_address",buildServiceAddress(acspDataDto));
     }
@@ -271,20 +271,20 @@ public class FilingsService {
     }
   }
 
-  private ServiceAddress buildServiceAddress(AcspDataDto acspDataDto) {
+  ServiceAddress buildServiceAddress(AcspDataDto acspDataDto) {
     var serviceAddress = new ServiceAddress();
     if(acspDataDto != null && acspDataDto.getApplicantDetails() != null) {
       if (acspDataDto.getApplicantDetails().getCorrespondenceAddressIsSameAsRegisteredOfficeAddress()) {
         serviceAddress.setServiceAddressROA(true);
       } else {
-        serviceAddress.setCorrespondenceAddress(buildCorrespondenAddress(acspDataDto));
+        serviceAddress.setCorrespondenceAddress(buildCorrespondenceAddress(acspDataDto));
         serviceAddress.setServiceAddressROA(false);
       }
     }
     return serviceAddress;
   }
 
-  Address buildCorrespondenAddress(AcspDataDto acspDataDto) {
+  Address buildCorrespondenceAddress(AcspDataDto acspDataDto) {
     var correspondenceAddress = new Address();
     if (acspDataDto.getApplicantDetails() != null && acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
         correspondenceAddress.setAddressLine1(
@@ -312,7 +312,7 @@ public class FilingsService {
     return correspondenceAddress;
   }
 
-  private Address buildRegisteredOfficeAddress(AcspDataDto acspDataDto) {
+  Address buildRegisteredOfficeAddress(AcspDataDto acspDataDto) {
     var registeredOfficeAddress = new Address();
     if(acspDataDto.getRegisteredOfficeAddress() != null) {
         registeredOfficeAddress.setAddressLine1(
