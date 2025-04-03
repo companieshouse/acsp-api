@@ -27,7 +27,6 @@
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
 		<email-producer-java-version>3.0.3</email-producer-java-version>
-		<kafka-clients-version>3.1.0</kafka-clients-version>
 		<sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
 		<sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
 		<sonar.login></sonar.login>
@@ -122,12 +121,27 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.18.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.http2</groupId>
+			<artifactId>http2-server</artifactId>
+			<version>11.0.25</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>11.0.25</version>
+		</dependency>
 
 		<!-- Kafka -->
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-clients</artifactId>
-			<version>${kafka-clients-version}</version>
+			<version>4.0.0</version>
 		</dependency>
 
 		<!-- Test dependencies -->
