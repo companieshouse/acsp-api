@@ -234,7 +234,7 @@ public class FilingsService {
     return stPersonalInformation;
   }
 
-  private ArrayList<String> getNationalities(AcspDataDto acspDataDto) {
+  ArrayList<String> getNationalities(AcspDataDto acspDataDto) {
     var nationalities = new ArrayList<String>();
     if (acspDataDto.getApplicantDetails() != null) {
       if (acspDataDto.getApplicantDetails().getNationality().getFirstNationality() != null &&

@@ -39,10 +39,7 @@ import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -1221,6 +1218,7 @@ class FilingServiceTest {
 
         Address result = filingsService.buildRegisteredOfficeAddress(acspDataDto);
 
+        assertNotNull(result);
         assertEquals("LINE 1", result.getAddressLine1());
         assertEquals("LINE 2", result.getAddressLine2());
         assertEquals("POSTAL CODE", result.getPostalCode());
@@ -1239,6 +1237,7 @@ class FilingServiceTest {
 
         ServiceAddress serviceAddress = filingsService.buildServiceAddress(acspDataDto);
 
+        assertNotNull(serviceAddress);
         assertEquals(true, serviceAddress.getIsServiceAddressROA());
     }
 
@@ -1256,6 +1255,30 @@ class FilingServiceTest {
 
         assertEquals(false, serviceAddress.getIsServiceAddressROA());
         assertEquals("123 TEST ST", serviceAddress.getCorrespondenceAddress().getAddressLine1());
+    }
+
+    @Test
+    void testGetNationalities() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        ApplicantDetailsDto applicantDetails = new ApplicantDetailsDto();
+        NationalityDto nationality = new NationalityDto();
+        nationality.setFirstNationality("British");
+        nationality.setSecondNationality("French");
+        nationality.setThirdNationality("German");
+        applicantDetails.setNationality(nationality);
+        acspDataDto.setApplicantDetails(applicantDetails);
+
+        FilingsService filingsService = new FilingsService(transactionService, acspService, apiClientService);
+        ArrayList<String> nationalities = filingsService.getNationalities(acspDataDto);
+
+        assertNotNull(nationalities);
+        assertEquals(3, nationalities.size());
+        assertTrue(nationalities.contains("British"));
+        assertTrue(nationalities.contains("French"));
+        assertTrue(nationalities.contains("German"));
+        assertEquals("British", nationalities.get(0));
+        assertEquals("French", nationalities.get(1));
+        assertEquals("German", nationalities.get(2));
     }
 
 }
