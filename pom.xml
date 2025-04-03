@@ -26,18 +26,16 @@
 		<api-security-java.version>2.0.8</api-security-java.version>
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
-		<sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
 		<email-producer-java-version>3.0.3</email-producer-java-version>
 		<kafka-clients-version>3.1.0</kafka-clients-version>
+		<sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
+		<sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+		<sonar.login></sonar.login>
+		<sonar.password></sonar.password>
+		<sonar.projectName>file-validation-api</sonar.projectName>
+		<sonar.projectKey>uk.gov.companieshouse:acsp-api</sonar.projectKey>
+		<sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
 	</properties>
-	<profiles>
-		<profile>
-			<id>sonar-pr-analysis</id>
-			<properties>
-				<sonar.pullrequest.base>main</sonar.pullrequest.base>
-			</properties>
-		</profile>
-	</profiles>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -145,15 +143,15 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.sonarsource.scanner.maven</groupId>
-			<artifactId>sonar-maven-plugin</artifactId>
-			<version>${sonar-maven-plugin.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.13.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>1.20.6</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -265,6 +263,11 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>2.17</version>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>${sonar-maven-plugin.version}</version>
 			</plugin>
 		</plugins>
 	</build>
