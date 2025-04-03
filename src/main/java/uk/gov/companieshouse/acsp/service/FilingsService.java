@@ -253,7 +253,7 @@ public class FilingsService {
     return nationalities;
   }
 
-  private void buildCompanyDetails(AcspDataDto acspDataDto, Map<String, Object>data) {
+  void buildCompanyDetails(AcspDataDto acspDataDto, Map<String, Object> data) {
     if (acspDataDto.getTypeOfBusiness() != null) {
       if (TypeOfBusiness.LC.equals(acspDataDto.getTypeOfBusiness()) ||
               TypeOfBusiness.LLP.equals(acspDataDto.getTypeOfBusiness()) ||

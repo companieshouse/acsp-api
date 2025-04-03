@@ -1188,4 +1188,22 @@ class FilingServiceTest {
         assertNull(result.getLocality());
     }
 
+    @Test
+    void testBuildCompanyDetails() throws Exception {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        CompanyDto companyDetails = new CompanyDto();
+        companyDetails.setCompanyName("Test Company");
+        companyDetails.setCompanyNumber("12345678");
+        acspDataDto.setCompanyDetails(companyDetails);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LLP);
+
+        Map<String, Object> data = new HashMap<>();
+        Transaction transaction = new Transaction();
+
+        filingsService.buildCompanyDetails(acspDataDto, data);
+
+        assertEquals("TEST COMPANY", data.get("company_name"));
+        assertEquals("12345678", data.get("company_number"));
+    }
+
 }
