@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.acsp.models.dao;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Map;
 
 @Document(collection = "applications")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AcspDataDao {
 
     @Id
@@ -37,6 +39,9 @@ public class AcspDataDao {
     @Field("aml_supervisory_bodies")
     private AMLSupervisoryBodiesDao[] amlSupervisoryBodies;
 
+    @Field("removed_aml_supervisory_bodies")
+    private AMLSupervisoryBodiesDao[] removedAmlSupervisoryBodies;
+
     @Field("company_details")
     private CompanyDao companyDetails;
 
@@ -54,6 +59,9 @@ public class AcspDataDao {
 
     @JsonProperty("acsp_type")
     private String acspType;
+
+    @JsonProperty("acsp_id")
+    private String acspId;
 
     public String getId() {
         return id;
@@ -127,6 +135,14 @@ public class AcspDataDao {
         this.amlSupervisoryBodies = amlSupervisoryBodies;
     }
 
+    public AMLSupervisoryBodiesDao[] getRemovedAmlSupervisoryBodies() {
+        return removedAmlSupervisoryBodies;
+    }
+
+    public void setRemovedAmlSupervisoryBodies(AMLSupervisoryBodiesDao[] removedAmlSupervisoryBodies) {
+        this.removedAmlSupervisoryBodies = removedAmlSupervisoryBodies;
+    }
+
     public CompanyDao getCompanyDetails() {
         return companyDetails;
     }
@@ -172,5 +188,13 @@ public class AcspDataDao {
 
     public void setAcspType(String acspType) {
         this.acspType = acspType;
+    }
+
+    public String getAcspId() {
+        return acspId;
+    }
+
+    public void setAcspId(String acspId) {
+        this.acspId = acspId;
     }
 }

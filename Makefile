@@ -55,8 +55,8 @@ dist: clean build package
 
 .PHONY: sonar
 sonar:
-	mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar
+	mvn sonar:sonar -Dsonar.dependencyCheck.htmlReportPath=./target/dependency-check-report.html
 
 .PHONY: sonar-pr-analysis
 sonar-pr-analysis:
-	mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar -P sonar-pr-analysis
+	mvn sonar:sonar -P sonar-pr-analysis -Dsonar.dependencyCheck.htmlReportPath=./target/dependency-check-report.html
