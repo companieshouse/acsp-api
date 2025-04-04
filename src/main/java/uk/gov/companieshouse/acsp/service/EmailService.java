@@ -16,7 +16,7 @@ import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 public class EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
-    private static String EMAIL_SUBJECT = "Identity verified for client: ";
+    private static final String EMAIL_SUBJECT = "Identity verified for client: ";
     private final EmailProducer emailProducer;
 
     public EmailService(EmailProducer emailProducer) {
