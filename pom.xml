@@ -29,7 +29,7 @@
 		<sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
 		<junit-jupiter.version>1.20.6</junit-jupiter.version>
 		<email-producer-java-version>3.0.3</email-producer-java-version>
-		<kafka-clients-version>3.1.0</kafka-clients-version>
+		<kafka-clients-version>4.0.0</kafka-clients-version>
 		<sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
 		<sonar.login></sonar.login>
 		<sonar.password></sonar.password>
@@ -121,7 +121,39 @@
 					<groupId>org.apache.kafka</groupId>
 					<artifactId>kafka-clients</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty.http2</groupId>
+					<artifactId>http2-server</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-fileupload</groupId>
+					<artifactId>commons-fileupload</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-webapp</artifactId>
+				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.http2</groupId>
+			<artifactId>jetty-http2-server</artifactId>
+			<version>12.0.19</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.ee10</groupId>
+			<artifactId>jetty-ee10-webapp</artifactId>
+			<version>12.0.19</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
+			<version>2.0.0-M2</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.gov.companieshouse</groupId>
+			<artifactId>kafka-models</artifactId>
+			<version>3.0.12</version>
 		</dependency>
 
 		<!-- Kafka -->
