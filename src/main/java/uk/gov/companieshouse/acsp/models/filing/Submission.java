@@ -12,6 +12,12 @@ public class Submission {
     @JsonProperty("transaction_id")
     private String transactionId;
 
+    @JsonProperty("company_number")
+    private String companyNumber;
+
+    @JsonProperty("company_name")
+    private String companyName;
+
     public LocalDateTime getReceivedAt() {
         return receivedAt;
     }
@@ -26,5 +32,21 @@ public class Submission {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public String getCompanyNumber() {
+        return companyNumber;
+    }
+
+    public void setCompanyNumber(String companyNumber) {
+        this.companyNumber = companyNumber;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 }

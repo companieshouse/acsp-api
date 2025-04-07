@@ -137,6 +137,9 @@ public class FilingsService {
 
   private void buildSubmission(Map<String, Object>data, AcspDataDto acspDataDto, String transactionId) {
     var submission = new Submission();
+    if (acspDataDto.getAcspId() != null) {
+      submission.setCompanyNumber(acspDataDto.getAcspId());
+    }
     submission.setReceivedAt(acspDataDto.getAcspDataSubmission().getUpdatedAt());
     submission.setTransactionId(transactionId.toUpperCase());
     data.put(SUBMISSION, submission);
@@ -201,8 +204,6 @@ public class FilingsService {
   }
 
   private void buildUpdateAcspData(Map<String, Object> data, AcspDataDto acspDataDto) {
-
-    data.put("incorporation_number", Optional.ofNullable(acspDataDto.getAcspId()).map(String::toUpperCase).orElse(null));
 
     data.put(EMAIL, Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
 

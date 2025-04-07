@@ -862,7 +862,6 @@ class FilingServiceTest {
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
 
         Assertions.assertNotNull(response.getData());
-        Assertions.assertEquals(ACSP_ID.toUpperCase(), response.getData().get("incorporation_number"));
         Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
         Assertions.assertEquals("Test Limited Company Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
         Assertions.assertNotNull(response.getData().get("acsp_details"));
@@ -919,7 +918,6 @@ class FilingServiceTest {
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
 
         Assertions.assertNotNull(response.getData());
-        Assertions.assertEquals(ACSP_ID.toUpperCase(), response.getData().get("incorporation_number"));
         Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
         Assertions.assertEquals("Test LLP Company Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
         Assertions.assertNotNull(response.getData().get("acsp_details"));
@@ -979,7 +977,6 @@ class FilingServiceTest {
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
 
         Assertions.assertNotNull(response.getData());
-        Assertions.assertEquals(ACSP_ID.toUpperCase(), response.getData().get("incorporation_number"));
         Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
         Assertions.assertEquals("Test Sole Trader Business Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
         Assertions.assertNotNull(response.getData().get("acsp_details"));
@@ -1030,7 +1027,6 @@ class FilingServiceTest {
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
 
         Assertions.assertNotNull(response.getData());
-        Assertions.assertEquals(ACSP_ID.toUpperCase(), response.getData().get("incorporation_number"));
         Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
         Assertions.assertEquals("Test Corporate Body Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
         Assertions.assertNotNull(response.getData().get("acsp_details"));
@@ -1056,7 +1052,6 @@ class FilingServiceTest {
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
 
         Assertions.assertNotNull(response.getData());
-        Assertions.assertEquals(ACSP_ID.toUpperCase(), response.getData().get("incorporation_number"));
         Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
         Assertions.assertEquals("Test Business Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
         Assertions.assertNotNull(response.getData().get("acsp_details"));
@@ -1082,8 +1077,6 @@ class FilingServiceTest {
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
 
         Assertions.assertNotNull(response.getData());
-        Assertions.assertNotNull(response.getData().get("incorporation_number"));
-        Assertions.assertEquals(ACSP_ID.toUpperCase(), response.getData().get("incorporation_number"));
         Assertions.assertNull(response.getData().get("email"));
         Assertions.assertNull(response.getData().get("proposed_corporate_body_name"));
         Assertions.assertNotNull(response.getData().get("acsp_details"));
