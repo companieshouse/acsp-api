@@ -41,6 +41,7 @@ public class FilingsController {
             FilingApi filing = filingService.generateAcspApplicationFiling(acspApplicationId, transactionId, passThroughTokenHeader);
             return ResponseEntity.ok(new FilingApi[]{filing});
         } catch (ServiceException | SubmissionNotLinkedToTransactionException e) {
+            LOGGER.error("EXCEPTION MESSAGE ---> " + e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

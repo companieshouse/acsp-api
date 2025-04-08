@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
+import uk.gov.companieshouse.acsp.models.enums.AcspType;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
+import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_UPDATE_ACSP;
 
 @Service
 public class FilingsService {
@@ -52,6 +54,9 @@ public class FilingsService {
   @Value("${ACSP_APPLICATION_FILING_DESCRIPTION}")
   private String filingDescription;
 
+  @Value("${ACSP_UPDATE_FILING_DESCRIPTION}")
+  private String updateFilingDescription;
+
   private TransactionService transactionService;
 
   private final ApiClientService apiClientService;
@@ -61,6 +66,16 @@ public class FilingsService {
   private static final String PRESENTER = "presenter";
 
   private static final String SUBMISSION = "submission";
+
+  private static final String REGISTERED_OFFICE_ADDRESS = "registered_office_address";
+
+  private static final String SERVICE_ADDRESS = "service_address";
+
+  private static final String EMAIL = "email";
+
+  private static final String BUSINESS_SECTOR = "business_sector";
+
+  private static final String ST_PERSONAL_INFORMATION = "st_personal_information";
 
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -88,15 +103,20 @@ public class FilingsService {
     var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
     var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
-      filing.setData(buildData(acspDataDto, transactionId, transaction, passThroughTokenHeader));
-      setDescriptionFields(filing, transaction);
-      buildFilingStatus(filing);
+      boolean isRegistration =  AcspType.REGISTER_ACSP.equals(acspDataDto.getAcspType());
+      filing.setData(buildData(acspDataDto, transactionId, transaction, passThroughTokenHeader, isRegistration));
+      setDescriptionFields(filing, transaction, acspDataDto.getAcspType());
+      buildFilingStatus(filing, acspDataDto.getAcspType());
     }
   }
 
-  private void buildFilingStatus(FilingApi filing) {
-    filing.setKind(FILING_KIND_ACSP);
-    filing.setCost(costAmount);
+  private void buildFilingStatus(FilingApi filing, AcspType acspType) {
+    if (AcspType.REGISTER_ACSP.equals(acspType)) {
+      filing.setKind(FILING_KIND_ACSP);
+      filing.setCost(costAmount);
+    } else {
+      filing.setKind(FILING_KIND_UPDATE_ACSP);
+    }
   }
 
   private void buildPresenter(Map<String, Object> data, AcspDataDto acspDataDto) {
@@ -117,15 +137,22 @@ public class FilingsService {
 
   private void buildSubmission(Map<String, Object>data, AcspDataDto acspDataDto, String transactionId) {
     var submission = new Submission();
+    if (acspDataDto.getAcspId() != null) {
+      submission.setCompanyNumber(acspDataDto.getAcspId());
+    }
     submission.setReceivedAt(acspDataDto.getAcspDataSubmission().getUpdatedAt());
     submission.setTransactionId(transactionId.toUpperCase());
     data.put(SUBMISSION, submission);
   }
 
   private Map<String, Object> buildData(AcspDataDto acspDataDto, String transactionId, Transaction transaction,
-                                            String passThroughTokenHeader) throws ServiceException {
+                                            String passThroughTokenHeader,  boolean isRegistration) throws ServiceException {
     Map<String, Object> data = new HashMap<>();
-    buildAcspData(data, acspDataDto, transaction,passThroughTokenHeader);
+    if (!isRegistration) {
+      buildUpdateAcspData(data, acspDataDto);
+    } else {
+      buildAcspData(data, acspDataDto, transaction, passThroughTokenHeader);
+    }
     buildPresenter(data, acspDataDto);
     buildSubmission(data, acspDataDto, transactionId);
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
@@ -135,17 +162,17 @@ public class FilingsService {
   private void buildAcspData(Map<String, Object>data, AcspDataDto acspDataDto, Transaction transaction,
                              String passThroughTokenHeader) throws ServiceException {
     if (acspDataDto.getApplicantDetails() != null) {
-      data.put("email", Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
+      data.put(EMAIL, Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
     }
-    if(TypeOfBusiness.LP.equals(acspDataDto.getTypeOfBusiness()) ||
+    if (TypeOfBusiness.LP.equals(acspDataDto.getTypeOfBusiness()) ||
             TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness())||
             TypeOfBusiness.UNINCORPORATED.equals(acspDataDto.getTypeOfBusiness())) {
-      data.put("registered_office_address", buildRegisteredOfficeAddress(acspDataDto));
-      data.put("service_address",buildServiceAddress(acspDataDto));
+      data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
+      data.put(SERVICE_ADDRESS,buildServiceAddress(acspDataDto));
     } else if (TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
-      data.put("registered_office_address", buildCorrespondenAddress(acspDataDto));
+      data.put(REGISTERED_OFFICE_ADDRESS, buildCorrespondenAddress(acspDataDto));
     } else {
-      data.put("service_address",buildServiceAddress(acspDataDto));
+      data.put(SERVICE_ADDRESS,buildServiceAddress(acspDataDto));
     }
 
     if(transaction.getStatus() != null &&
@@ -160,9 +187,9 @@ public class FilingsService {
     }
 
     if(BusinessSector.PNTS.equals(acspDataDto.getWorkSector())) {
-      data.put("business_sector", null);
+      data.put(BUSINESS_SECTOR, null);
     } else {
-      data.put("business_sector", Optional.ofNullable(acspDataDto.getWorkSector()).map((BusinessSector::name)).orElse(null));
+      data.put(BUSINESS_SECTOR, Optional.ofNullable(acspDataDto.getWorkSector()).map((BusinessSector::name)).orElse(null));
     }
 
     if(acspDataDto.getAmlSupervisoryBodies() != null) {
@@ -171,21 +198,51 @@ public class FilingsService {
 
     if(acspDataDto.getTypeOfBusiness() != null &&
             TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
-      data.put("st_personal_information", buildStPersonalInformation(acspDataDto));
+      data.put(ST_PERSONAL_INFORMATION, buildStPersonalInformation(acspDataDto));
     }
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
   }
 
+  private void buildUpdateAcspData(Map<String, Object> data, AcspDataDto acspDataDto) {
+
+    data.put(EMAIL, Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
+
+    data.put("proposed_corporate_body_name", Optional.ofNullable(acspDataDto.getBusinessName()).map(String::toUpperCase).orElse(null));
+
+    data.put("acsp_details", buildAml(acspDataDto));
+
+    if(acspDataDto.getRegisteredOfficeAddress() != null) {
+      data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
+    }
+
+    if(acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
+      data.put(SERVICE_ADDRESS, buildServiceAddress(acspDataDto));
+    }
+
+    if(acspDataDto.getTypeOfBusiness() != null &&
+            TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
+      data.put(ST_PERSONAL_INFORMATION, buildStPersonalInformation(acspDataDto));
+    }
+  }
+
+
   private Aml buildAml(AcspDataDto acspDataDto) {
     var aml = new Aml();
-    aml.setAmlMemberships(buildAmlMemberships(acspDataDto));
-    aml.setPersonName(buildPersonName(acspDataDto));
+    if (acspDataDto.getRemovedAmlSupervisoryBodies() != null) {
+      aml.setPreviousAmlMemberships(buildAmlMemberships(acspDataDto, true));
+    }
+    if (acspDataDto.getAmlSupervisoryBodies() != null) {
+      aml.setAmlMemberships(buildAmlMemberships(acspDataDto, false));
+    }
+    if (buildPersonName(acspDataDto) != null) {
+      aml.setPersonName(buildPersonName(acspDataDto));
+    }
     return aml;
   }
 
-  private AmlMembership[] buildAmlMemberships(AcspDataDto acspDataDto) {
+  private AmlMembership[] buildAmlMemberships(AcspDataDto acspDataDto, boolean isRemoved) {
     var amlMemberships = new ArrayList<AmlMembership>();
-    Arrays.stream(acspDataDto.getAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
+    Arrays.stream(isRemoved ? acspDataDto.getRemovedAmlSupervisoryBodies() : acspDataDto.getAmlSupervisoryBodies()).forEach(amlSupervisoryBodiesDto -> {
       var membership = new AmlMembership();
       membership.setRegistrationNumber(amlSupervisoryBodiesDto.getMembershipId().toUpperCase());
       membership.setSupervisoryBody(amlSupervisoryBodiesDto.getAmlSupervisoryBody().name());
@@ -341,7 +398,7 @@ public class FilingsService {
     return registeredOfficeAddress;
   }
 
-  private void setDescriptionFields(FilingApi filing, Transaction transaction) {
+  private void setDescriptionFields(FilingApi filing, Transaction transaction, AcspType acspType) {
     var formattedDate = "";
     if(transaction.getClosedAt() != null) {
       var datofCreation = LocalDate.parse(
@@ -352,8 +409,10 @@ public class FilingsService {
     if(filingDescriptionIdentifier != null) {
       filing.setDescriptionIdentifier(filingDescriptionIdentifier.toUpperCase());
     }
-    if(filingDescription != null) {
+    if (AcspType.REGISTER_ACSP.equals(acspType) && filingDescription != null) {
       filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
+    } else if (updateFilingDescription != null) {
+      filing.setDescription(updateFilingDescription.replace("{date}", formattedDate).toUpperCase());
     }
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);
