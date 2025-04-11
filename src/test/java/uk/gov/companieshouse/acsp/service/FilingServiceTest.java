@@ -864,12 +864,12 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData());
         Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
         Assertions.assertEquals("Test Limited Company Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
-        Assertions.assertNotNull(response.getData().get("acsp_details"));
+        Assertions.assertNotNull(response.getData().get("aml"));
         Assertions.assertNotNull(response.getData().get("registered_office_address"));
         Assertions.assertNotNull(response.getData().get("service_address"));
         Assertions.assertNull(response.getData().get("st_personal_information"));
 
-        Aml acspDetails = (Aml) response.getData().get("acsp_details");
+        Aml acspDetails = (Aml) response.getData().get("aml");
         Assertions.assertNotNull(acspDetails.getAmlMemberships());
         Assertions.assertEquals(1, acspDetails.getAmlMemberships().length);
         Arrays.stream(acspDetails.getAmlMemberships()).forEach(
@@ -920,12 +920,12 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData());
         Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
         Assertions.assertEquals("Test LLP Company Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
-        Assertions.assertNotNull(response.getData().get("acsp_details"));
+        Assertions.assertNotNull(response.getData().get("aml"));
         Assertions.assertNotNull(response.getData().get("registered_office_address"));
         Assertions.assertNotNull(response.getData().get("service_address"));
         Assertions.assertNull(response.getData().get("st_personal_information"));
 
-        Aml acspDetails = (Aml) response.getData().get("acsp_details");
+        Aml acspDetails = (Aml) response.getData().get("aml");
         Assertions.assertNotNull(acspDetails.getAmlMemberships());
         Assertions.assertEquals(1, acspDetails.getAmlMemberships().length);
         Arrays.stream(acspDetails.getAmlMemberships()).forEach(
@@ -979,13 +979,13 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData());
         Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
         Assertions.assertEquals("Test Sole Trader Business Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
-        Assertions.assertNotNull(response.getData().get("acsp_details"));
+        Assertions.assertNotNull(response.getData().get("aml"));
         Assertions.assertNotNull(response.getData().get("registered_office_address"));
         Assertions.assertNotNull(response.getData().get("service_address"));
         Assertions.assertNotNull(response.getData().get("st_personal_information"));
 
 
-        Aml acspDetails = (Aml) response.getData().get("acsp_details");
+        Aml acspDetails = (Aml) response.getData().get("aml");
         Assertions.assertNotNull(acspDetails.getAmlMemberships());
         Assertions.assertEquals(1, acspDetails.getAmlMemberships().length);
         Arrays.stream(acspDetails.getAmlMemberships()).forEach(
@@ -1029,7 +1029,7 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData());
         Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
         Assertions.assertEquals("Test Corporate Body Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
-        Assertions.assertNotNull(response.getData().get("acsp_details"));
+        Assertions.assertNotNull(response.getData().get("aml"));
         Assertions.assertNotNull(response.getData().get("registered_office_address"));
         Assertions.assertNull(response.getData().get("service_address"));
         Assertions.assertNull(response.getData().get("st_personal_information"));
@@ -1054,7 +1054,7 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData());
         Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
         Assertions.assertEquals("Test Business Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
-        Assertions.assertNotNull(response.getData().get("acsp_details"));
+        Assertions.assertNotNull(response.getData().get("aml"));
         Assertions.assertNotNull(response.getData().get("registered_office_address"));
         Assertions.assertNotNull(response.getData().get("service_address"));
         Assertions.assertNotNull(response.getData().get("st_personal_information"));
@@ -1079,7 +1079,7 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData());
         Assertions.assertNull(response.getData().get("email"));
         Assertions.assertNull(response.getData().get("proposed_corporate_body_name"));
-        Assertions.assertNotNull(response.getData().get("acsp_details"));
+        Assertions.assertNotNull(response.getData().get("aml"));
         Assertions.assertNull(response.getData().get("registered_office_address"));
         Assertions.assertNull(response.getData().get("service_address"));
         Assertions.assertNull(response.getData().get("st_personal_information"));
