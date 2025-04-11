@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
+import uk.gov.companieshouse.acsp.models.filing.Filing;
 import uk.gov.companieshouse.acsp.service.FilingsService;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
@@ -24,8 +25,6 @@ class FilingsControllerTest {
     private static final String TRANSACTION_ID = "def456";
     private static final String PASS_THROUGH_HEADER = "545345345";
 
-    private Transaction transaction;
-
     @Mock
     private FilingsService filingsService;
 
@@ -36,7 +35,7 @@ class FilingsControllerTest {
 
     @BeforeEach
     void init() {
-        transaction = new Transaction();
+        Transaction transaction = new Transaction();
         transaction.setId(TRANSACTION_ID);
         mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletRequest.addHeader("ERIC-Access-Token", PASS_THROUGH_HEADER);
@@ -44,13 +43,15 @@ class FilingsControllerTest {
 
     @Test
     void testGetFilingReturnsSuccessfully() throws ServiceException, SubmissionNotLinkedToTransactionException {
-        FilingApi filing = new FilingApi();
-        filing.setDescription("12345678");
+        Filing filing = new Filing();
+        FilingApi filingApi = new FilingApi();
+        filingApi.setDescription("12345678");
+        filing.setFilingItems(new FilingApi[] {filingApi});
         when(filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER)).thenReturn(filing);
         var result = filingsController.getFiling(ACSP_ID, TRANSACTION_ID, mockHttpServletRequest);
         Assertions.assertNotNull(result.getBody());
-        Assertions.assertEquals(1, result.getBody().length);
-        Assertions.assertEquals("12345678", result.getBody()[0].getDescription());
+        Assertions.assertEquals(1, result.getBody().getFilingItems().length);
+        Assertions.assertEquals("12345678", result.getBody().getFilingItems()[0].getDescription());
     }
 
     @Test
