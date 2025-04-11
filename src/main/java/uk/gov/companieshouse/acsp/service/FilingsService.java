@@ -9,6 +9,7 @@ import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.enums.AcspType;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
+import uk.gov.companieshouse.acsp.models.filing.Filing;
 import uk.gov.companieshouse.acsp.models.filing.Presenter;
 import uk.gov.companieshouse.acsp.models.filing.Aml;
 import uk.gov.companieshouse.acsp.models.filing.ServiceAddress;
@@ -57,15 +58,11 @@ public class FilingsService {
   @Value("${ACSP_UPDATE_FILING_DESCRIPTION}")
   private String updateFilingDescription;
 
-  private TransactionService transactionService;
+  private final TransactionService transactionService;
 
   private final ApiClientService apiClientService;
 
-  private AcspService acspService;
-
-  private static final String PRESENTER = "presenter";
-
-  private static final String SUBMISSION = "submission";
+  private final AcspService acspService;
 
   private static final String REGISTERED_OFFICE_ADDRESS = "registered_office_address";
 
@@ -79,6 +76,8 @@ public class FilingsService {
 
   private static final String AML = "aml";
 
+  private static final String BUSINESS_NAME = "business_name";
+
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
   @Autowired
@@ -89,26 +88,31 @@ public class FilingsService {
     this.apiClientService = apiClientService;
   }
 
-  public FilingApi generateAcspApplicationFiling(
+  public Filing generateAcspApplicationFiling(
           String acspApplicationId,
           String transactionId,
           String passThroughTokenHeader)
           throws ServiceException, SubmissionNotLinkedToTransactionException {
     LOGGER.debug("starting generateAcspApplicationFiling--------------");
-    var filing = new FilingApi();
+    var filing = new Filing();
     setFilingApiData(filing, acspApplicationId, transactionId, passThroughTokenHeader);
     return filing;
   }
 
-  private void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId,
+  private void setFilingApiData(Filing filing, String acspApplicationId, String transactionId,
                                 String passThroughTokenHeader) throws ServiceException, SubmissionNotLinkedToTransactionException {
     var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
     var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
       boolean isRegistration =  AcspType.REGISTER_ACSP.equals(acspDataDto.getAcspType());
-      filing.setData(buildData(acspDataDto, transactionId, transaction, passThroughTokenHeader, isRegistration));
-      setDescriptionFields(filing, transaction, acspDataDto.getAcspType());
-      buildFilingStatus(filing, acspDataDto.getAcspType());
+      var items = new FilingApi();
+      items.setData(buildData(acspDataDto, transaction, passThroughTokenHeader, isRegistration));
+      setDescriptionFields(items, transaction, acspDataDto.getAcspType());
+      buildFilingStatus(items, acspDataDto.getAcspType());
+
+      filing.setFilingItems(new FilingApi[]{items});
+      filing.setSubmission(buildSubmission(acspDataDto, transactionId));
+      filing.setPresenter(buildPresenter(acspDataDto));
     }
   }
 
@@ -121,7 +125,7 @@ public class FilingsService {
     }
   }
 
-  private void buildPresenter(Map<String, Object> data, AcspDataDto acspDataDto) {
+  private Presenter buildPresenter(AcspDataDto acspDataDto) {
     var presenter = new Presenter();
 
     if (acspDataDto.getApplicantDetails() != null) {
@@ -134,20 +138,20 @@ public class FilingsService {
             .map(String::toUpperCase).orElse(null));
 
     // presenter.setLanguage(); // add language in acspDataModel
-    data.put(PRESENTER, presenter);
+    return presenter;
   }
 
-  private void buildSubmission(Map<String, Object>data, AcspDataDto acspDataDto, String transactionId) {
+  private Submission buildSubmission(AcspDataDto acspDataDto, String transactionId) {
     var submission = new Submission();
     if (acspDataDto.getAcspId() != null) {
       submission.setCompanyNumber(acspDataDto.getAcspId());
     }
     submission.setReceivedAt(acspDataDto.getAcspDataSubmission().getUpdatedAt());
     submission.setTransactionId(transactionId.toUpperCase());
-    data.put(SUBMISSION, submission);
+    return submission;
   }
 
-  private Map<String, Object> buildData(AcspDataDto acspDataDto, String transactionId, Transaction transaction,
+  private Map<String, Object> buildData(AcspDataDto acspDataDto, Transaction transaction,
                                             String passThroughTokenHeader,  boolean isRegistration) throws ServiceException {
     Map<String, Object> data = new HashMap<>();
     if (!isRegistration) {
@@ -155,8 +159,6 @@ public class FilingsService {
     } else {
       buildAcspData(data, acspDataDto, transaction, passThroughTokenHeader);
     }
-    buildPresenter(data, acspDataDto);
-    buildSubmission(data, acspDataDto, transactionId);
     //item.setSubmissionLanguage(acspDataDto.getLanguage()); //add language in ascpDataModel
     return data;
   }
@@ -209,7 +211,7 @@ public class FilingsService {
 
     data.put(EMAIL, Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
 
-    data.put("proposed_corporate_body_name", Optional.ofNullable(acspDataDto.getBusinessName()).map(String::toUpperCase).orElse(null));
+    data.put(BUSINESS_NAME, Optional.ofNullable(acspDataDto.getBusinessName()).map(String::toUpperCase).orElse(null));
 
     data.put(AML, buildAml(acspDataDto));
 
@@ -322,7 +324,7 @@ public class FilingsService {
           }
           break;
         default:
-          data.put("business_name", Optional.ofNullable(acspDataDto.getBusinessName())
+          data.put(BUSINESS_NAME, Optional.ofNullable(acspDataDto.getBusinessName())
                             .map(String::toUpperCase).orElse(null));
           break;
       }
