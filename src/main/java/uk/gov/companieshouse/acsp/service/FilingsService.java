@@ -77,6 +77,8 @@ public class FilingsService {
 
   private static final String ST_PERSONAL_INFORMATION = "st_personal_information";
 
+  private static final String AML = "aml";
+
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
   @Autowired
@@ -193,7 +195,7 @@ public class FilingsService {
     }
 
     if(acspDataDto.getAmlSupervisoryBodies() != null) {
-      data.put("aml", buildAml(acspDataDto));
+      data.put(AML, buildAml(acspDataDto));
     }
 
     if(acspDataDto.getTypeOfBusiness() != null &&
@@ -209,7 +211,7 @@ public class FilingsService {
 
     data.put("proposed_corporate_body_name", Optional.ofNullable(acspDataDto.getBusinessName()).map(String::toUpperCase).orElse(null));
 
-    data.put("acsp_details", buildAml(acspDataDto));
+    data.put(AML, buildAml(acspDataDto));
 
     if(acspDataDto.getRegisteredOfficeAddress() != null) {
       data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
