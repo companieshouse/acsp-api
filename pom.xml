@@ -28,7 +28,7 @@
 		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
 		<email-producer-java-version>3.0.3</email-producer-java-version>
 		<sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
-		<kafka-clients-version>3.1.0</kafka-clients-version>
+		<kafka-clients-version>3.9.0</kafka-clients-version>
 		<sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
 		<sonar.login></sonar.login>
 		<sonar.password></sonar.password>
