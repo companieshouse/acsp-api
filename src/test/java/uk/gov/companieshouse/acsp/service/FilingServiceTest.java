@@ -17,9 +17,14 @@ import uk.gov.companieshouse.acsp.models.dto.AcspDataSubmissionDto;
 import uk.gov.companieshouse.acsp.models.dto.AddressDto;
 import uk.gov.companieshouse.acsp.models.dto.ApplicantDetailsDto;
 import uk.gov.companieshouse.acsp.models.enums.AMLSupervisoryBodies;
+import uk.gov.companieshouse.acsp.models.enums.AcspType;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
-import uk.gov.companieshouse.acsp.models.filing.*;
+import uk.gov.companieshouse.acsp.models.filing.Aml;
+import uk.gov.companieshouse.acsp.models.filing.Presenter;
+import uk.gov.companieshouse.acsp.models.filing.STPersonalInformation;
+import uk.gov.companieshouse.acsp.models.filing.ServiceAddress;
+import uk.gov.companieshouse.acsp.models.filing.PersonName;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.ApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -58,6 +63,7 @@ class FilingServiceTest {
     private static final String PAYMENT_METHOD = "credit-card";
     private static final String PAYMENT_REFERENCE = "PAYMENT_REFERENCE";
     private static final String COUNTRY_OF_RESIDENCE = "United Kingdom";
+    private static final String EMAIL_ADDRESS = "testEmail@email.com";
 
     private static final String TRANSACTION_ID = "3324324324-3243243-32424";
 
@@ -142,6 +148,7 @@ class FilingServiceTest {
         setACSPDataDto();
         CompanyDto companyDto = new CompanyDto();
         acspDataDto.setCompanyDetails(companyDto);
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
     }
 
     private void setACSPDataDtoWithoutNamesandId() {
@@ -237,6 +244,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -261,6 +269,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDtoWithoutApplicantDetails();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
 
@@ -282,6 +291,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.getApplicantDetails().setCorrespondenceAddress(null);
         acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
@@ -308,6 +318,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildCorrespondenceAddressWithOnlyCountry());
         acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
@@ -333,6 +344,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildBlankCorrespondenceAddress());
         acspDataDto.setRegisteredOfficeAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
@@ -358,6 +370,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDtoWithCompanyDetails();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
         acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildBlankCorrespondenceAddress());
         acspDataDto.setRegisteredOfficeAddress(buildBlankBusinessAddress());
@@ -385,6 +398,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDtoWithCompanyDetails();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
         acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildBlankCorrespondenceAddress());
         acspDataDto.setRegisteredOfficeAddress(buildBlankBusinessAddress());
@@ -412,6 +426,7 @@ class FilingServiceTest {
         initGetPaymentMocks();
 
         setACSPDataDtoWithoutNamesandId();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildBlankCorrespondenceAddress());
         acspDataDto.setRegisteredOfficeAddress(buildBlankBusinessAddress());
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
@@ -454,6 +469,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
         acspDataDto.setWorkSector(BusinessSector.AIP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
@@ -494,6 +510,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setWorkSector(BusinessSector.ILP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         LocalDate localDate = LocalDate.parse("1984-10-31");
@@ -529,6 +546,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setWorkSector(BusinessSector.TCSP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         LocalDate localDate = LocalDate.parse("1984-10-31");
@@ -566,6 +584,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setWorkSector(BusinessSector.TCSP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
@@ -606,6 +625,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setWorkSector(BusinessSector.ILP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
@@ -638,6 +658,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setWorkSector(BusinessSector.HVD);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
@@ -665,6 +686,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setWorkSector(BusinessSector.CASINOS);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
@@ -694,6 +716,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setWorkSector(BusinessSector.PNTS);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
@@ -724,6 +747,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setWorkSector(BusinessSector.CI);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.getApplicantDetails().setFirstName(null);
@@ -757,6 +781,7 @@ class FilingServiceTest {
         transaction.setStatus(TransactionStatus.CLOSED);
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         acspDataDto.setWorkSector(BusinessSector.AIP);
         acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
         acspDataDto.setBusinessName("businessName");
@@ -776,7 +801,6 @@ class FilingServiceTest {
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertNotNull(response.getData().get("registered_office_address"));
         Assertions.assertFalse(((ServiceAddress)(response.getData().get("service_address"))).getIsServiceAddressROA());
-
     }
 
     @Test
@@ -788,13 +812,284 @@ class FilingServiceTest {
         transaction.setClosedAt("2024-07-01T12:53Z");
 
         setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.REGISTER_ACSP);
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
         Assertions.assertTrue(response.getDescription().contains("01-07-2024"));
-
     }
 
+    @Test
+    void testGenerateAcspApplicationFilingUpdateAcsp() throws Exception {
+        setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        Assertions.assertNull(response.getCost());
+        Assertions.assertNull(response.getData().get("payment_reference"));
+        Assertions.assertNull(response.getData().get("payment_method"));
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertNotNull(response.getData().get("submission"));
+        Assertions.assertNotNull(response.getData().get("presenter"));
+        Assertions.assertEquals(FIRST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getFirstName());
+        Assertions.assertEquals(LAST_NAME.toUpperCase(), ((Presenter) response.getData().get("presenter")).getLastName());
+        Assertions.assertEquals("acsp#update", response.getKind());
+    }
+
+    @Test
+    void testGenerateAllDataUpdateLimitedAcsp() throws Exception {
+        setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
+        acspDataDto.setAcspId(ACSP_ID);
+        acspDataDto.getApplicantDetails().setCorrespondenceEmail(EMAIL_ADDRESS);
+        acspDataDto.setBusinessName("Test Limited Company Name Update ACSP");
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
+        acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildCorrespondenceAddress());
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LC);
+
+        AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
+        amlSupervisoryBodies1.setAmlSupervisoryBody(AMLSupervisoryBodies.HMRC);
+        amlSupervisoryBodies1.setMembershipId("12345678");
+        AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
+        acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
+
+        AMLSupervisoryBodiesDto amlSupervisoryBodies2 = new AMLSupervisoryBodiesDto();
+        amlSupervisoryBodies2.setAmlSupervisoryBody(AMLSupervisoryBodies.FCA);
+        amlSupervisoryBodies2.setMembershipId("87654321");
+        AMLSupervisoryBodiesDto[] removedAmlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies2};
+        acspDataDto.setRemovedAmlSupervisoryBodies(removedAmlSupervisoryBodies);
+
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
+        Assertions.assertEquals("Test Limited Company Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
+        Assertions.assertNotNull(response.getData().get("aml"));
+        Assertions.assertNotNull(response.getData().get("registered_office_address"));
+        Assertions.assertNotNull(response.getData().get("service_address"));
+        Assertions.assertNull(response.getData().get("st_personal_information"));
+
+        Aml acspDetails = (Aml) response.getData().get("aml");
+        Assertions.assertNotNull(acspDetails.getAmlMemberships());
+        Assertions.assertEquals(1, acspDetails.getAmlMemberships().length);
+        Arrays.stream(acspDetails.getAmlMemberships()).forEach(
+                amlMembership -> {
+                    Assertions.assertEquals("12345678", amlMembership.getRegistrationNumber());
+                    Assertions.assertEquals(AMLSupervisoryBodies.HMRC.name(), amlMembership.getSupervisoryBody().toUpperCase());
+                }
+        );
+
+        Assertions.assertNotNull(acspDetails.getPreviousAmlMemberships());
+        Assertions.assertEquals(1, acspDetails.getPreviousAmlMemberships().length);
+        Arrays.stream(acspDetails.getPreviousAmlMemberships()).forEach(
+                amlMembership -> {
+                    Assertions.assertEquals("87654321", amlMembership.getRegistrationNumber());
+                    Assertions.assertEquals(AMLSupervisoryBodies.FCA.name(), amlMembership.getSupervisoryBody().toUpperCase());
+                }
+        );
+    }
+
+    @Test
+    void testGenerateAllDataUpdateLLPAcsp() throws Exception {
+        setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
+        acspDataDto.setAcspId(ACSP_ID);
+        acspDataDto.getApplicantDetails().setCorrespondenceEmail(EMAIL_ADDRESS);
+        acspDataDto.setBusinessName("Test LLP Company Name Update ACSP");
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
+        acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildCorrespondenceAddress());
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.LLP);
+
+        AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
+        amlSupervisoryBodies1.setAmlSupervisoryBody(AMLSupervisoryBodies.HMRC);
+        amlSupervisoryBodies1.setMembershipId("12345678");
+        AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
+        acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
+
+        AMLSupervisoryBodiesDto amlSupervisoryBodies2 = new AMLSupervisoryBodiesDto();
+        amlSupervisoryBodies2.setAmlSupervisoryBody(AMLSupervisoryBodies.FCA);
+        amlSupervisoryBodies2.setMembershipId("87654321");
+        AMLSupervisoryBodiesDto[] removedAmlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies2};
+        acspDataDto.setRemovedAmlSupervisoryBodies(removedAmlSupervisoryBodies);
+
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
+        Assertions.assertEquals("Test LLP Company Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
+        Assertions.assertNotNull(response.getData().get("aml"));
+        Assertions.assertNotNull(response.getData().get("registered_office_address"));
+        Assertions.assertNotNull(response.getData().get("service_address"));
+        Assertions.assertNull(response.getData().get("st_personal_information"));
+
+        Aml acspDetails = (Aml) response.getData().get("aml");
+        Assertions.assertNotNull(acspDetails.getAmlMemberships());
+        Assertions.assertEquals(1, acspDetails.getAmlMemberships().length);
+        Arrays.stream(acspDetails.getAmlMemberships()).forEach(
+                amlMembership -> {
+                    Assertions.assertEquals("12345678", amlMembership.getRegistrationNumber());
+                    Assertions.assertEquals(AMLSupervisoryBodies.HMRC.name(), amlMembership.getSupervisoryBody().toUpperCase());
+                }
+        );
+
+        Assertions.assertNotNull(acspDetails.getPreviousAmlMemberships());
+        Assertions.assertEquals(1, acspDetails.getPreviousAmlMemberships().length);
+        Arrays.stream(acspDetails.getPreviousAmlMemberships()).forEach(
+                amlMembership -> {
+                    Assertions.assertEquals("87654321", amlMembership.getRegistrationNumber());
+                    Assertions.assertEquals(AMLSupervisoryBodies.FCA.name(), amlMembership.getSupervisoryBody().toUpperCase());
+                }
+        );
+    }
+
+    @Test
+    void testGenerateAllDataUpdateSoleTraderAcsp() throws Exception {
+        setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
+        acspDataDto.setAcspId(ACSP_ID);
+        acspDataDto.getApplicantDetails().setCorrespondenceEmail(EMAIL_ADDRESS);
+        acspDataDto.setBusinessName("Test Sole Trader Business Name Update ACSP");
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
+        acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildCorrespondenceAddress());
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
+        acspDataDto.getApplicantDetails().setFirstName(FIRST_NAME);
+        acspDataDto.getApplicantDetails().setMiddleName(MIDDLE_NAME);
+        acspDataDto.getApplicantDetails().setLastName(LAST_NAME);
+
+        AMLSupervisoryBodiesDto amlSupervisoryBodies1 = new AMLSupervisoryBodiesDto();
+        amlSupervisoryBodies1.setAmlSupervisoryBody(AMLSupervisoryBodies.AAT);
+        amlSupervisoryBodies1.setMembershipId("12345678");
+        AMLSupervisoryBodiesDto[] amlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies1};
+        acspDataDto.setAmlSupervisoryBodies(amlSupervisoryBodies);
+
+        AMLSupervisoryBodiesDto amlSupervisoryBodies2 = new AMLSupervisoryBodiesDto();
+        amlSupervisoryBodies2.setAmlSupervisoryBody(AMLSupervisoryBodies.AIA);
+        amlSupervisoryBodies2.setMembershipId("87654321");
+        AMLSupervisoryBodiesDto[] removedAmlSupervisoryBodies = new AMLSupervisoryBodiesDto[]{amlSupervisoryBodies2};
+        acspDataDto.setRemovedAmlSupervisoryBodies(removedAmlSupervisoryBodies);
+
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
+        Assertions.assertEquals("Test Sole Trader Business Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
+        Assertions.assertNotNull(response.getData().get("aml"));
+        Assertions.assertNotNull(response.getData().get("registered_office_address"));
+        Assertions.assertNotNull(response.getData().get("service_address"));
+        Assertions.assertNotNull(response.getData().get("st_personal_information"));
+
+
+        Aml acspDetails = (Aml) response.getData().get("aml");
+        Assertions.assertNotNull(acspDetails.getAmlMemberships());
+        Assertions.assertEquals(1, acspDetails.getAmlMemberships().length);
+        Arrays.stream(acspDetails.getAmlMemberships()).forEach(
+                amlMembership -> {
+                    Assertions.assertEquals("12345678", amlMembership.getRegistrationNumber());
+                    Assertions.assertEquals(AMLSupervisoryBodies.AAT.name(), amlMembership.getSupervisoryBody().toUpperCase());
+                }
+        );
+        Assertions.assertNotNull(acspDetails.getPreviousAmlMemberships());
+        Assertions.assertEquals(1, acspDetails.getPreviousAmlMemberships().length);
+        Arrays.stream(acspDetails.getPreviousAmlMemberships()).forEach(
+                amlMembership -> {
+                    Assertions.assertEquals("87654321", amlMembership.getRegistrationNumber());
+                    Assertions.assertEquals(AMLSupervisoryBodies.AIA.name(), amlMembership.getSupervisoryBody().toUpperCase());
+                }
+        );
+
+        PersonName personName = acspDetails.getPersonName();
+        Assertions.assertNotNull(personName);
+        Assertions.assertEquals(FIRST_NAME.toUpperCase(), personName.getFirstName());
+        Assertions.assertEquals(MIDDLE_NAME.toUpperCase(), personName.getMiddleName());
+        Assertions.assertEquals(LAST_NAME.toUpperCase(), personName.getLastName());
+    }
+
+    @Test
+    void testGenerateUpdateCorporateBodyAcspWithNullCorrespondenceAddress() throws Exception {
+        setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
+        acspDataDto.setAcspId(ACSP_ID);
+        acspDataDto.getApplicantDetails().setCorrespondenceEmail(EMAIL_ADDRESS);
+        acspDataDto.setBusinessName("Test Corporate Body Name Update ACSP");
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
+        acspDataDto.getApplicantDetails().setCorrespondenceAddress(null);
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.CORPORATE_BODY);
+
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
+        Assertions.assertEquals("Test Corporate Body Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
+        Assertions.assertNotNull(response.getData().get("aml"));
+        Assertions.assertNotNull(response.getData().get("registered_office_address"));
+        Assertions.assertNull(response.getData().get("service_address"));
+        Assertions.assertNull(response.getData().get("st_personal_information"));
+    }
+
+    @Test
+    void testBuildUpdateAcspDataWithNonNullData() throws Exception {
+        setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
+        acspDataDto.setAcspId(ACSP_ID);
+        acspDataDto.getApplicantDetails().setCorrespondenceEmail(EMAIL_ADDRESS);
+        acspDataDto.setBusinessName("Test Business Name Update ACSP");
+        acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
+        acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildCorrespondenceAddress());
+        acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
+
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get("email"));
+        Assertions.assertEquals("Test Business Name Update ACSP".toUpperCase(), response.getData().get("proposed_corporate_body_name"));
+        Assertions.assertNotNull(response.getData().get("aml"));
+        Assertions.assertNotNull(response.getData().get("registered_office_address"));
+        Assertions.assertNotNull(response.getData().get("service_address"));
+        Assertions.assertNotNull(response.getData().get("st_personal_information"));
+    }
+
+    @Test
+    void testBuildUpdateAcspDataWithNullValues() throws Exception {
+        setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
+        acspDataDto.setAcspId(ACSP_ID);
+        acspDataDto.getApplicantDetails().setCorrespondenceEmail(null);
+        acspDataDto.setBusinessName(null);
+        acspDataDto.setRegisteredOfficeAddress(null);
+        acspDataDto.getApplicantDetails().setCorrespondenceAddress(null);
+        acspDataDto.setTypeOfBusiness(null);
+
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertNull(response.getData().get("email"));
+        Assertions.assertNull(response.getData().get("proposed_corporate_body_name"));
+        Assertions.assertNotNull(response.getData().get("aml"));
+        Assertions.assertNull(response.getData().get("registered_office_address"));
+        Assertions.assertNull(response.getData().get("service_address"));
+        Assertions.assertNull(response.getData().get("st_personal_information"));
+    }
+  
     @Test
     void testSetFilingApiData() throws ServiceException, SubmissionNotLinkedToTransactionException {
         String acspApplicationId = "demo@ch.gov.uk";
