@@ -9,15 +9,12 @@ import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.enums.AcspType;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
-import uk.gov.companieshouse.acsp.models.filing.Filing;
-import uk.gov.companieshouse.acsp.models.filing.Presenter;
 import uk.gov.companieshouse.acsp.models.filing.Aml;
 import uk.gov.companieshouse.acsp.models.filing.ServiceAddress;
 import uk.gov.companieshouse.acsp.models.filing.STPersonalInformation;
 import uk.gov.companieshouse.acsp.models.filing.Address;
 import uk.gov.companieshouse.acsp.models.filing.AmlMembership;
 import uk.gov.companieshouse.acsp.models.filing.PersonName;
-import uk.gov.companieshouse.acsp.models.filing.Submission;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.filinggenerator.FilingApi;
@@ -88,31 +85,26 @@ public class FilingsService {
     this.apiClientService = apiClientService;
   }
 
-  public Filing generateAcspApplicationFiling(
+  public FilingApi generateAcspApplicationFiling(
           String acspApplicationId,
           String transactionId,
           String passThroughTokenHeader)
           throws ServiceException, SubmissionNotLinkedToTransactionException {
     LOGGER.debug("starting generateAcspApplicationFiling--------------");
-    var filing = new Filing();
+    var filing = new FilingApi();
     setFilingApiData(filing, acspApplicationId, transactionId, passThroughTokenHeader);
     return filing;
   }
 
-  private void setFilingApiData(Filing filing, String acspApplicationId, String transactionId,
+  private void setFilingApiData(FilingApi filing, String acspApplicationId, String transactionId,
                                 String passThroughTokenHeader) throws ServiceException, SubmissionNotLinkedToTransactionException {
     var transaction = transactionService.getTransaction(passThroughTokenHeader, transactionId);
     var acspDataDto = acspService.getAcsp(acspApplicationId, transaction).orElse(null);
     if(acspDataDto != null) {
       boolean isRegistration =  AcspType.REGISTER_ACSP.equals(acspDataDto.getAcspType());
-      var items = new FilingApi();
-      items.setData(buildData(acspDataDto, transaction, passThroughTokenHeader, isRegistration));
-      setDescriptionFields(items, transaction, acspDataDto.getAcspType());
-      buildFilingStatus(items, acspDataDto.getAcspType());
-
-      filing.setFilingItems(new FilingApi[]{items});
-      filing.setSubmission(buildSubmission(acspDataDto, transactionId));
-      filing.setPresenter(buildPresenter(acspDataDto));
+      filing.setData(buildData(acspDataDto, transaction, passThroughTokenHeader, isRegistration));
+      setDescriptionFields(filing, transaction, acspDataDto.getAcspType());
+      buildFilingStatus(filing, acspDataDto.getAcspType());
     }
   }
 
@@ -123,32 +115,6 @@ public class FilingsService {
     } else {
       filing.setKind(FILING_KIND_UPDATE_ACSP);
     }
-  }
-
-  private Presenter buildPresenter(AcspDataDto acspDataDto) {
-    var presenter = new Presenter();
-
-    if (acspDataDto.getApplicantDetails() != null) {
-      presenter.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
-              .map(String::toUpperCase).orElse(null));
-      presenter.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
-              .map(String::toUpperCase).orElse(null));
-    }
-    presenter.setUserId(Optional.ofNullable(acspDataDto.getAcspDataSubmission().getLastModifiedByUserId())
-            .map(String::toUpperCase).orElse(null));
-
-    // presenter.setLanguage(); // add language in acspDataModel
-    return presenter;
-  }
-
-  private Submission buildSubmission(AcspDataDto acspDataDto, String transactionId) {
-    var submission = new Submission();
-    if (acspDataDto.getAcspId() != null) {
-      submission.setCompanyNumber(acspDataDto.getAcspId());
-    }
-    submission.setReceivedAt(acspDataDto.getAcspDataSubmission().getUpdatedAt());
-    submission.setTransactionId(transactionId.toUpperCase());
-    return submission;
   }
 
   private Map<String, Object> buildData(AcspDataDto acspDataDto, Transaction transaction,
