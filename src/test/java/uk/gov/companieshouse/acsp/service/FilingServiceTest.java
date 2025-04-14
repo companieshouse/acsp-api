@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import uk.gov.companieshouse.acsp.exception.ServiceException;
+import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.models.dto.CompanyDto;
 import uk.gov.companieshouse.acsp.models.dto.NationalityDto;
@@ -19,6 +21,7 @@ import uk.gov.companieshouse.acsp.models.enums.AcspType;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.TypeOfBusiness;
 import uk.gov.companieshouse.acsp.models.filing.Aml;
+import uk.gov.companieshouse.acsp.models.filing.Filing;
 import uk.gov.companieshouse.acsp.models.filing.STPersonalInformation;
 import uk.gov.companieshouse.acsp.models.filing.ServiceAddress;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
@@ -42,9 +45,11 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 class FilingServiceTest {
 
@@ -65,6 +70,7 @@ class FilingServiceTest {
     private static final String ST_PERSONAL_INFORMATION = "st_personal_information";
     private static final String AML = "aml";
     private static final String BUSINESS_NAME = "business_name";
+    private static final String SUBMISSION_ID = "demo@ch.gov.uk";
 
     private FilingsService filingsService;
 
@@ -1142,4 +1148,36 @@ class FilingServiceTest {
         Assertions.assertNull(filingItem.getData().get(SERVICE_ADDRESS));
         Assertions.assertNull(filingItem.getData().get(ST_PERSONAL_INFORMATION));
     }
+
+    @Test
+    void generateAcspApplicationFilingReturnsEmptyFilingWhenAcspDataIsNull() throws ServiceException, SubmissionNotLinkedToTransactionException {
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+        when(acspService.getAcsp(SUBMISSION_ID, transaction)).thenReturn(Optional.empty());
+
+        Filing filing = filingsService.generateAcspApplicationFiling(SUBMISSION_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        assertNotNull(filing);
+        assertNull(filing.getFilingItems());
+    }
+
+    @Test
+    void generateAcspApplicationFilingThrowsExceptionWhenTransactionNotFound() throws ServiceException {
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenThrow(ServiceException.class);
+
+        assertThrows(ServiceException.class, () -> {
+            filingsService.generateAcspApplicationFiling(SUBMISSION_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+        });
+    }
+
+    @Test
+    void setFilingApiDataHandlesNullAcspDataDto() throws ServiceException, SubmissionNotLinkedToTransactionException {
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+        when(acspService.getAcsp(SUBMISSION_ID, transaction)).thenReturn(Optional.empty());
+
+        Filing filing = new Filing();
+        filingsService.generateAcspApplicationFiling(SUBMISSION_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        assertNull(filing.getFilingItems());
+    }
+
 }

@@ -135,8 +135,6 @@ class AcspControllerTest {
     @Test
     void deleteApplicationSuccessTransactionClosed() {
         when(transaction.getStatus()).thenReturn(TransactionStatus.CLOSED);
-        when(acspService.deleteAcspApplication(USER_ID)).thenReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT));
-        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
 
         var response = acspController.deleteApplication(USER_ID, transaction, mockHttpServletRequest);
         verify(acspService, times(1)).deleteAcspApplication(USER_ID);
@@ -163,5 +161,44 @@ class AcspControllerTest {
 
         var response = acspController.deleteApplication(USER_ID, transaction, mockHttpServletRequest);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    void createAcspReturnsBadRequestWhenServiceThrowsException() {
+        when(acspService.createAcspRegData(transaction, acspDataDto, PASSTHROUGH_HEADER))
+                .thenThrow(new RuntimeException("Service error"));
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(PASSTHROUGH_HEADER);
+
+        var response = acspController.createAcspData(transaction, acspDataDto, mockHttpServletRequest);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void saveAcspReturnsBadRequestWhenRequestIdIsMissing() {
+        when(mockHttpServletRequest.getHeader("ERIC-Access-Token")).thenReturn(null);
+
+        var response = acspController.saveAcspData(transaction, acspDataDto, mockHttpServletRequest);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void getAcspReturnsBadRequestWhenTransactionIsNull() throws SubmissionNotLinkedToTransactionException {
+        when(acspService.getAcsp(SUBMISSION_ID, null))
+                .thenThrow(new SubmissionNotLinkedToTransactionException("Transaction is null"));
+
+        var response = acspController.getAcspData(SUBMISSION_ID, null);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void deleteApplicationReturnsBadRequestWhenTransactionIdIsNull() {
+        when(transaction.getId()).thenReturn(null);
+
+        var response = acspController.deleteApplication(USER_ID, transaction, mockHttpServletRequest);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

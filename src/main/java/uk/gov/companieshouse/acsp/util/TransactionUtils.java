@@ -20,6 +20,9 @@ public class TransactionUtils {
         Map<String, String> links;
         if(ObjectUtils.isNotEmpty(acspDataDto)){
             links = acspDataDto.getLinks();
+            if (links == null || links.isEmpty()) {
+                return false;
+            }
         }else {
             return false;
         }
