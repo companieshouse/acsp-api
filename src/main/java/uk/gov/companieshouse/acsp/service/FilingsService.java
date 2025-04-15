@@ -177,6 +177,8 @@ public class FilingsService {
 
     data.put(EMAIL, Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail()).map((String::toUpperCase)).orElse(null));
 
+    data.put("company_number", Optional.ofNullable(acspDataDto.getAcspId()).map((String::toUpperCase)).orElse(null));
+
     data.put(BUSINESS_NAME, Optional.ofNullable(acspDataDto.getBusinessName()).map(String::toUpperCase).orElse(null));
 
     data.put(AML, buildAml(acspDataDto));
