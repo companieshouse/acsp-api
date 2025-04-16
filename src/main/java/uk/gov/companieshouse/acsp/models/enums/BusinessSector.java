@@ -33,10 +33,7 @@ public enum BusinessSector {
 
     //keys
     public static BusinessSector findByLabel(String label) {
-        if (label == null) {
-            return null;
-        }
-        if (label.trim().isEmpty()) {
+        if (label == null || label.trim().isEmpty()) {
             throw new IllegalArgumentException("Label cannot be empty");
         }
         for (BusinessSector v : values()) {

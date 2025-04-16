@@ -28,8 +28,11 @@ public class AMLSupervisoryBodiesTest {
     }
 
     @Test
-    void returnsNullWhenLabelIsNull() {
-        assertNull(AMLSupervisoryBodies.findByLabel(null));
+    void throwsExceptionWhenLabelIsNull() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            AMLSupervisoryBodies.findByLabel(null);
+        });
+        assertEquals("Label cannot be empty", exception.getMessage());
     }
 
     @Test

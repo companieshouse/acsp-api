@@ -28,8 +28,11 @@ public class BusinessSectorTest {
     }
 
     @Test
-    void returnsNullWhenLabelIsNull() {
-        assertNull(BusinessSector.findByLabel(null));
+    void throwsExceptionWhenLabelIsNull() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            BusinessSector.findByLabel(null);
+        });
+        assertEquals("Label cannot be empty", exception.getMessage());
     }
 
     @Test

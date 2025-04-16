@@ -39,10 +39,7 @@ public enum AMLSupervisoryBodies {
     }
 
     public static AMLSupervisoryBodies findByLabel(String label){
-        if (label == null) {
-            return null;
-        }
-        if (label.trim().isEmpty()) {
+        if (label == null || label.trim().isEmpty()) {
             throw new IllegalArgumentException("Label cannot be empty");
         }
         for (AMLSupervisoryBodies v : values()) {

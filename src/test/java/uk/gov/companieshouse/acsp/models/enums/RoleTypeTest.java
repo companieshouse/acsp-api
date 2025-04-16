@@ -28,8 +28,11 @@ public class RoleTypeTest {
     }
 
     @Test
-    void returnsNullWhenLabelIsNull() {
-        assertNull(RoleType.findByLabel(null));
+    void throwsExceptionWhenLabelIsNull() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            RoleType.findByLabel(null);
+        });
+        assertEquals("Label cannot be empty", exception.getMessage());
     }
 
     @Test

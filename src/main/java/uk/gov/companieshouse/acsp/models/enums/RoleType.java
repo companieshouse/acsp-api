@@ -24,10 +24,7 @@ public enum RoleType {
 
     //keys
     public static RoleType findByLabel(String label) {
-        if (label == null) {
-            return null;
-        }
-        if (label.trim().isEmpty()) {
+        if (label == null || label.trim().isEmpty()) {
             throw new IllegalArgumentException("Label cannot be empty");
         }
         for (RoleType v : values()) {
