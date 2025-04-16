@@ -114,4 +114,46 @@ class TransactionUtilsTest {
         return acspDataDto;
     }
 
+    @Test
+    void returnsFalseWhenAcspDataDtoIsEmpty() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto);
+        assertFalse(result);
+    }
+
+    @Test
+    void returnsFalseWhenAcspSubmissionSelfLinkIsBlank() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        acspDataDto.setLinks(Map.of("self", ""));
+        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto);
+        assertFalse(result);
+    }
+
+    @Test
+    void returnsFalseWhenTransactionResourcesContainNullResourceLinks() {
+        Map<String, Resource> transactionResources = new HashMap<>();
+        Resource acspResource = new Resource();
+        acspResource.setKind(FILING_KIND_ACSP);
+        acspResource.setLinks(new HashMap<>());
+        transactionResources.put(ACSP_SELF_LINK, acspResource);
+        when(transaction.getResources()).thenReturn(transactionResources);
+
+        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, getAcspDataDto());
+        assertFalse(result);
+    }
+
+    @Test
+    void returnsTrueWhenTransactionContainsAcspFilingKindAndMatchesSelfLink() {
+        Map<String, Resource> transactionResources = new HashMap<>();
+        Resource acspResource = new Resource();
+        acspResource.setKind(FILING_KIND_ACSP);
+        Map<String, String> acspResourceLinks = new HashMap<>();
+        acspResourceLinks.put(LINK_RESOURCE, ACSP_SELF_LINK);
+        acspResource.setLinks(acspResourceLinks);
+        transactionResources.put(ACSP_SELF_LINK, acspResource);
+        when(transaction.getResources()).thenReturn(transactionResources);
+
+        var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, getAcspDataDto());
+        assertTrue(result);
+    }
 }
