@@ -19,21 +19,15 @@ import uk.gov.companieshouse.api.handler.transaction.request.TransactionsGet;
 import uk.gov.companieshouse.api.handler.transaction.request.TransactionsUpdate;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.companieshouse.acsp.util.Constants.PAYMENT_REQUIRED_HEADER;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
@@ -160,73 +154,6 @@ class TransactionServiceTest {
         when(privateTransactionPatch.execute()).thenThrow(new URIValidationException("ERROR"));
 
         assertThrows(ServiceException.class, () -> transactionService.updateTransaction(PASSTHROUGH_HEADER, transaction));
-    }
-
-    @Test
-    void closeTransactionSuccessForPayableTransaction() throws ServiceException, IOException, URIValidationException {
-
-        Transaction transaction = new Transaction();
-        transaction.setId(TRANSACTION_ID);
-
-        when(apiClientService.getApiClient()).thenReturn(apiClient);
-        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
-        when(transactionsResourceHandler.update("/transactions/" + TRANSACTION_ID, transaction)).thenReturn(transactionsUpdate);
-        when(transactionsUpdate.execute()).thenReturn(responseWithoutData);
-        when(responseWithoutData.getHeaders()).thenReturn(headers);
-
-        List<String> paymentRequiredHeader = new ArrayList<>();
-        paymentRequiredHeader.add(PAYMENT_URL);
-        when(headers.get(PAYMENT_REQUIRED_HEADER)).thenReturn(paymentRequiredHeader);
-
-        boolean paymentRequired = transactionService.closeTransaction(transaction);
-
-        assertTrue(paymentRequired);
-    }
-
-    @Test
-    void closeTransactionSuccessForNonPayableTransaction() throws ServiceException, IOException, URIValidationException {
-
-        Transaction transaction = new Transaction();
-        transaction.setId(TRANSACTION_ID);
-
-        when(apiClientService.getApiClient()).thenReturn(apiClient);
-        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
-        when(transactionsResourceHandler.update("/transactions/" + TRANSACTION_ID, transaction)).thenReturn(transactionsUpdate);
-        when(transactionsUpdate.execute()).thenReturn(responseWithoutData);
-        when(responseWithoutData.getHeaders()).thenReturn(headers);
-        when(headers.get(PAYMENT_REQUIRED_HEADER)).thenReturn(null);
-
-        boolean paymentRequired = transactionService.closeTransaction(transaction);
-
-        assertFalse(paymentRequired);
-    }
-
-    @Test
-    void closeTransactionUriValidationError() throws IOException, URIValidationException {
-
-        Transaction transaction = new Transaction();
-        transaction.setId(TRANSACTION_ID);
-
-        when(apiClientService.getApiClient()).thenReturn(apiClient);
-        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
-        when(transactionsResourceHandler.update("/transactions/" + TRANSACTION_ID, transaction)).thenReturn(transactionsUpdate);
-        when(transactionsUpdate.execute()).thenThrow(new URIValidationException("ERROR"));
-
-        assertThrows(ServiceException.class, () -> transactionService.closeTransaction(transaction));
-    }
-
-    @Test
-    void closeTransactionUriApiErrorResponse() throws IOException, URIValidationException {
-
-        Transaction transaction = new Transaction();
-        transaction.setId(TRANSACTION_ID);
-
-        when(apiClientService.getApiClient()).thenReturn(apiClient);
-        when(apiClient.transactions()).thenReturn(transactionsResourceHandler);
-        when(transactionsResourceHandler.update("/transactions/" + TRANSACTION_ID, transaction)).thenReturn(transactionsUpdate);
-        when(transactionsUpdate.execute()).thenThrow(ApiErrorResponseException.fromIOException(new IOException("ERROR")));
-
-        assertThrows(ServiceException.class, () -> transactionService.closeTransaction(transaction));
     }
 
     @Test

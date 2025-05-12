@@ -11,7 +11,7 @@ public enum TypeOfBusiness {
 
     public final String label;
 
-    private TypeOfBusiness(String label) {
+    TypeOfBusiness(String label) {
         this.label = label;
     }
 

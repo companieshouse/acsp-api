@@ -5,28 +5,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriTemplate;
 import uk.gov.companieshouse.acsp.exception.ServiceException;
 import uk.gov.companieshouse.acsp.sdk.ApiClientService;
-import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.model.transaction.Transaction;
-import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
-import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
-import static uk.gov.companieshouse.acsp.util.Constants.PAYMENT_REQUIRED_HEADER;
-
 
 @Service
 public class TransactionService {
 
     private final ApiClientService apiClientService;
     private static final UriTemplate TRANSACTIONS_URI = new UriTemplate("/transactions/{id}");
-    private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
 
     @Autowired
     public TransactionService(ApiClientService apiClientService) {
@@ -56,29 +43,6 @@ public class TransactionService {
             throw new ServiceException(message, e);
         }
     }
-
-    public boolean closeTransaction(Transaction transaction) throws ServiceException {
-        try {
-            transaction.setStatus(TransactionStatus.CLOSED);
-            var uri = "/transactions/" + transaction.getId();
-            Map<String, Object> headers =
-                    apiClientService.getApiClient()
-                            .transactions().update(uri, transaction)
-                            .execute().getHeaders();
-
-            var paymentRequired = false;
-            List<String> paymentRequiredHeaders = (ArrayList) headers.get(PAYMENT_REQUIRED_HEADER);
-            if (paymentRequiredHeaders != null) {
-                paymentRequired = true;
-            }
-            return paymentRequired;
-        } catch (URIValidationException e) {
-            throw new ServiceException("Invalid URI for transactions resource", e);
-        } catch (ApiErrorResponseException e) {
-            throw new ServiceException("Error closing transaction", e);
-        }
-    }
-
 
     public void deleteTransaction(String passThroughHeader, String transactionId) throws ServiceException {
         try {
