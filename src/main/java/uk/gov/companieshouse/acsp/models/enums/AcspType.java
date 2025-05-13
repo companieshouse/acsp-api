@@ -16,6 +16,9 @@ public enum AcspType {
     }
 
     public static AcspType findByLabel(String label) {
+        if (label == null || label.trim().isEmpty()) {
+            throw new IllegalArgumentException("Label cannot be empty");
+        }
         for (AcspType v : values()) {
             if (v.label.equals(label)) {
                 return v;

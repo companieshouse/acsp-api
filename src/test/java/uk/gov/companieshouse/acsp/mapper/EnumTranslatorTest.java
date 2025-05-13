@@ -170,6 +170,50 @@ import uk.gov.companieshouse.acsp.models.enums.*;
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    void amlSupervisoryBodiesEnumToStringHandlesNullMembershipId() {
+        AMLSupervisoryBodiesDto[] inputEnumArray = new AMLSupervisoryBodiesDto[]{
+                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.AAT, null)
+        };
+
+        AMLSupervisoryBodiesDao[] expectedArray = new AMLSupervisoryBodiesDao[]{
+                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.AAT.getLabel(), null)
+        };
+
+        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesEnumToString(inputEnumArray);
+
+        assertEquals(expectedArray[0].getAmlSupervisoryBody(), actualArray[0].getAmlSupervisoryBody());
+        assertNull(actualArray[0].getMembershipId());
+    }
+
+    @Test
+    void amlSupervisoryBodiesStringToEnumHandlesNullMembershipId() {
+        AMLSupervisoryBodiesDao[] inputStrArray = new AMLSupervisoryBodiesDao[]{
+                new AMLSupervisoryBodiesDao(AMLSupervisoryBodies.AAT.getLabel(), null)
+        };
+
+        AMLSupervisoryBodiesDto[] expectedArray = new AMLSupervisoryBodiesDto[]{
+                new AMLSupervisoryBodiesDto(AMLSupervisoryBodies.AAT, null)
+        };
+
+        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesStringToEnum(inputStrArray);
+
+        assertEquals(expectedArray[0].getAmlSupervisoryBody(), actualArray[0].getAmlSupervisoryBody());
+        assertNull(actualArray[0].getMembershipId());
+    }
+
+    @Test
+    void amlSupervisoryBodiesEnumToStringHandlesNullInputArray() {
+        AMLSupervisoryBodiesDao[] actualArray = enumTranslator.amlSupervisoryBodiesEnumToString(null);
+        assertArrayEquals(new AMLSupervisoryBodiesDao[0], actualArray);
+    }
+
+    @Test
+    void amlSupervisoryBodiesStringToEnumHandlesNullInputArray() {
+        AMLSupervisoryBodiesDto[] actualArray = enumTranslator.amlSupervisoryBodiesStringToEnum(null);
+        assertArrayEquals(new AMLSupervisoryBodiesDto[0], actualArray);
+    }
 }
 
 

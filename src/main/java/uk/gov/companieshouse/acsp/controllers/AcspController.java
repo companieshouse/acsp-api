@@ -89,9 +89,14 @@ public class AcspController {
                                                     HttpServletRequest request) {
         LOGGER.info("Received request to delete application for id: " + acspId + " and Transaction ID: " + transaction.getId());
         String passThroughHeader = request.getHeader(ApiSdkManager.getEricPassthroughTokenHeader());
-        if(transaction.getStatus() == TransactionStatus.CLOSED){
+        if (transaction.getStatus() == TransactionStatus.CLOSED) {
             LOGGER.info("Transaction is CLOSED");
-            return acspService.deleteAcspApplication(acspId);
+            acspService.deleteAcspApplication(acspId);
+            return ResponseEntity.noContent().build();
+        }
+        if (transaction.getId() == null) {
+            LOGGER.error("Transaction ID is null");
+            return ResponseEntity.badRequest().body("Transaction ID cannot be null");
         }
         LOGGER.info("Transaction is not closed");
         return acspService.deleteAcspApplicationAndTransaction(passThroughHeader, acspId, transaction.getId());

@@ -22,6 +22,9 @@ public enum TypeOfBusiness {
 
     //keys
     public static TypeOfBusiness findByLabel(String label) {
+        if (label == null || label.trim().isEmpty()) {
+            throw new IllegalArgumentException("Label cannot be empty");
+        }
         for (TypeOfBusiness v : values()) {
             if (v.label.equals(label)) {
                 return v;

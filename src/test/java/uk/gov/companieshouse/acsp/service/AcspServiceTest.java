@@ -776,4 +776,50 @@ class AcspServiceTest {
                 REQUEST_ID);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
+
+    @Test
+    void updateACSPDetailsUpdatesTransactionWhenCompanyDetailsChange() throws Exception {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        acspDataDto.setCompanyDetails(new AcspServiceTest.CompanyDetails());
+        acspDataDto.getCompanyDetails().setCompanyName("New Company");
+        acspDataDto.getCompanyDetails().setCompanyNumber("98765432");
+
+        Transaction transaction = new Transaction();
+        transaction.setId(TRANSACTION_ID);
+        transaction.setCompanyName("Old Company");
+        transaction.setCompanyNumber("12345678");
+
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)).thenReturn(true);
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspDataDto)).thenReturn(new AcspDataDao());
+        when(acspRepository.save(any(Acsp.class))).thenReturn(new Acsp());
+
+        ResponseEntity<Object> response = acspService.updateACSPDetails(transaction, acspDataDto, REQUEST_ID, "acsp-id");
+
+        verify(transactionService).updateTransaction(REQUEST_ID, transaction);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void updateACSPDetailsThrowsExceptionWhenTransactionNotLinked() {
+        AcspDataDto acspDataDto = new AcspDataDto();
+        Transaction transaction = new Transaction();
+
+        when(transactionUtils.isTransactionLinkedToAcspSubmission(transaction, acspDataDto)).thenReturn(false);
+
+        assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
+            acspService.updateACSPDetails(transaction, acspDataDto, REQUEST_ID, "acsp-id");
+        });
+    }
+
+    @Test
+    void deleteAcspApplicationAndTransactionReturnsNoContentForSuccessfulDeletion() throws ServiceException {
+        doNothing().when(acspRepository).deleteById(USER_ID);
+        doNothing().when(transactionService).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
+
+        ResponseEntity<Object> response = acspService.deleteAcspApplicationAndTransaction(PASS_THROUGH_HEADER, USER_ID, TRANSACTION_ID);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(acspRepository, times(1)).deleteById(USER_ID);
+        verify(transactionService, times(1)).deleteTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID);
+    }
 }
