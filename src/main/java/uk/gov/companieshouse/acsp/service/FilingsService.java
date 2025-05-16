@@ -141,7 +141,7 @@ public class FilingsService {
               .map(String::toUpperCase).orElse(null));
     }
 
-    if (TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
+    if (TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness()) || AcspType.UPDATE_ACSP.equals(acspDataDto.getAcspType())) {
       data.put(ST_PERSONAL_INFORMATION, buildStPersonalInformation(acspDataDto));
     }
 
