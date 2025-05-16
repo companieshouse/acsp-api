@@ -856,7 +856,7 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData().get(AML));
         Assertions.assertNotNull(response.getData().get(REGISTERED_OFFICE_ADDRESS));
         Assertions.assertNotNull(response.getData().get(SERVICE_ADDRESS));
-        Assertions.assertNull(response.getData().get(ST_PERSONAL_INFORMATION));
+        Assertions.assertNotNull(response.getData().get(ST_PERSONAL_INFORMATION));
 
         Aml acspDetails = (Aml) response.getData().get(AML);
         Assertions.assertNotNull(acspDetails.getAmlMemberships());
@@ -912,7 +912,7 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData().get(AML));
         Assertions.assertNotNull(response.getData().get(REGISTERED_OFFICE_ADDRESS));
         Assertions.assertNotNull(response.getData().get(SERVICE_ADDRESS));
-        Assertions.assertNull(response.getData().get(ST_PERSONAL_INFORMATION));
+        Assertions.assertNotNull(response.getData().get(ST_PERSONAL_INFORMATION));
 
         Aml acspDetails = (Aml) response.getData().get(AML);
         Assertions.assertNotNull(acspDetails.getAmlMemberships());
@@ -972,7 +972,6 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData().get(REGISTERED_OFFICE_ADDRESS));
         Assertions.assertNotNull(response.getData().get(SERVICE_ADDRESS));
         Assertions.assertNotNull(response.getData().get(ST_PERSONAL_INFORMATION));
-        Assertions.assertNotNull(response.getData().get(ST_PERSONAL_INFORMATION));
 
         var stPersonalInformation = (STPersonalInformation) response.getData().get(ST_PERSONAL_INFORMATION);
         Assertions.assertEquals(FIRST_NAME.toUpperCase(), stPersonalInformation.getPersonName().getFirstName());
@@ -1006,6 +1005,33 @@ class FilingServiceTest {
     }
 
     @Test
+    void testBuildStPersonalInformationWithNullsAndCountryOfResidence() throws Exception {
+        setACSPDataDto();
+        acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
+        acspDataDto.setAcspId("AP654321");
+        // Set applicant details with only country of residence
+        acspDataDto.getApplicantDetails().setFirstName(null);
+        acspDataDto.getApplicantDetails().setLastName(null);
+        acspDataDto.getApplicantDetails().setMiddleName(null);
+        acspDataDto.getApplicantDetails().setDateOfBirth(null);
+        acspDataDto.getApplicantDetails().setCountryOfResidence("FRANCE");
+        acspDataDto.getApplicantDetails().setNationality(null);
+
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling("AP654321", TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        Object stPersonalInfoObj = response.getData().get(ST_PERSONAL_INFORMATION);
+        Assertions.assertNotNull(stPersonalInfoObj);
+        STPersonalInformation stPersonalInfo = (STPersonalInformation) stPersonalInfoObj;
+        Assertions.assertNull(stPersonalInfo.getPersonName());
+        Assertions.assertNull(stPersonalInfo.getBirthDate());
+        Assertions.assertEquals("FRANCE", stPersonalInfo.getUsualResidence());
+        Assertions.assertNull(stPersonalInfo.getNationalityOther());
+    }
+
+    @Test
     void testGenerateUpdateCorporateBodyAcspWithNullCorrespondenceAddress() throws Exception {
         setACSPDataDto();
         acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
@@ -1026,8 +1052,8 @@ class FilingServiceTest {
         Assertions.assertEquals("Test Corporate Body Name Update ACSP".toUpperCase(), response.getData().get(BUSINESS_NAME));
         Assertions.assertNotNull(response.getData().get(AML));
         Assertions.assertNotNull(response.getData().get(REGISTERED_OFFICE_ADDRESS));
+        Assertions.assertNotNull(response.getData().get(ST_PERSONAL_INFORMATION));
         Assertions.assertNull(response.getData().get(SERVICE_ADDRESS));
-        Assertions.assertNull(response.getData().get(ST_PERSONAL_INFORMATION));
     }
 
     @Test
@@ -1065,6 +1091,12 @@ class FilingServiceTest {
         acspDataDto.setRegisteredOfficeAddress(null);
         acspDataDto.getApplicantDetails().setCorrespondenceAddress(null);
         acspDataDto.setTypeOfBusiness(null);
+        acspDataDto.getApplicantDetails().setFirstName(null);
+        acspDataDto.getApplicantDetails().setMiddleName(null);
+        acspDataDto.getApplicantDetails().setLastName(null);
+        acspDataDto.getApplicantDetails().setDateOfBirth(null);
+        acspDataDto.getApplicantDetails().setCountryOfResidence(null);
+        acspDataDto.getApplicantDetails().setNationality(null);
 
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
         when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
@@ -1077,6 +1109,13 @@ class FilingServiceTest {
         Assertions.assertNotNull(response.getData().get(AML));
         Assertions.assertNull(response.getData().get(REGISTERED_OFFICE_ADDRESS));
         Assertions.assertNull(response.getData().get(SERVICE_ADDRESS));
-        Assertions.assertNull(response.getData().get(ST_PERSONAL_INFORMATION));
+
+        Object stPersonalInfoObj = response.getData().get(ST_PERSONAL_INFORMATION);
+        Assertions.assertNotNull(stPersonalInfoObj);
+        STPersonalInformation stPersonalInfo = (STPersonalInformation) stPersonalInfoObj;
+        Assertions.assertNull(stPersonalInfo.getPersonName());
+        Assertions.assertNull(stPersonalInfo.getBirthDate());
+        Assertions.assertNull(stPersonalInfo.getUsualResidence());
+        Assertions.assertNull(stPersonalInfo.getNationalityOther());
     }
 }
