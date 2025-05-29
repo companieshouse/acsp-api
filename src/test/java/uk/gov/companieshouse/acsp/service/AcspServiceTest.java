@@ -776,4 +776,54 @@ class AcspServiceTest {
                 REQUEST_ID);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
+
+    @Test
+    void createCloseAcspSuccess() throws Exception {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+        acspData.setAcspId("AP123456");
+        acspData.setAcspType(AcspType.CLOSE_ACSP);
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+        var acsp = new Acsp();
+        acsp.setAcspDataDao(acspDataDao);
+        acsp.setId(acspDataDao.getId());
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+        when(acspRepository.insert((Acsp) any())).thenReturn(acsp);
+        doNothing().when(transactionService).updateTransaction(any(), any());
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspData,
+                REQUEST_ID);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    @Test
+    void createCloseAcspDuplicateApplication() {
+        AcspDataDto acspData = new AcspDataDto();
+        acspData.setId("demo@ch.gov.uk");
+        acspData.setAcspType(AcspType.CLOSE_ACSP);
+
+
+        AcspDataDao acspDataDao = new AcspDataDao();
+        acspDataDao.setId("demo@ch.gov.uk");
+
+        var acsp = new Acsp();
+        acsp.setAcspDataDao(acspDataDao);
+        acsp.setId(acspDataDao.getId());
+
+        transaction = new Transaction();
+
+        Map<String, Resource> resourceMap = new HashMap<>();
+        resourceMap.put("Resource 1", new Resource());
+
+        transaction.setResources(resourceMap);
+
+        when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
+
+        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+                acspData,
+                REQUEST_ID);
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
 }
