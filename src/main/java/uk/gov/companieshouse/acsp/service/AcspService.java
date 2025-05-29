@@ -230,8 +230,6 @@ public class AcspService {
             case CLOSE_ACSP:
                 acspResource.setKind(FILING_KIND_CLOSE_ACSP);
                 break;
-            default:
-                throw new IllegalArgumentException("Unsupported ACSP type: " + acspType);
         }
 
         Map<String, String> linksMap = new HashMap<>();
