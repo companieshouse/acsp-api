@@ -35,6 +35,7 @@ import java.util.Calendar;
 
 
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
+import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_CLOSE_ACSP;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_UPDATE_ACSP;
 import static uk.gov.companieshouse.acsp.util.Constants.LINK_SELF;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
@@ -219,10 +220,18 @@ public class AcspService {
     private Resource createAcspTransactionResource(String submissionUri, AcspType acspType) {
         var acspResource = new Resource();
 
-        if (AcspType.REGISTER_ACSP.equals(acspType)) {
-            acspResource.setKind(FILING_KIND_ACSP);
-        } else {
-            acspResource.setKind(FILING_KIND_UPDATE_ACSP);
+        switch (acspType){
+            case REGISTER_ACSP:
+                acspResource.setKind(FILING_KIND_ACSP);
+                break;
+            case UPDATE_ACSP:
+                acspResource.setKind(FILING_KIND_UPDATE_ACSP);
+                break;
+            case CLOSE_ACSP:
+                acspResource.setKind(FILING_KIND_CLOSE_ACSP);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported ACSP type: " + acspType);
         }
 
         Map<String, String> linksMap = new HashMap<>();
