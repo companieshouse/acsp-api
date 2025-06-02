@@ -1118,4 +1118,22 @@ class FilingServiceTest {
         Assertions.assertNull(stPersonalInfo.getUsualResidence());
         Assertions.assertNull(stPersonalInfo.getNationalityOther());
     }
+
+    @Test
+    void testBuildCloseAcspDataWithNonNullData() throws Exception {
+        acspDataDto = new AcspDataDto();
+        acspDataDto.setAcspType(AcspType.CLOSE_ACSP);
+        acspDataDto.setAcspId(ACSP_ID);
+        AcspDataSubmissionDto dataSubmissionDto = new AcspDataSubmissionDto();
+        dataSubmissionDto.setUpdatedAt(LocalDateTime.now());
+        acspDataDto.setAcspDataSubmission(dataSubmissionDto);
+
+        when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
+        when(transactionService.getTransaction(PASS_THROUGH_HEADER, TRANSACTION_ID)).thenReturn(transaction);
+
+        var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
+
+        Assertions.assertNotNull(response.getData());
+        Assertions.assertEquals(ACSP_ID.toUpperCase(), response.getData().get("company_number"));
+    }
 }

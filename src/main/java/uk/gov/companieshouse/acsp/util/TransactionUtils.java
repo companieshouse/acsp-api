@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_ACSP;
+import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_CLOSE_ACSP;
 import static uk.gov.companieshouse.acsp.util.Constants.FILING_KIND_UPDATE_ACSP;
 import static uk.gov.companieshouse.acsp.util.Constants.LINK_RESOURCE;
 
@@ -33,7 +34,7 @@ public class TransactionUtils {
         }
 
         return transaction.getResources().entrySet().stream()
-                .filter(resource -> FILING_KIND_ACSP.equals(resource.getValue().getKind()) || FILING_KIND_UPDATE_ACSP.equals((resource.getValue().getKind())))
+                .filter(resource -> FILING_KIND_ACSP.equals(resource.getValue().getKind()) || FILING_KIND_UPDATE_ACSP.equals((resource.getValue().getKind())) || FILING_KIND_CLOSE_ACSP.equals((resource.getValue().getKind())))
                 .anyMatch(resource -> acspSubmissionSelfLink.equals(resource.getValue().getLinks().get(LINK_RESOURCE)));
     }
 }
