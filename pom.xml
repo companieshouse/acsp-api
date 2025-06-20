@@ -5,7 +5,8 @@
 	<parent>
 		<groupId>uk.gov.companieshouse</groupId>
 		<artifactId>companies-house-parent</artifactId>
-		<version>2.1.11</version> <!-- lookup parent from repository -->
+		<version>2.1.11</version>
+		<!-- lookup parent from repository -->
 	</parent>
 	<artifactId>acsp-api</artifactId>
 	<version>unversioned</version>
@@ -25,7 +26,7 @@
 		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
 		<api-security-java.version>2.0.8</api-security-java.version>
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
-		<dependency-check-plugin.version>8.3.1</dependency-check-plugin.version>
+		<dependency-check-plugin.version>12.1.3</dependency-check-plugin.version>
 		<email-producer-java-version>3.0.3</email-producer-java-version>
 		<sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
 		<kafka-clients-version>3.1.0</kafka-clients-version>
@@ -38,6 +39,16 @@
 	</properties>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.vladsch.flexmark</groupId>
+				<artifactId>flexmark-all</artifactId>
+				<version>0.42.14</version>
+			</dependency>
+			<dependency>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>12.1.3</version>
+			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
