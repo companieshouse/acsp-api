@@ -101,6 +101,16 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+		<groupId>uk.gov.companieshouse</groupId>
+			<artifactId>environment-reader-library</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.11.0</version>
+		</dependency>
+		<dependency>
 			<groupId>uk.gov.companieshouse</groupId>
 			<artifactId>private-api-sdk-java</artifactId>
 			<version>${private-api-sdk-java.version}</version>
