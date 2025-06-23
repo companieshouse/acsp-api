@@ -27,7 +27,7 @@
 		<api-security-java.version>2.0.8</api-security-java.version>
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<dependency-check-plugin.version>12.1.3</dependency-check-plugin.version>
-		<email-producer-java-version>3.0.3</email-producer-java-version>
+		<email-producer-java-version>3.0.4</email-producer-java-version>
 		<sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
 		<kafka-clients-version>3.1.0</kafka-clients-version>
 		<sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
