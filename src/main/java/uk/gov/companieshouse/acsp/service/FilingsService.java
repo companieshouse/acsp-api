@@ -88,6 +88,8 @@ public class FilingsService {
 
   private static final String PAYMENT_METHOD = "payment_method";
 
+  private static final String DATE_COMPONENT = "{date}";
+
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
   @Autowired
@@ -143,72 +145,82 @@ public class FilingsService {
                              String passThroughTokenHeader, AcspType acspType) throws ServiceException {
 
     // Common data for Register and Update ACSP
-    if (AcspType.REGISTER_ACSP.equals(acspType) || AcspType.UPDATE_ACSP.equals(acspType)) {
-      if (acspDataDto.getApplicantDetails() != null) {
-        data.put(EMAIL, Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail())
-                .map(String::toUpperCase).orElse(null));
-      }
+    // Extracted methods to reduce cognitive complexity
 
-      if (TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness()) || AcspType.UPDATE_ACSP.equals(acspDataDto.getAcspType())) {
-        data.put(ST_PERSONAL_INFORMATION, buildStPersonalInformation(acspDataDto));
-      }
-    }
+    addCommonRegisterOrUpdateData(data, acspDataDto);
 
-    // Register ACSP data
     if (AcspType.REGISTER_ACSP.equals(acspType)) {
-      if (TypeOfBusiness.LP.equals(acspDataDto.getTypeOfBusiness()) ||
-              TypeOfBusiness.PARTNERSHIP.equals(acspDataDto.getTypeOfBusiness()) ||
-              TypeOfBusiness.UNINCORPORATED.equals(acspDataDto.getTypeOfBusiness())) {
-        data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
-        data.put(SERVICE_ADDRESS, buildServiceAddress(acspDataDto));
-      } else if (TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness())) {
-        data.put(REGISTERED_OFFICE_ADDRESS, buildCorrespondenceAddress(acspDataDto));
-      } else {
-        data.put(SERVICE_ADDRESS, buildServiceAddress(acspDataDto));
-      }
-
-      if (transaction.getStatus() != null && TransactionStatus.CLOSED.equals(transaction.getStatus())) {
-        setPaymentData(data, transaction, passThroughTokenHeader);
-      }
-
-      data.put(ACSP_TYPE, Optional.ofNullable(acspDataDto.getTypeOfBusiness())
-              .map(TypeOfBusiness::name).orElse(null));
-
-      if (acspDataDto.getCompanyDetails() != null || acspDataDto.getBusinessName() != null) {
-        buildCompanyDetails(acspDataDto, data);
-      }
-
-      if (BusinessSector.PNTS.equals(acspDataDto.getWorkSector())) {
-        data.put(BUSINESS_SECTOR, null);
-      } else {
-        data.put(BUSINESS_SECTOR, Optional.ofNullable(acspDataDto.getWorkSector())
-                .map(BusinessSector::name).orElse(null));
-      }
-
-      if (acspDataDto.getAmlSupervisoryBodies() != null) {
-        data.put(AML, buildAml(acspDataDto));
-      }
-
-      // Update ACSP data
+      addRegisterAcspData(data, acspDataDto, transaction, passThroughTokenHeader);
     } else if (AcspType.UPDATE_ACSP.equals(acspType)) {
-      data.put(BUSINESS_NAME, Optional.ofNullable(acspDataDto.getBusinessName())
-              .map(String::toUpperCase).orElse(null));
-      data.put(AML, buildAml(acspDataDto));
-
-      if (acspDataDto.getRegisteredOfficeAddress() != null) {
-        data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
-      }
-
-      if (acspDataDto.getApplicantDetails() != null &&
-              acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
-        data.put(SERVICE_ADDRESS, buildServiceAddress(acspDataDto));
-      }
+      addUpdateAcspData(data, acspDataDto);
     }
 
-    // Common data for Update and Close ACSP
     if (AcspType.UPDATE_ACSP.equals(acspType) || AcspType.CLOSE_ACSP.equals(acspType)) {
       data.put(COMPANY_NUMBER, Optional.ofNullable(acspDataDto.getAcspId())
               .map(String::toUpperCase).orElse(null));
+    }
+  }
+
+  private void addCommonRegisterOrUpdateData(Map<String, Object> data, AcspDataDto acspDataDto) {
+    if (acspDataDto.getApplicantDetails() != null) {
+      data.put(EMAIL, Optional.ofNullable(acspDataDto.getApplicantDetails().getCorrespondenceEmail())
+              .map(String::toUpperCase).orElse(null));
+    }
+    if (TypeOfBusiness.SOLE_TRADER.equals(acspDataDto.getTypeOfBusiness()) ||
+            AcspType.UPDATE_ACSP.equals(acspDataDto.getAcspType())) {
+      data.put(ST_PERSONAL_INFORMATION, buildStPersonalInformation(acspDataDto));
+    }
+  }
+
+  private void addRegisterAcspData(Map<String, Object> data, AcspDataDto acspDataDto, Transaction transaction, String passThroughTokenHeader) throws ServiceException {
+    TypeOfBusiness type = acspDataDto.getTypeOfBusiness();
+    if (TypeOfBusiness.LP.equals(type) ||
+            TypeOfBusiness.PARTNERSHIP.equals(type) ||
+            TypeOfBusiness.UNINCORPORATED.equals(type)) {
+      data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
+      data.put(SERVICE_ADDRESS, buildServiceAddress(acspDataDto));
+    } else if (TypeOfBusiness.SOLE_TRADER.equals(type)) {
+      data.put(REGISTERED_OFFICE_ADDRESS, buildCorrespondenceAddress(acspDataDto));
+    } else {
+      data.put(SERVICE_ADDRESS, buildServiceAddress(acspDataDto));
+    }
+
+    if (transaction.getStatus() != null && TransactionStatus.CLOSED.equals(transaction.getStatus())) {
+      setPaymentData(data, transaction, passThroughTokenHeader);
+    }
+
+    data.put(ACSP_TYPE, Optional.ofNullable(type)
+            .map(TypeOfBusiness::name).orElse(null));
+
+    if (acspDataDto.getCompanyDetails() != null || acspDataDto.getBusinessName() != null) {
+      buildCompanyDetails(acspDataDto, data);
+    }
+
+    BusinessSector sector = acspDataDto.getWorkSector();
+    if (BusinessSector.PNTS.equals(sector)) {
+      data.put(BUSINESS_SECTOR, null);
+    } else {
+      data.put(BUSINESS_SECTOR, Optional.ofNullable(sector)
+              .map(BusinessSector::name).orElse(null));
+    }
+
+    if (acspDataDto.getAmlSupervisoryBodies() != null) {
+      data.put(AML, buildAml(acspDataDto));
+    }
+  }
+
+  private void addUpdateAcspData(Map<String, Object> data, AcspDataDto acspDataDto) {
+    data.put(BUSINESS_NAME, Optional.ofNullable(acspDataDto.getBusinessName())
+            .map(String::toUpperCase).orElse(null));
+    data.put(AML, buildAml(acspDataDto));
+
+    if (acspDataDto.getRegisteredOfficeAddress() != null) {
+      data.put(REGISTERED_OFFICE_ADDRESS, buildRegisteredOfficeAddress(acspDataDto));
+    }
+
+    if (acspDataDto.getApplicantDetails() != null &&
+            acspDataDto.getApplicantDetails().getCorrespondenceAddress() != null) {
+      data.put(SERVICE_ADDRESS, buildServiceAddress(acspDataDto));
     }
   }
 
@@ -360,11 +372,11 @@ public class FilingsService {
       filing.setDescriptionIdentifier(filingDescriptionIdentifier.toUpperCase());
     }
     if (AcspType.REGISTER_ACSP.equals(acspType) && filingDescription != null) {
-      filing.setDescription(filingDescription.replace("{date}", formattedDate).toUpperCase());
+      filing.setDescription(filingDescription.replace(DATE_COMPONENT, formattedDate).toUpperCase());
     } else if (AcspType.UPDATE_ACSP.equals(acspType) && updateFilingDescription != null) {
-      filing.setDescription(updateFilingDescription.replace("{date}", formattedDate).toUpperCase());
+      filing.setDescription(updateFilingDescription.replace(DATE_COMPONENT, formattedDate).toUpperCase());
     } else if (AcspType.CLOSE_ACSP.equals(acspType) && closeFilingDescription != null) {
-      filing.setDescription(closeFilingDescription.replace("{date}", formattedDate).toUpperCase());
+      filing.setDescription(closeFilingDescription.replace(DATE_COMPONENT, formattedDate).toUpperCase());
     }
     Map<String, String> values = new HashMap<>();
     filing.setDescriptionValues(values);

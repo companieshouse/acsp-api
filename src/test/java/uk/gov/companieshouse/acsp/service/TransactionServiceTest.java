@@ -73,7 +73,6 @@ class TransactionServiceTest {
 
     private static final String TRANSACTION_ID = "12345678";
     private static final String PASSTHROUGH_HEADER = "passthrough";
-    private static final String PAYMENT_URL = "paymentUrl";
     @Test
     void getTransactionSuccess() throws IOException, URIValidationException, ServiceException {
         Transaction transaction = new Transaction();
