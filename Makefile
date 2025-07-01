@@ -52,11 +52,3 @@ endif
 
 .PHONY: dist
 dist: clean build package
-
-.PHONY: sonar
-sonar:
-	mvn sonar:sonar -Dsonar.dependencyCheck.htmlReportPath=./target/dependency-check-report.html
-
-.PHONY: sonar-pr-analysis
-sonar-pr-analysis:
-	mvn sonar:sonar -P sonar-pr-analysis -Dsonar.dependencyCheck.htmlReportPath=./target/dependency-check-report.html
