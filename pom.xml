@@ -29,12 +29,20 @@
 		<email-producer-java-version>3.0.3</email-producer-java-version>
 		<sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
 		<kafka-clients-version>3.1.0</kafka-clients-version>
+		<jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
 		<sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
 		<sonar.login></sonar.login>
 		<sonar.password></sonar.password>
 		<sonar.projectName>acsp-api</sonar.projectName>
 		<sonar.projectKey>uk.gov.companieshouse:acsp-api</sonar.projectKey>
 		<sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml,
+			${project.basedir}/target/site/jacoco-it/jacoco.xml
+		</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.jacoco.reports>${project.basedir}/target/site</sonar.jacoco.reports>
+		<sonar.java.binaries>Add commentMore actions
+			${project.basedir}/target
+		</sonar.java.binaries>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -268,7 +276,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-
+				<version>${jacoco-maven-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
