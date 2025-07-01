@@ -40,6 +40,9 @@
 			${project.basedir}/target/site/jacoco-it/jacoco.xml
 		</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.jacoco.reports>${project.basedir}/target/site</sonar.jacoco.reports>
+		<sonar.dependencyCheck.htmlReportPath>
+			${project.basedir}/target/dependency-check-report.html
+		</sonar.dependencyCheck.htmlReportPath>
 		<sonar.java.binaries>${project.basedir}/target</sonar.java.binaries>
 	</properties>
 	<dependencyManagement>
