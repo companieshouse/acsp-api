@@ -62,4 +62,34 @@ class ApiLoggerTest {
         assertEquals(1, logMap.size());
         assertEquals(LOG_MAP_VALUE, logMap.get(LOG_MAP_KEY));
     }
+
+    @Test
+    void debugWithNullMapDoesNotThrow() {
+        ApiLogger.debug("debug message", null);
+    }
+
+    @Test
+    void debugContextWithoutMapDoesNotThrow() {
+        ApiLogger.debugContext(CONTEXT, TEST_MESSAGE);
+    }
+
+    @Test
+    void infoWithoutMapDoesNotThrow() {
+        ApiLogger.info(TEST_MESSAGE);
+    }
+
+    @Test
+    void infoContextWithoutMapDoesNotThrow() {
+        ApiLogger.infoContext(CONTEXT, TEST_MESSAGE);
+    }
+
+    @Test
+    void errorContextWithExceptionDoesNotThrow() {
+        ApiLogger.errorContext(CONTEXT, new Exception(TEST_MESSAGE));
+    }
+
+    @Test
+    void errorContextWithMessageAndExceptionDoesNotThrow() {
+        ApiLogger.errorContext(CONTEXT, TEST_MESSAGE, new Exception(TEST_MESSAGE));
+    }
 }
