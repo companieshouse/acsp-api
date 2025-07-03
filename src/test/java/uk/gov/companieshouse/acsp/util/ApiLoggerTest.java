@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ApiLoggerTest {
 
@@ -16,6 +17,7 @@ class ApiLoggerTest {
     private static final String LOG_MAP_VALUE = "00006400";
 
     private Map<String, Object> logMap;
+    private final Map<String, Object> dataMap = null;
 
     @BeforeEach
     void setup() {
@@ -65,31 +67,37 @@ class ApiLoggerTest {
 
     @Test
     void debugWithNullMapDoesNotThrow() {
-        ApiLogger.debug("debug message", null);
+        ApiLogger.debug("debug message", dataMap);
+        assertNull(dataMap);
     }
 
     @Test
     void debugContextWithoutMapDoesNotThrow() {
         ApiLogger.debugContext(CONTEXT, TEST_MESSAGE);
+        assertNull(dataMap);
     }
 
     @Test
     void infoWithoutMapDoesNotThrow() {
         ApiLogger.info(TEST_MESSAGE);
+        assertNull(dataMap);
     }
 
     @Test
     void infoContextWithoutMapDoesNotThrow() {
         ApiLogger.infoContext(CONTEXT, TEST_MESSAGE);
+        assertNull(dataMap);
     }
 
     @Test
     void errorContextWithExceptionDoesNotThrow() {
         ApiLogger.errorContext(CONTEXT, new Exception(TEST_MESSAGE));
+        assertNull(dataMap);
     }
 
     @Test
     void errorContextWithMessageAndExceptionDoesNotThrow() {
         ApiLogger.errorContext(CONTEXT, TEST_MESSAGE, new Exception(TEST_MESSAGE));
+        assertNull(dataMap);
     }
 }
