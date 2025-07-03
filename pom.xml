@@ -44,6 +44,7 @@
 			${project.basedir}/target/dependency-check-report.html
 		</sonar.dependencyCheck.htmlReportPath>
 		<sonar.java.binaries>${project.basedir}/target</sonar.java.binaries>
+		<sonar.exclusions>**/models/**</sonar.exclusions>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -278,9 +279,6 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco-maven-plugin.version}</version>
-				<configuration>
-					<excludes>**/models/*.class</excludes>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
