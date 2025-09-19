@@ -16,7 +16,8 @@ import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 public class EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
-    private static final String EMAIL_SUBJECT = "Identity verified for client: ";
+    private static final String VERIFY_EMAIL_SUBJECT = "Identity verified for client: ";
+    private static final String REVERIFY_EMAIL_SUBJECT = "Identity reverified for client: ";
     private final EmailProducer emailProducer;
 
     public EmailService(EmailProducer emailProducer) {
@@ -31,8 +32,20 @@ public class EmailService {
         emailData.setReferenceNumber(referenceNumber);
         emailData.setClientEmailAddress(clientEmailAddress);
         emailData.setTo(recipientEmailAddress);
-        emailData.setSubject(EMAIL_SUBJECT + clientName);
+        emailData.setSubject(VERIFY_EMAIL_SUBJECT + clientName);
         sendEmail(emailData, "acsp_client_verification_email");
+    }
+
+    public void sendClientReverificationEmail(final String recipientEmailAddress, final String clientName, final String referenceNumber, final String clientEmailAddress) {
+        LOGGER.info("Sending client reverification email for application: " + referenceNumber);
+
+        final var emailData = new ClientVerificationEmailData();
+        emailData.setClientName(clientName);
+        emailData.setReferenceNumber(referenceNumber);
+        emailData.setClientEmailAddress(clientEmailAddress);
+        emailData.setTo(recipientEmailAddress);
+        emailData.setSubject(REVERIFY_EMAIL_SUBJECT + clientName);
+        sendEmail(emailData, "acsp_client_reverification_email");
     }
 
     private void sendEmail(final EmailData emailData, final String messageType) throws EmailSendingException {
