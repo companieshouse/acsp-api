@@ -1138,18 +1138,14 @@ class FilingServiceTest {
     }
 
     @Test
-    void testBuildUpdateAcspDataWithApplicantDetailsNameNull() throws Exception {
+    void testBuildUpdateAcspDataWithNullApplicantDetails() throws Exception {
         setACSPDataDto();
         acspDataDto.setAcspType(AcspType.UPDATE_ACSP);
         acspDataDto.setAcspId(ACSP_ID);
 
-        acspDataDto.getApplicantDetails().setFirstName(null);
-        acspDataDto.getApplicantDetails().setLastName(null);
-        acspDataDto.getApplicantDetails().setMiddleName(null);
-        acspDataDto.getApplicantDetails().setCorrespondenceEmail(EMAIL_ADDRESS);
-        acspDataDto.setBusinessName(BUSINESS_NAME);
+        acspDataDto.setApplicantDetails(null);
+        acspDataDto.setBusinessName("Test Business Name Update ACSP");
         acspDataDto.setRegisteredOfficeAddress(buildBusinessAddress());
-        acspDataDto.getApplicantDetails().setCorrespondenceAddress(buildCorrespondenceAddress());
         acspDataDto.setTypeOfBusiness(TypeOfBusiness.SOLE_TRADER);
 
         when(acspService.getAcsp(any(), any())).thenReturn(Optional.of(acspDataDto));
@@ -1158,20 +1154,20 @@ class FilingServiceTest {
         var response = filingsService.generateAcspApplicationFiling(ACSP_ID, TRANSACTION_ID, PASS_THROUGH_HEADER);
 
         Assertions.assertNotNull(response.getData());
-        Assertions.assertEquals(EMAIL_ADDRESS.toUpperCase(), response.getData().get(EMAIL));
-        Assertions.assertEquals(BUSINESS_NAME.toUpperCase(), response.getData().get(BUSINESS_NAME));
+        Assertions.assertNull(response.getData().get(EMAIL));
+        Assertions.assertEquals("Test Business Name Update ACSP".toUpperCase(), response.getData().get(BUSINESS_NAME));
         Assertions.assertNotNull(response.getData().get(AML));
         Assertions.assertNotNull(response.getData().get(REGISTERED_OFFICE_ADDRESS));
-        Assertions.assertNotNull(response.getData().get(SERVICE_ADDRESS));
+        Assertions.assertNull(response.getData().get(SERVICE_ADDRESS));
 
-        Object stPersonalInfo = response.getData().get(ST_PERSONAL_INFORMATION);
-        Assertions.assertNotNull(stPersonalInfo);
-        STPersonalInformation soleTraderPersonalInfo = (STPersonalInformation) stPersonalInfo;
-        Assertions.assertNull(soleTraderPersonalInfo.getPersonName());
+        Object stPersonalInfoObj = response.getData().get(ST_PERSONAL_INFORMATION);
+        Assertions.assertNotNull(stPersonalInfoObj);
+        STPersonalInformation stPersonalInfo = (STPersonalInformation) stPersonalInfoObj;
+        Assertions.assertNull(stPersonalInfo.getPersonName());
 
-        Object amlDetails = response.getData().get(AML);
-        Assertions.assertNotNull(amlDetails);
-        Aml aml = (Aml) amlDetails;
+        Object amlObj = response.getData().get(AML);
+        Assertions.assertNotNull(amlObj);
+        Aml aml = (Aml) amlObj;
         Assertions.assertNull(aml.getPersonName());
     }
 }
