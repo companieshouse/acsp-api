@@ -80,4 +80,10 @@ public class EnumTranslator {
         return AcspType.findByLabel(inputStr);
     }
 
+    @Named("ApplicationTypeEnumToString")
+    public String applicationTypeEnumToString(ApplicationType inputEnum) { return inputEnum != null ? inputEnum.getLabel() : ""; }
+
+    @Named("ApplicationTypeStringToEnum")
+    public ApplicationType applicationTypeStringToEnum(String inputStr) { return ApplicationType.findByLabel(inputStr); }
+
 }

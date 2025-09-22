@@ -170,7 +170,38 @@ import uk.gov.companieshouse.acsp.models.enums.*;
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    void applicationTypeEnumToString() {
+        ApplicationType inputEnum = ApplicationType.VERIFICATION;
+        String expected = "verification";
+        String actual = enumTranslator.applicationTypeEnumToString(inputEnum);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void applicationTypeEnumToStringNull() {
+        String expected = "";
+        String actual = enumTranslator.applicationTypeEnumToString(null);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void applicationTypeStringToEnum() {
+        String inputEnum = ApplicationType.REVERIFICATION.label;
+        ApplicationType expected = ApplicationType.REVERIFICATION;
+        ApplicationType actual = enumTranslator.applicationTypeStringToEnum(inputEnum);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void applicationTypeStringToEnumInvalid() {
+        String inputString = "invalid_application_type";
+        ApplicationType expected = ApplicationType.VERIFICATION;
+        ApplicationType actual = enumTranslator.applicationTypeStringToEnum(inputString);
+        assertEquals(expected, actual);
+    }
 }
-
-
-
