@@ -3,6 +3,7 @@ package uk.gov.companieshouse.acsp.service;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.acsp.models.email.ClientVerificationEmailData;
+import uk.gov.companieshouse.acsp.models.enums.ApplicationType;
 import uk.gov.companieshouse.email_producer.EmailProducer;
 import uk.gov.companieshouse.email_producer.EmailSendingException;
 import uk.gov.companieshouse.email_producer.model.EmailData;
@@ -24,28 +25,22 @@ public class EmailService {
         this.emailProducer = emailProducer;
     }
 
-    public void sendClientVerificationEmail(final String recipientEmailAddress, final String clientName, final String referenceNumber, final String clientEmailAddress) {
-        LOGGER.info("Sending client verification email for application: " + referenceNumber);
+    public void sendClientVerificationEmail(final String recipientEmailAddress, final String clientName, final String referenceNumber, final String clientEmailAddress, final ApplicationType applicationType) {
+        LOGGER.info("Sending client " + applicationType.getLabel() + " email for application: " + referenceNumber);
 
         final var emailData = new ClientVerificationEmailData();
         emailData.setClientName(clientName);
         emailData.setReferenceNumber(referenceNumber);
         emailData.setClientEmailAddress(clientEmailAddress);
         emailData.setTo(recipientEmailAddress);
-        emailData.setSubject(VERIFY_EMAIL_SUBJECT + clientName);
-        sendEmail(emailData, "acsp_client_verification_email");
-    }
 
-    public void sendClientReverificationEmail(final String recipientEmailAddress, final String clientName, final String referenceNumber, final String clientEmailAddress) {
-        LOGGER.info("Sending client reverification email for application: " + referenceNumber);
-
-        final var emailData = new ClientVerificationEmailData();
-        emailData.setClientName(clientName);
-        emailData.setReferenceNumber(referenceNumber);
-        emailData.setClientEmailAddress(clientEmailAddress);
-        emailData.setTo(recipientEmailAddress);
-        emailData.setSubject(REVERIFY_EMAIL_SUBJECT + clientName);
-        sendEmail(emailData, "acsp_client_reverification_email");
+        if (ApplicationType.REVERIFICATION.equals(applicationType)) {
+            emailData.setSubject(REVERIFY_EMAIL_SUBJECT + clientName);
+            sendEmail(emailData, "acsp_client_reverification_email");
+        } else {
+            emailData.setSubject(VERIFY_EMAIL_SUBJECT + clientName);
+            sendEmail(emailData, "acsp_client_verification_email");
+        }
     }
 
     private void sendEmail(final EmailData emailData, final String messageType) throws EmailSendingException {

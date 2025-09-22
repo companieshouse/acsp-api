@@ -31,19 +31,13 @@ public class VerifyClientController {
         try{
             ApplicationType applicationType = ApplicationType.findByLabel(applicationTypeParam);
 
-            if (ApplicationType.VERIFICATION.equals(applicationType)) {
-                emailService.sendClientVerificationEmail(
-                        clientVerificationEmailDao.getTo(),
-                        clientVerificationEmailDao.getClientName(),
-                        clientVerificationEmailDao.getReferenceNumber(),
-                        clientVerificationEmailDao.getClientEmailAddress());
-            } else {
-                emailService.sendClientReverificationEmail(
-                        clientVerificationEmailDao.getTo(),
-                        clientVerificationEmailDao.getClientName(),
-                        clientVerificationEmailDao.getReferenceNumber(),
-                        clientVerificationEmailDao.getClientEmailAddress());
-            }
+            emailService.sendClientVerificationEmail(
+                    clientVerificationEmailDao.getTo(),
+                    clientVerificationEmailDao.getClientName(),
+                    clientVerificationEmailDao.getReferenceNumber(),
+                    clientVerificationEmailDao.getClientEmailAddress(),
+                    applicationType);
+
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             LOGGER.error("Error sending email for identity-verification " + e.getMessage());

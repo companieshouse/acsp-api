@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.acsp.models.email.ClientVerificationEmailData;
+import uk.gov.companieshouse.acsp.models.enums.ApplicationType;
 import uk.gov.companieshouse.acsp.service.EmailService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +46,8 @@ public class VerifyClientControllerTest {
                 emailData.getTo(),
                 emailData.getClientName(),
                 emailData.getReferenceNumber(),
-                emailData.getClientEmailAddress());
+                emailData.getClientEmailAddress(),
+                ApplicationType.VERIFICATION);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -57,7 +59,8 @@ public class VerifyClientControllerTest {
                 emailData.getTo(),
                 emailData.getClientName(),
                 emailData.getReferenceNumber(),
-                emailData.getClientEmailAddress());
+                emailData.getClientEmailAddress(),
+                ApplicationType.VERIFICATION);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -65,11 +68,12 @@ public class VerifyClientControllerTest {
     void sendIdentityReverificationEmailSuccess() {
         ResponseEntity<?> response = verifyClientController.sendIdentityVerificationEmail(emailData, "reverification");
 
-        verify(emailService).sendClientReverificationEmail(
+        verify(emailService).sendClientVerificationEmail(
                 emailData.getTo(),
                 emailData.getClientName(),
                 emailData.getReferenceNumber(),
-                emailData.getClientEmailAddress());
+                emailData.getClientEmailAddress(),
+                ApplicationType.REVERIFICATION);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -80,7 +84,8 @@ public class VerifyClientControllerTest {
                         emailData.getTo(),
                         emailData.getClientName(),
                         emailData.getReferenceNumber(),
-                        emailData.getClientEmailAddress());
+                        emailData.getClientEmailAddress(),
+                        ApplicationType.VERIFICATION);
 
         ResponseEntity<?> response = verifyClientController.sendIdentityVerificationEmail(emailData, "verification");
 
@@ -90,11 +95,12 @@ public class VerifyClientControllerTest {
     @Test
     void sendIdentityReverificationEmailFailure() {
         doThrow(RuntimeException.class).when(emailService)
-                .sendClientReverificationEmail(
+                .sendClientVerificationEmail(
                         emailData.getTo(),
                         emailData.getClientName(),
                         emailData.getReferenceNumber(),
-                        emailData.getClientEmailAddress());
+                        emailData.getClientEmailAddress(),
+                        ApplicationType.REVERIFICATION);
 
         ResponseEntity<?> response = verifyClientController.sendIdentityVerificationEmail(emailData, "reverification");
 
