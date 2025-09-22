@@ -2,11 +2,10 @@ package uk.gov.companieshouse.acsp.exception;
 
 public class ServiceException extends Exception {
 
-    private final int statusCode;
+    private int statusCode;
 
     public ServiceException(String message) {
         super(message);
-        this.statusCode = 0;
     }
 
     public ServiceException(int statusCode, String message) {
@@ -16,7 +15,6 @@ public class ServiceException extends Exception {
 
     public ServiceException(String message, Throwable cause) {
         super(message, cause);
-        this.statusCode = 0;
     }
 
     public int getStatusCode() {
