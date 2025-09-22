@@ -74,18 +74,22 @@ class AcspServiceTest {
         private String companyName;
         private String companyNumber;
 
+        @Override
         public String getCompanyName() {
             return companyName;
         }
 
+        @Override
         public void setCompanyName(String companyName) {
             this.companyName = companyName;
         }
 
+        @Override
         public String getCompanyNumber() {
             return companyNumber;
         }
 
+        @Override
         public void setCompanyNumber(String companyNumber) {
             this.companyNumber = companyNumber;
         }
@@ -146,16 +150,16 @@ class AcspServiceTest {
         acsp.setAcspDataDao(acspDataDao);
         acsp.setId(acspDataDao.getId());
 
-        transaction = new Transaction();
+        Transaction testTransaction = new Transaction();
 
         Map<String, Resource> resourceMap = new HashMap<>();
         resourceMap.put("Resource 1", new Resource());
 
-        transaction.setResources(resourceMap);
+        testTransaction.setResources(resourceMap);
 
         when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
 
-        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+        ResponseEntity<Object> response = acspService.createAcspRegData(testTransaction,
                 acspData,
                 REQUEST_ID);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
@@ -290,14 +294,14 @@ class AcspServiceTest {
         application.setLinks(links);
         application.setAcspDataSubmission(submissionData);
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        Transaction transaction = new Transaction();
-        transaction.setStatus(TransactionStatus.OPEN);
+        Transaction testTransaction = new Transaction();
+        testTransaction.setStatus(TransactionStatus.OPEN);
         var acsp = new Acsp();
         acsp.setAcspDataDao(application);
         acsp.setId(application.getId());
 
         when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(acsp));
-        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
+        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(testTransaction);
         ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
         assertEquals(expectedResponse, response);
     }
@@ -311,19 +315,19 @@ class AcspServiceTest {
         application.setLinks(links);
         application.setAcspDataSubmission(submissionData);
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        Transaction transaction = new Transaction();
-        transaction.setStatus(TransactionStatus.CLOSED);
+        Transaction testTransaction = new Transaction();
+        testTransaction.setStatus(TransactionStatus.CLOSED);
         Map<String, Filing> filingsMap = new HashMap<>();
         Filing filing = new Filing();
         filing.setStatus("rejected");
         filingsMap.put(TRANSACTION_ID + "-1", filing);
-        transaction.setFilings(filingsMap);
+        testTransaction.setFilings(filingsMap);
         var acsp = new Acsp();
         acsp.setAcspDataDao(application);
         acsp.setId(application.getId());
 
         when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(acsp));
-        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
+        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(testTransaction);
         ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
         assertEquals(expectedResponse, response);
         verify(acspRepository, times(1)).delete(acsp);
@@ -338,19 +342,19 @@ class AcspServiceTest {
         application.setLinks(links);
         application.setAcspDataSubmission(submissionData);
         ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        Transaction transaction = new Transaction();
-        transaction.setStatus(TransactionStatus.CLOSED);
+        Transaction testTransaction = new Transaction();
+        testTransaction.setStatus(TransactionStatus.CLOSED);
         Map<String, Filing> filingsMap = new HashMap<>();
         Filing filing = new Filing();
         filing.setStatus("processing");
         filingsMap.put(TRANSACTION_ID + "-1", filing);
-        transaction.setFilings(filingsMap);
+        testTransaction.setFilings(filingsMap);
         var acsp = new Acsp();
         acsp.setAcspDataDao(application);
         acsp.setId(application.getId());
 
         when(acspRepository.findById(USER_ID)).thenReturn(Optional.of(acsp));
-        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(transaction);
+        when(transactionService.getTransaction(REQUEST_ID, TRANSACTION_ID)).thenReturn(testTransaction);
         ResponseEntity<Object> response = acspService.getAcspApplicationStatus(USER_ID, REQUEST_ID);
         assertEquals(expectedResponse, response);
     }
@@ -407,12 +411,6 @@ class AcspServiceTest {
         assertThrows(SubmissionNotLinkedToTransactionException.class, () -> {
             acspService.getAcsp(SUBMISSION_ID, transaction);
         });
-    }
-
-    private Transaction buildTransaction() {
-        Transaction transaction = new Transaction();
-        transaction.setId(TRANSACTION_ID);
-        return transaction;
     }
 
     @Test
@@ -762,16 +760,16 @@ class AcspServiceTest {
         acsp.setAcspDataDao(acspDataDao);
         acsp.setId(acspDataDao.getId());
 
-        transaction = new Transaction();
+        Transaction testTransaction = new Transaction();
 
         Map<String, Resource> resourceMap = new HashMap<>();
         resourceMap.put("Resource 1", new Resource());
 
-        transaction.setResources(resourceMap);
+        testTransaction.setResources(resourceMap);
 
         when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
 
-        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+        ResponseEntity<Object> response = acspService.createAcspRegData(testTransaction,
                 acspData,
                 REQUEST_ID);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
@@ -812,16 +810,16 @@ class AcspServiceTest {
         acsp.setAcspDataDao(acspDataDao);
         acsp.setId(acspDataDao.getId());
 
-        transaction = new Transaction();
+        Transaction testTransaction = new Transaction();
 
         Map<String, Resource> resourceMap = new HashMap<>();
         resourceMap.put("Resource 1", new Resource());
 
-        transaction.setResources(resourceMap);
+        testTransaction.setResources(resourceMap);
 
         when(acspRegDataDtoDaoMapper.dtoToDao(acspData)).thenReturn(acspDataDao);
 
-        ResponseEntity<Object> response = acspService.createAcspRegData(transaction,
+        ResponseEntity<Object> response = acspService.createAcspRegData(testTransaction,
                 acspData,
                 REQUEST_ID);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());

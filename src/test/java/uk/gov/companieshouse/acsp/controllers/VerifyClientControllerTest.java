@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
-public class VerifyClientControllerTest {
+class VerifyClientControllerTest {
 
     @Mock
     private EmailService emailService;
@@ -40,7 +40,7 @@ public class VerifyClientControllerTest {
 
     @Test
     void sendIdentityVerificationEmailSuccess() {
-        ResponseEntity<?> response = verifyClientController.sendIdentityVerificationEmail(emailData, "verification");
+        ResponseEntity<Object> response = verifyClientController.sendIdentityVerificationEmail(emailData, "verification");
 
         verify(emailService).sendClientVerificationEmail(
                 emailData.getTo(),
@@ -53,7 +53,7 @@ public class VerifyClientControllerTest {
 
     @Test
     void sendIdentityVerificationEmailSuccessWithDefaultApplicationType() {
-        ResponseEntity<?> response = verifyClientController.sendIdentityVerificationEmail(emailData, null);
+        ResponseEntity<Object> response = verifyClientController.sendIdentityVerificationEmail(emailData, null);
 
         verify(emailService).sendClientVerificationEmail(
                 emailData.getTo(),
@@ -66,7 +66,7 @@ public class VerifyClientControllerTest {
 
     @Test
     void sendIdentityReverificationEmailSuccess() {
-        ResponseEntity<?> response = verifyClientController.sendIdentityVerificationEmail(emailData, "reverification");
+        ResponseEntity<Object> response = verifyClientController.sendIdentityVerificationEmail(emailData, "reverification");
 
         verify(emailService).sendClientVerificationEmail(
                 emailData.getTo(),
@@ -87,7 +87,7 @@ public class VerifyClientControllerTest {
                         emailData.getClientEmailAddress(),
                         ApplicationType.VERIFICATION);
 
-        ResponseEntity<?> response = verifyClientController.sendIdentityVerificationEmail(emailData, "verification");
+        ResponseEntity<Object> response = verifyClientController.sendIdentityVerificationEmail(emailData, "verification");
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -102,7 +102,7 @@ public class VerifyClientControllerTest {
                         emailData.getClientEmailAddress(),
                         ApplicationType.REVERIFICATION);
 
-        ResponseEntity<?> response = verifyClientController.sendIdentityVerificationEmail(emailData, "reverification");
+        ResponseEntity<Object> response = verifyClientController.sendIdentityVerificationEmail(emailData, "reverification");
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }

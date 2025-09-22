@@ -255,8 +255,10 @@ public class FilingsService {
 
   private PersonName buildPersonName(AcspDataDto acspDataDto) {
     var personName = new PersonName();
-    if (acspDataDto.getApplicantDetails() != null) {
-    if (acspDataDto.getApplicantDetails().getFirstName() != null || acspDataDto.getApplicantDetails().getLastName() != null || acspDataDto.getApplicantDetails().getMiddleName() != null) {
+    if (acspDataDto.getApplicantDetails() != null &&
+        (acspDataDto.getApplicantDetails().getFirstName() != null ||
+         acspDataDto.getApplicantDetails().getLastName() != null ||
+         acspDataDto.getApplicantDetails().getMiddleName() != null)) {
       personName.setFirstName(Optional.ofNullable(acspDataDto.getApplicantDetails().getFirstName())
               .map(String::toUpperCase).orElse(null));
       personName.setLastName(Optional.ofNullable(acspDataDto.getApplicantDetails().getLastName())
@@ -265,9 +267,9 @@ public class FilingsService {
               .map(String::toUpperCase).orElse(null));
       return personName;
     }
-    }
     return null;
   }
+
   private STPersonalInformation buildStPersonalInformation(AcspDataDto acspDataDto) {
     var stPersonalInformation = new STPersonalInformation();
     stPersonalInformation.setPersonName(buildPersonName(acspDataDto));
@@ -308,19 +310,18 @@ public class FilingsService {
 
   private void buildCompanyDetails(AcspDataDto acspDataDto, Map<String, Object>data) {
     if (acspDataDto.getTypeOfBusiness() != null) {
-      switch (acspDataDto.getTypeOfBusiness()) {
-        case LC, LLP, CORPORATE_BODY:
-          if (acspDataDto.getCompanyDetails() != null) {
-            data.put(COMPANY_NUMBER, Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyNumber())
-                    .map(String::toUpperCase).orElse(null));
-            data.put("company_name", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyName())
-                    .map(String::toUpperCase).orElse(null));
-          }
-          break;
-        default:
-          data.put(BUSINESS_NAME, Optional.ofNullable(acspDataDto.getBusinessName())
-                            .map(String::toUpperCase).orElse(null));
-          break;
+      if (acspDataDto.getTypeOfBusiness() == TypeOfBusiness.LC ||
+          acspDataDto.getTypeOfBusiness() == TypeOfBusiness.LLP ||
+          acspDataDto.getTypeOfBusiness() == TypeOfBusiness.CORPORATE_BODY) {
+        if (acspDataDto.getCompanyDetails() != null) {
+          data.put(COMPANY_NUMBER, Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyNumber())
+                  .map(String::toUpperCase).orElse(null));
+          data.put("company_name", Optional.ofNullable(acspDataDto.getCompanyDetails().getCompanyName())
+                  .map(String::toUpperCase).orElse(null));
+        }
+      } else {
+        data.put(BUSINESS_NAME, Optional.ofNullable(acspDataDto.getBusinessName())
+                          .map(String::toUpperCase).orElse(null));
       }
     }
   }

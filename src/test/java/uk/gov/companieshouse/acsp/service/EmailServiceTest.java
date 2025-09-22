@@ -20,7 +20,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailServiceTest {
+class EmailServiceTest {
 
     @Mock
     EmailProducer emailProducer;
@@ -49,18 +49,24 @@ public class EmailServiceTest {
                 ApplicationType.VERIFICATION);
 
         verify(emailProducer).sendEmail(
-                argThat(emailData -> "Identity verified for client: Client Name".equals(emailData.getSubject())),
+                argThat(sentEmailData -> "Identity verified for client: Client Name".equals(sentEmailData.getSubject())),
                 eq("acsp_client_verification_email"));
     }
 
     @Test
     void sendClientVerificationEmailFailure() throws EmailSendingException {
         doThrow(EmailSendingException.class).when(emailProducer).sendEmail(any(EmailData.class), eq("acsp_client_verification_email"));
+
+        String to = emailData.getTo();
+        String clientName = emailData.getClientName();
+        String referenceNumber = emailData.getReferenceNumber();
+        String clientEmailAddress = emailData.getClientEmailAddress();
+
         assertThrows(EmailSendingException.class, () -> emailService.sendClientVerificationEmail(
-                emailData.getTo(),
-                emailData.getClientName(),
-                emailData.getReferenceNumber(),
-                emailData.getClientEmailAddress(),
+                to,
+                clientName,
+                referenceNumber,
+                clientEmailAddress,
                 ApplicationType.VERIFICATION));
     }
 
@@ -74,18 +80,24 @@ public class EmailServiceTest {
                 ApplicationType.REVERIFICATION);
 
         verify(emailProducer).sendEmail(
-                argThat(emailData -> "Identity reverified for client: Client Name".equals(emailData.getSubject())),
+                argThat(sentEmailData -> "Identity reverified for client: Client Name".equals(sentEmailData.getSubject())),
                 eq("acsp_client_reverification_email"));
     }
 
     @Test
     void sendClientReverificationEmailFailure() throws EmailSendingException {
         doThrow(EmailSendingException.class).when(emailProducer).sendEmail(any(EmailData.class), eq("acsp_client_reverification_email"));
+
+        String to = emailData.getTo();
+        String clientName = emailData.getClientName();
+        String referenceNumber = emailData.getReferenceNumber();
+        String clientEmailAddress = emailData.getClientEmailAddress();
+
         assertThrows(EmailSendingException.class, () -> emailService.sendClientVerificationEmail(
-                emailData.getTo(),
-                emailData.getClientName(),
-                emailData.getReferenceNumber(),
-                emailData.getClientEmailAddress(),
+                to,
+                clientName,
+                referenceNumber,
+                clientEmailAddress,
                 ApplicationType.REVERIFICATION));
     }
 }

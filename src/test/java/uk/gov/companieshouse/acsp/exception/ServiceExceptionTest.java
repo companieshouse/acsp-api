@@ -6,28 +6,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ServiceExceptionTest {
 
-    final String MESSAGE_PARAM = "Test Message";
-    final int STATUS_CODE = 404;
-    final String INVALID_URI = "INVALIDURI";
+    final String messageParam = "Test Message";
+    final int statusCode = 404;
+    final String invalidUri = "INVALIDURI";
+
     @Test
     void serviceExceptionObjectWithOneParam(){
-        ServiceException serviceException = new ServiceException(MESSAGE_PARAM);
+        ServiceException serviceException = new ServiceException(messageParam);
 
-        assertEquals(serviceException.getMessage(), MESSAGE_PARAM);
+        assertEquals(serviceException.getMessage(), messageParam);
     }
 
     @Test
     void serviceExceptionObjectWithTwoParams(){
-        ServiceException serviceException = new ServiceException(STATUS_CODE, MESSAGE_PARAM);
+        ServiceException serviceException = new ServiceException(statusCode, messageParam);
 
-        assertEquals(serviceException.getMessage(), MESSAGE_PARAM);
-        assertEquals(serviceException.getStatusCode(), STATUS_CODE);
+        assertEquals(serviceException.getMessage(), messageParam);
+        assertEquals(serviceException.getStatusCode(), statusCode);
     }
 
     @Test
     void serviceExceptionObjectWithCause(){
-        ServiceException serviceException = new ServiceException(MESSAGE_PARAM, new URIValidationException(INVALID_URI));
+        ServiceException serviceException = new ServiceException(messageParam, new URIValidationException(invalidUri));
 
-        assertEquals(serviceException.getMessage(), MESSAGE_PARAM);
+        assertEquals(serviceException.getMessage(), messageParam);
     }
 }

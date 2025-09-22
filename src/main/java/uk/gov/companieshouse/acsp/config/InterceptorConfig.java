@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.acsp.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -18,12 +17,17 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public static final String PRIVATE_TRANSACTIONS = "/private/transactions/**";
     public static final String HEALTH_CHECK = "/*/healthcheck";
 
-    @Autowired
-    private TransactionInterceptor transactionInterceptor;
-    @Autowired
-    private LoggingInterceptor loggingInterceptor;
-    @Autowired
-    private AuthenticationInterceptor authenticationInterceptor;
+    private final TransactionInterceptor transactionInterceptor;
+    private final LoggingInterceptor loggingInterceptor;
+    private final AuthenticationInterceptor authenticationInterceptor;
+
+    public InterceptorConfig(TransactionInterceptor transactionInterceptor,
+                           LoggingInterceptor loggingInterceptor,
+                           AuthenticationInterceptor authenticationInterceptor) {
+        this.transactionInterceptor = transactionInterceptor;
+        this.loggingInterceptor = loggingInterceptor;
+        this.authenticationInterceptor = authenticationInterceptor;
+    }
 
     /**
      * Set up the interceptors to run against endpoints when the endpoints are called
