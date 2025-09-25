@@ -60,32 +60,66 @@ Please see below for the following environmental variables used within this repo
 | LOG_LEVEL | Used for Structured Logging (minimum level to log)
 
 ## API Routes
-The API routes are defined based on the following patterns:
+The API provides the following endpoints organized by functionality:
 
-| Path Pattern                                                                                                         | Description                                                                                                        |
-|----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| `/private/transactions/{TRANSACTION_ID}/authorised-corporate-service-provider-applications/{APPLICATION_ID}/filings` | Filing endpoint for ACSP Registration applications (requires bearer token, a transaction id and an application id) |
-| `/acsp-api/healthcheck`                                                                                              | Health check endpoint (Requires bearer token)                                                                      |
+### ACSP Application Management
+These endpoints handle the core ACSP application lifecycle:
 
-### Request Headers
-For testing the endpoints of this service, a valid Bearer token is required, as is standard with all CH API services.
+| HTTP Method | Path | Description
+|-------------|------|-------------------------------------|
+| POST | `/transactions/{transaction_id}/authorised-corporate-service-provider-applications` | Post a new ACSP application
+| PUT | `/transactions/{transaction_id}/authorised-corporate-service-provider-applications/{acsp_application_id}` | Update an existing ACSP application
+| GET | `/transactions/{transaction_id}/authorised-corporate-service-provider-applications/{acsp_application_id}` | Retrieve an ACSP application
+| DELETE | `/transactions/{transaction_id}/authorised-corporate-service-provider-applications/{acsp_application_id}` | Delete an ACSP application
 
-### Logging Events
-The application uses structured logging with configurable log levels.
+### Cost Information
+| HTTP Method | Path | Description                           |
+|-------------|------|---------------------------------------|
+| GET | `/transactions/{transaction_id}/authorised-corporate-service-provider-applications/{acsp_application_id}/costs` | Get cost information for Register as an ACSP application
 
-### MongoDB
-The application uses MongoDB for data persistence with:
-- Database: `acsp_application`
-- Auto-index creation enabled
-- Snake case field naming strategy
+### Filing Operations
+| HTTP Method | Path | Description                             |
+|-------------|------|-----------------------------------------|
+| GET | `/private/transactions/{transaction_id}/authorised-corporate-service-provider-applications/{acsp_application_id}/filings` | Get filing data for an ACSP application
+
+### Client Identity Verification and Reverification Emails
+| HTTP Method | Path                                                                                   | Description                                                  |
+|-------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| POST | `/acsp-api/verify-client-identity/send-identity-verification-email/{application_type}` | Send identity verification or reverification email to client |
+
+**Query Parameters for Identity Verification/Rverification Emails:**
+- `application_type` (optional): Type of application - "verification" (default) or "reverification"
 
 ### Email Functionality
 
-The following ACSP web applications trigger the email sender functionality within this repository:
+The following ACSP web applications trigger the email sender functionality within this repository upon a successful application submission:
 - Verify a client's identity for Companies House (/tell-companies-house-you-have-verified-someones-identity)
 - Reverify a client's identity for Companies House (/reverify-someones-identity-for-companies-house)
 
 The above front facing web applications trigger the email sender functionality within this repository upon application completion.
+
+### Health Check
+| HTTP Method | Path | Description |
+|-------------|------|-------------|
+| GET | `/acsp-api/healthcheck` | Health check endpoint |
+
+### Path Parameters used within applicable endpoints
+- `{transaction_id}`: The unique identifier for the transaction
+- `{acsp_application_id}`: The unique identifier for the ACSP application
+
+### Request Headers
+For all endpoints, the following headers are required:
+- **Authorization**: Bearer token for authentication
+- **ERIC-Identity**: ERIC identity header (automatically handled by ERIC framework)
+- **ERIC-Identity-Type**: Type of ERIC identity (automatically handled by ERIC framework)
+
+### Response Codes
+- **200 OK**: Successful operation
+- **400 Bad Request**: Invalid request
+- **404 Not Found**: Resource not found
+- **500 Internal Server Error**: Server error
+
+
 ### Testing
 - Unit tests: `mvn test`
 - Integration tests: Run via Maven or IntelliJ
