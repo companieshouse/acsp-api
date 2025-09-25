@@ -96,8 +96,6 @@ The following ACSP web applications trigger the email sender functionality withi
 - Verify a client's identity for Companies House (/tell-companies-house-you-have-verified-someones-identity)
 - Reverify a client's identity for Companies House (/reverify-someones-identity-for-companies-house)
 
-The above front facing web applications trigger the email sender functionality within this repository upon application completion.
-
 ### Health Check
 | HTTP Method | Path | Description |
 |-------------|------|-------------|
