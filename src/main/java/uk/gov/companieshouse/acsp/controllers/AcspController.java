@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.acsp.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,9 +31,11 @@ import static uk.gov.companieshouse.acsp.util.Constants.TRANSACTION_KEY;
 public class AcspController {
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
 
-    @Autowired
-    private AcspService acspService;
+    private final AcspService acspService;
 
+    public AcspController(AcspService acspService) {
+        this.acspService = acspService;
+    }
 
     @PostMapping("/transactions/{" + TRANSACTION_ID_KEY + "}/authorised-corporate-service-provider-applications")
     public ResponseEntity<Object> createAcspData(

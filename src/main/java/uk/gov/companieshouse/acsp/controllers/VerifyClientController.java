@@ -25,7 +25,7 @@ public class VerifyClientController {
     }
 
     @PostMapping("/send-identity-verification-email")
-    public ResponseEntity<?> sendIdentityVerificationEmail(
+    public ResponseEntity<Object> sendIdentityVerificationEmail(
             @RequestBody ClientVerificationEmailData clientVerificationEmailDao,
             @RequestParam(value = "application_type", defaultValue = "verification") String applicationTypeParam) {
         try{
