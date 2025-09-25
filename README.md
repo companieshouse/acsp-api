@@ -87,7 +87,7 @@ These endpoints handle the core ACSP application lifecycle:
 |-------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------|
 | POST | `/acsp-api/verify-client-identity/send-identity-verification-email/{application_type}` | Send identity verification or reverification email to client |
 
-**Query Parameters for Identity Verification/Rverification Emails:**
+**Query Parameters for Identity Verification/Reverification Emails:**
 - `application_type` (optional): Type of application - "verification" (default) or "reverification"
 
 ### Email Functionality
@@ -125,6 +125,6 @@ For all endpoints, the following headers are required:
 - Integration tests: Run via Maven or IntelliJ
 - Use Postman to test API endpoints
 
-### Build Commands
+### Build Command
 To build this repo from the pom.xml file, run the following command:
 - Build: `mvn clean build`
