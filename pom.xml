@@ -28,7 +28,7 @@
 		<rest-service-common-library-version>0.0.5</rest-service-common-library-version>
 		<email-producer-java-version>3.0.3</email-producer-java-version>
 		<sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
-		<kafka-clients-version>3.1.0</kafka-clients-version>
+		<kafka-clients-version>3.9.1</kafka-clients-version>
 		<jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
 		<sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
 		<sonar.login></sonar.login>
