@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.acsp.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
