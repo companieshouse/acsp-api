@@ -1,32 +1,37 @@
 package uk.gov.companieshouse.acsp.service;
 
-import org.springframework.context.annotation.ComponentScan;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.acsp.client.EmailClient;
+import uk.gov.companieshouse.acsp.exception.EmailSendException;
+import uk.gov.companieshouse.acsp.factory.SendEmailFactory;
 import uk.gov.companieshouse.acsp.models.email.ClientVerificationEmailData;
+import uk.gov.companieshouse.acsp.models.email.EmailData;
 import uk.gov.companieshouse.acsp.models.enums.ApplicationType;
-import uk.gov.companieshouse.email_producer.EmailProducer;
-import uk.gov.companieshouse.email_producer.EmailSendingException;
-import uk.gov.companieshouse.email_producer.model.EmailData;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
+import static java.lang.String.format;
 import static uk.gov.companieshouse.acsp.AcspApplication.APP_NAMESPACE;
 
 @Service
-@ComponentScan("uk.gov.companieshouse.email_producer")
 public class EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APP_NAMESPACE);
     private static final String VERIFY_EMAIL_SUBJECT = "Identity verified for client: ";
     private static final String REVERIFY_EMAIL_SUBJECT = "Identity reverified for client: ";
-    private final EmailProducer emailProducer;
+    public static final String ACSP_CLIENT_REVERIFICATION_EMAIL = "acsp_client_reverification_email";
+    public static final String ACSP_CLIENT_VERIFICATION_EMAIL = "acsp_client_verification_email";
+    private final EmailClient emailClient;
+    private final SendEmailFactory sendEmailFactory;
 
-    public EmailService(EmailProducer emailProducer) {
-        this.emailProducer = emailProducer;
+    public EmailService(EmailClient emailClient, SendEmailFactory sendEmailFactory) {
+        this.emailClient = emailClient;
+        this.sendEmailFactory = sendEmailFactory;
     }
 
     public void sendClientVerificationEmail(final String recipientEmailAddress, final String clientName, final String referenceNumber, final String clientEmailAddress, final ApplicationType applicationType) {
-        LOGGER.info("Sending client " + applicationType.getLabel() + " email for application: " + referenceNumber);
+        LOGGER.info(format("Sending client %s email for application: %s", applicationType.getLabel(), referenceNumber));
 
         final var emailData = new ClientVerificationEmailData();
         emailData.setClientName(clientName);
@@ -34,16 +39,26 @@ public class EmailService {
         emailData.setClientEmailAddress(clientEmailAddress);
         emailData.setTo(recipientEmailAddress);
 
-        if (ApplicationType.REVERIFICATION.equals(applicationType)) {
-            emailData.setSubject(REVERIFY_EMAIL_SUBJECT + clientName);
-            sendEmail(emailData, "acsp_client_reverification_email");
-        } else {
-            emailData.setSubject(VERIFY_EMAIL_SUBJECT + clientName);
-            sendEmail(emailData, "acsp_client_verification_email");
+        String messageType = ApplicationType.REVERIFICATION.equals(applicationType)
+                ? ACSP_CLIENT_REVERIFICATION_EMAIL
+                : ACSP_CLIENT_VERIFICATION_EMAIL;
+
+        String subjectPrefix = ApplicationType.REVERIFICATION.equals(applicationType)
+                ? REVERIFY_EMAIL_SUBJECT
+                : VERIFY_EMAIL_SUBJECT;
+
+        emailData.setSubject(subjectPrefix + clientName);
+
+        try {
+            sendEmail(emailData, messageType);
+        } catch (JsonProcessingException e) {
+            LOGGER.error(format("Failed to process JSON for referenceNumber: %s", referenceNumber));
+            throw new EmailSendException("Error encoding email data: " + e.getMessage());
         }
     }
 
-    private void sendEmail(final EmailData emailData, final String messageType) throws EmailSendingException {
-        emailProducer.sendEmail(emailData, messageType);
+    private void sendEmail(final EmailData emailData, final String messageType) throws EmailSendException, JsonProcessingException {
+        var sendEmail = sendEmailFactory.createSendEmail(emailData, messageType);
+        emailClient.sendEmail(sendEmail);
     }
 }
