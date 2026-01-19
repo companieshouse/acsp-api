@@ -151,27 +151,6 @@
 			<artifactId>rest-service-common-library</artifactId>
 			<version>${rest-service-common-library-version}</version>
 		</dependency>
-
-		<!-- Email producer -->
-		<dependency>
-			<groupId>uk.gov.companieshouse</groupId>
-			<artifactId>email-producer-java</artifactId>
-			<version>${email-producer-java-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.kafka</groupId>
-					<artifactId>kafka-clients</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.jetty.http2</groupId>
-					<artifactId>http2-server</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-webapp</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
