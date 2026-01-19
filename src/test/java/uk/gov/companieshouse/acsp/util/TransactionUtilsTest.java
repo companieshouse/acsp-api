@@ -57,8 +57,6 @@ class TransactionUtilsTest {
     @Test
     void testIsTransactionLinkedToAcspSubmissionReturnsFalseIfNoAcspFilingKindFoundInTransaction() {
         Map<String, Resource> transactionResources = new HashMap<>();
-        Resource accountsResource = new Resource();
-        accountsResource.setKind("Accounts");
         when(transaction.getResources()).thenReturn(transactionResources);
 
         var result = transactionUtils.isTransactionLinkedToAcspSubmission(transaction, getAcspDataDto());
