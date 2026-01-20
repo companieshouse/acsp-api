@@ -53,10 +53,6 @@ Please see below for the following environmental variables used within this repo
 | ACSP_APPLICATION_FILING_DESCRIPTION | ACSP Registration filing description
 | ACSP_UPDATE_FILING_DESCRIPTION | Update ACSP filing description
 | ACSP_CLOSE_FILING_DESCRIPTION | Close ACSP filing description
-| KAFKA_BROKER_ADDR | Kafka broker address for email functionality
-| KAFKA_CONFIG_ACKS | Kafka acknowledgment configuration
-| KAFKA_CONFIG_RETRIES | Kafka retry configuration
-| KAFKA_CONFIG_IS_ROUND_ROBIN | Kafka round robin configuration
 | LOG_LEVEL | Used for Structured Logging (minimum level to log)
 
 ## API Routes
