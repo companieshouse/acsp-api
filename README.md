@@ -79,9 +79,9 @@ These endpoints handle the core ACSP application lifecycle:
 | GET | `/private/transactions/{transaction_id}/authorised-corporate-service-provider-applications/{acsp_application_id}/filings` | Get filing data for an ACSP application
 
 ### Client Identity Verification and Reverification Emails
-| HTTP Method | Path                                                                                   | Description                                                  |
-|-------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------|
-| POST | `/acsp-api/verify-client-identity/send-identity-verification-email/{application_type}` | Send identity verification or reverification email to client |
+| HTTP Method | Path                                                                                                    | Description                                                  |
+|-------------|---------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| POST | `/acsp-api/verify-client-identity/send-identity-verification-email/?application_type={applicationType}` | Send identity verification or reverification email to client |
 
 **Query Parameters for Identity Verification/Reverification Emails:**
 - `application_type` (optional): Type of application - "verification" (default) or "reverification"
