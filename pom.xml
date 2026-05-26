@@ -18,7 +18,7 @@
 		<main.class>uk.gov.companieshouse.acsp.AcspApplication</main.class>
 		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
-		<private-api-sdk-java.version>4.0.439</private-api-sdk-java.version>
+		<private-api-sdk-java.version>6.0.17</private-api-sdk-java.version>
 		<api-sdk-manager-java-library.version>3.0.15</api-sdk-manager-java-library.version>
 		<structured-logging.version>3.0.46</structured-logging.version>
 		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
@@ -49,7 +49,11 @@
 		<powermock-api-mockito2.version>2.0.9</powermock-api-mockito2.version>
 		<jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
 		<maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
+
+		<!-- Override properties -->
+		<tomcat-embed.version>10.1.55</tomcat-embed.version>
 	</properties>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -69,8 +73,26 @@
 				<artifactId>commons-lang3</artifactId>
         		<version>${commons-lang3.version}</version>
       		</dependency>
+
+			<!-- CVE-2026-41293, CVE-2026-41284, CVE-2026-43513, CVE-2026-43512, CVE-2026-42498, CVE-2026-43515 -->
+			<!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core -->
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-core</artifactId>
+				<version>${tomcat-embed.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<!-- CVE-2026-41293, CVE-2026-41284, CVE-2026-43513, CVE-2026-43512, CVE-2026-42498, CVE-2026-43515 -->
+			<!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core -->
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-websocket</artifactId>
+				<version>${tomcat-embed.version}</version>
+				<scope>compile</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
