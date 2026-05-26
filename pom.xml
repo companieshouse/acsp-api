@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>uk.gov.companieshouse</groupId>
 		<artifactId>companies-house-parent</artifactId>
-		<version>2.1.12</version>
+		<version>2.1.14</version>
 		<relativePath/>
 	</parent>
 	<artifactId>acsp-api</artifactId>
@@ -14,11 +14,11 @@
 	<description>ACSP workstream</description>
 	<properties>
 		<java.version>21</java.version>
-		<spring.boot.version>3.5.9</spring.boot.version>
+		<spring.boot.version>3.5.14</spring.boot.version>
 		<main.class>uk.gov.companieshouse.acsp.AcspApplication</main.class>
 		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
-		<private-api-sdk-java.version>4.0.439</private-api-sdk-java.version>
+		<private-api-sdk-java.version>6.0.17</private-api-sdk-java.version>
 		<api-sdk-manager-java-library.version>3.0.15</api-sdk-manager-java-library.version>
 		<structured-logging.version>3.0.46</structured-logging.version>
 		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
@@ -40,8 +40,8 @@
 		<sonar.java.binaries>${project.basedir}/target</sonar.java.binaries>
 		<sonar.exclusions>**/models/**</sonar.exclusions>
 		<commons-io.version>2.21.0</commons-io.version>
-		<jetty-http2-server.version>12.1.5</jetty-http2-server.version>
-		<jetty-ee10-webapp.version>12.1.5</jetty-ee10-webapp.version>
+		<jetty-http2-server.version>12.1.9</jetty-http2-server.version>
+		<jetty-ee10-webapp.version>12.1.9</jetty-ee10-webapp.version>
 		<junit-jupiter.version>1.21.4</junit-jupiter.version>
 		<flexmark-all.version>0.42.14</flexmark-all.version>
 		<swagger-annotations.version>2.0.0-rc2</swagger-annotations.version>
@@ -49,7 +49,11 @@
 		<powermock-api-mockito2.version>2.0.9</powermock-api-mockito2.version>
 		<jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
 		<maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
+
+		<!-- Override properties -->
+		<tomcat-embed.version>10.1.55</tomcat-embed.version>
 	</properties>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -64,13 +68,31 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>${commons-lang3.version}</version>
-      </dependency>
+      		<dependency>
+        		<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+        		<version>${commons-lang3.version}</version>
+      		</dependency>
+
+			<!-- CVE-2026-41293, CVE-2026-41284, CVE-2026-43513, CVE-2026-43512, CVE-2026-42498, CVE-2026-43515 -->
+			<!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core -->
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-core</artifactId>
+				<version>${tomcat-embed.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<!-- CVE-2026-41293, CVE-2026-41284, CVE-2026-43513, CVE-2026-43512, CVE-2026-42498, CVE-2026-43515 -->
+			<!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core -->
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-websocket</artifactId>
+				<version>${tomcat-embed.version}</version>
+				<scope>compile</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
