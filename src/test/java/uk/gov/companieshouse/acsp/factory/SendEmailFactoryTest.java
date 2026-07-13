@@ -1,10 +1,10 @@
 package uk.gov.companieshouse.acsp.factory;
 
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -21,7 +21,7 @@ class SendEmailFactoryTest {
     @Value("${email.appId}")
     private String appId;
     private static final String MESSAGE_TYPE = "verification";
-    @Mock
+    @MockitoBean
     private JsonMapper jsonMapper;
 
     private SendEmailFactory sendEmailFactory;

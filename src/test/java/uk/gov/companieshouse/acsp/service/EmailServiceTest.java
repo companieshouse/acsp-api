@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.acsp.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +37,7 @@ class EmailServiceTest {
     private ClientVerificationEmailData emailData;
 
     @BeforeEach
-    void setUp() throws JsonProcessingException {
+    void setUp() throws JacksonException {
         emailData = new ClientVerificationEmailData();
         emailData.setClientName("Client Name");
         emailData.setReferenceNumber("12345");
@@ -105,7 +105,7 @@ class EmailServiceTest {
     }
 
     @Test
-    void sendClientVerificationEmailJsonProcessingException() throws JsonProcessingException {
+    void sendClientVerificationEmailJsonProcessingException() throws JacksonException {
         // Arrange
         String to = emailData.getTo();
         String clientName = emailData.getClientName();
@@ -113,7 +113,7 @@ class EmailServiceTest {
         String clientEmailAddress = emailData.getClientEmailAddress();
         ApplicationType applicationType = ApplicationType.VERIFICATION;
 
-        Mockito.doThrow(JsonProcessingException.class).when(sendEmailFactory).createSendEmail(any(), any());
+        Mockito.doThrow(JacksonException.class).when(sendEmailFactory).createSendEmail(any(), any());
 
         // Act & Assert
         EmailSendException exception = assertThrows(EmailSendException.class, () ->
