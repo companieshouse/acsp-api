@@ -1,15 +1,17 @@
 package uk.gov.companieshouse.acsp.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
@@ -19,7 +21,10 @@ import uk.gov.companieshouse.api.model.transaction.Transaction;
 import uk.gov.companieshouse.api.model.transaction.TransactionStatus;
 
 import java.net.URI;
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -50,7 +55,10 @@ class AcspControllerMvcTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
+
+    @Autowired
+    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
     @MockitoBean
     private AcspService acspService;
@@ -82,7 +90,7 @@ class AcspControllerMvcTest {
         ResultActions result = mockMvc.perform(post(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(AuthTestUtil.getOauth2AuthorisationHeaders())
-                .content(objectMapper.writeValueAsString(acspDataDto)));
+                .content(jsonMapper.writeValueAsString(acspDataDto)));
 
         result.andExpect(status().isCreated());
         result.andExpect(jsonPath("$.id").value(acspDataDto.getId()));
@@ -98,7 +106,7 @@ class AcspControllerMvcTest {
         ResultActions result = mockMvc.perform(post(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(AuthTestUtil.getOauth2AuthorisationHeaders())
-                .content(objectMapper.writeValueAsString(acspDataDto)));
+                .content(jsonMapper.writeValueAsString(acspDataDto)));
 
         result.andExpect(status().isBadRequest());
     }
@@ -111,7 +119,7 @@ class AcspControllerMvcTest {
         ResultActions result = mockMvc.perform(put(RESOURCE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(AuthTestUtil.getOauth2AuthorisationHeaders())
-                .content(objectMapper.writeValueAsString(acspDataDto)));
+                .content(jsonMapper.writeValueAsString(acspDataDto)));
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.id").value(acspDataDto.getId()));
@@ -126,7 +134,7 @@ class AcspControllerMvcTest {
         ResultActions result = mockMvc.perform(put(RESOURCE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(AuthTestUtil.getOauth2AuthorisationHeaders())
-                .content(objectMapper.writeValueAsString(acspDataDto)));
+                .content(jsonMapper.writeValueAsString(acspDataDto)));
 
         result.andExpect(status().isBadRequest());
     }
@@ -196,5 +204,75 @@ class AcspControllerMvcTest {
         result.andExpect(status().isNoContent());
         verify(acspService, times(1))
                 .deleteAcspApplicationAndTransaction(PASSTHROUGH_HEADER, ACSP_APPLICATION_ID, TRANSACTION_ID);
+    }
+
+    private boolean isLikelyJsonResponseConverter(HttpMessageConverter<?> converter) {
+        return converter.canWrite(AcspDataDto.class, MediaType.APPLICATION_JSON);
+    }
+
+    private String describeConverters(List<HttpMessageConverter<?>> converters) {
+        return converters.stream()
+                .map(c -> c.getClass().getName())
+                .collect(Collectors.joining(", "));
+    }
+
+    private String describeJsonWritableConverters(List<HttpMessageConverter<?>> converters) {
+        return converters.stream()
+                .filter(c -> c.canWrite(AcspDataDto.class, MediaType.APPLICATION_JSON))
+                .map(c -> c.getClass().getName())
+                .collect(Collectors.joining(", "));
+    }
+
+    private Object resolveMapperFromConverter(HttpMessageConverter<?> converter) {
+        try {
+            Method getMapper = converter.getClass().getMethod("getMapper");
+            return getMapper.invoke(converter);
+        } catch (ReflectiveOperationException ignored) {
+            // Fall through to alternate APIs.
+        }
+
+        try {
+            Method getJsonMapper = converter.getClass().getMethod("getJsonMapper");
+            return getJsonMapper.invoke(converter);
+        } catch (ReflectiveOperationException ignored) {
+            // Fall through to legacy API.
+        }
+
+        try {
+            Method getObjectMapper = converter.getClass().getMethod("getObjectMapper");
+            return getObjectMapper.invoke(converter);
+        } catch (ReflectiveOperationException ex) {
+            return null;
+        }
+    }
+
+    private String describePublicMethodNames(HttpMessageConverter<?> converter) {
+        return java.util.Arrays.stream(converter.getClass().getMethods())
+                .map(Method::getName)
+                .distinct()
+                .sorted()
+                .collect(Collectors.joining(", "));
+    }
+
+    private String extractNamingStrategy(Object objectMapper) {
+        try {
+            Method getSerializationConfig = objectMapper.getClass().getMethod("getSerializationConfig");
+            Object serializationConfig = getSerializationConfig.invoke(objectMapper);
+
+            Method getPropertyNamingStrategy = serializationConfig.getClass().getMethod("getPropertyNamingStrategy");
+            Object strategy = getPropertyNamingStrategy.invoke(serializationConfig);
+            return strategy == null ? "<null>" : strategy.getClass().getName();
+        } catch (ReflectiveOperationException ex) {
+            return "<unavailable: " + ex.getClass().getSimpleName() + ">";
+        }
+    }
+
+    private String serializeWithMapper(Object objectMapper, Object value) {
+        try {
+            Method writeValueAsString = objectMapper.getClass().getMethod("writeValueAsString", Object.class);
+            return String.valueOf(writeValueAsString.invoke(objectMapper, value));
+        } catch (ReflectiveOperationException ex) {
+            return "<unavailable: " + ex.getClass().getSimpleName() + ">";
+        }
     }
 }

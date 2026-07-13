@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.acsp.factory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -22,17 +22,17 @@ class SendEmailFactoryTest {
     private String appId;
     private static final String MESSAGE_TYPE = "verification";
     @Mock
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     private SendEmailFactory sendEmailFactory;
 
     @BeforeEach
     void setUp() {
-        sendEmailFactory = new SendEmailFactory(appId, objectMapper);
+        sendEmailFactory = new SendEmailFactory(appId, jsonMapper);
     }
 
     @Test
-    void testCreateSendEmail() throws JsonProcessingException {
+    void testCreateSendEmail() throws JacksonException {
         // Arrange
         var emailData = new ClientVerificationEmailData();
         emailData.setClientName("Client Name");
@@ -40,7 +40,7 @@ class SendEmailFactoryTest {
         emailData.setClientEmailAddress("client@example.com");
         emailData.setTo("recipient@example.com");
         String jsonData = "{\"to\":\"recipient@example.com\"}";
-        when(objectMapper.writeValueAsString(emailData)).thenReturn(jsonData);
+        when(jsonMapper.writeValueAsString(emailData)).thenReturn(jsonData);
 
         // Act
         SendEmail sendEmail = sendEmailFactory.createSendEmail(emailData, MESSAGE_TYPE);
