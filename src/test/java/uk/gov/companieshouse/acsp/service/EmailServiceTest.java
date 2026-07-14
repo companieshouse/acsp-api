@@ -105,7 +105,7 @@ class EmailServiceTest {
     }
 
     @Test
-    void sendClientVerificationEmailJsonProcessingException() throws JacksonException {
+    void sendClientVerificationEmailJacksonException() throws JacksonException {
         // Arrange
         String to = emailData.getTo();
         String clientName = emailData.getClientName();

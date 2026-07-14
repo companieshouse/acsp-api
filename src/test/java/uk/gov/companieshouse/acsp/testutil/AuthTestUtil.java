@@ -42,6 +42,8 @@ public class AuthTestUtil {
     }
 
     public static HttpHeaders getOauth2AuthorisationHeaders() {
-       return AuthTestUtil.oauth2AuthorisationHeaders;
+        HttpHeaders headers = new HttpHeaders();
+        headers.putAll(AuthTestUtil.oauth2AuthorisationHeaders);
+        return headers;
     }
 }

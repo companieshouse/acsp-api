@@ -52,7 +52,7 @@ public class EmailService {
         try {
             sendEmail(emailData, messageType);
         } catch (JacksonException e) {
-            LOGGER.error(format("Failed to process JSON for referenceNumber: %s", referenceNumber));
+            LOGGER.error(format("Failed to process JSON for referenceNumber: %s", referenceNumber), e);
             throw new EmailSendException("Error encoding email data: " + e.getMessage());
         }
     }
