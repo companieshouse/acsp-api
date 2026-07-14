@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.acsp.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.JacksonException;
 import uk.gov.companieshouse.acsp.client.EmailClient;
