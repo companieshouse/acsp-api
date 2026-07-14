@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import uk.gov.companieshouse.acsp.exception.SubmissionNotLinkedToTransactionException;
 import uk.gov.companieshouse.acsp.models.dto.AcspDataDto;
 import uk.gov.companieshouse.acsp.service.AcspService;
@@ -53,9 +52,6 @@ class AcspControllerMvcTest {
 
     @Autowired
     private JsonMapper jsonMapper;
-
-    @Autowired
-    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
     @MockitoBean
     private AcspService acspService;
