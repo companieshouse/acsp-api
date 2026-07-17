@@ -15,15 +15,18 @@
 	<properties>
         <!-- Java and Spring -->
 		<java.version>21</java.version>
-		<spring.boot.version>4.1.0</spring.boot.version>
+		<spring-boot.version>4.1.0</spring-boot.version>
 
         <!-- Misc -->
         <main.class>uk.gov.companieshouse.acsp.AcspApplication</main.class>
 
         <!-- CH dependencies -->
         <ch-boms.version>0.1.13</ch-boms.version>
-        <private-api-sdk-java.version>6.0.17</private-api-sdk-java.version>
+        <private-api-sdk-java.version>7.0.11</private-api-sdk-java.version>
         <rest-service-common-library-version>2.0.9</rest-service-common-library-version>
+
+        <api-sdk-java.version>unversioned</api-sdk-java.version>
+
         <!-- external libraries not managed by Spring dependencies -->
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
@@ -51,19 +54,12 @@
         <sonar.java.binaries>${project.basedir}/target</sonar.java.binaries>
         <sonar.exclusions>**/models/**</sonar.exclusions>
 
-        <!-- Override properties -->
-		<tomcat-embed.version>10.1.55</tomcat-embed.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring.boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+
+            <!-- Import the CH Dependency BOM to manage versions of common dependencies -->
             <dependency>
                 <groupId>uk.gov.companieshouse</groupId>
                 <artifactId>ch-dependency-bom</artifactId>
@@ -71,10 +67,19 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>uk.gov.companieshouse</groupId>
                 <artifactId>ch-test-bom</artifactId>
                 <version>${ch-boms.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -90,6 +95,11 @@
 				<artifactId>commons-lang3</artifactId>
         		<version>${commons-lang3.version}</version>
       		</dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
 
             <!--
              CH Libs
@@ -108,24 +118,69 @@
                 <artifactId>rest-service-common-library</artifactId>
                 <version>${rest-service-common-library-version}</version>
             </dependency>
+            <dependency>
+                <groupId>uk.gov.companieshouse</groupId>
+                <artifactId>api-sdk-java</artifactId>
+                <version>${api-sdk-java.version}</version>
+            </dependency>
 
 
-            <!-- CVE-2026-41293, CVE-2026-41284, CVE-2026-43513, CVE-2026-43512, CVE-2026-42498, CVE-2026-43515 -->
-			<!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-core</artifactId>
-				<version>${tomcat-embed.version}</version>
-				<scope>compile</scope>
-			</dependency>-->
-			<!-- CVE-2026-41293, CVE-2026-41284, CVE-2026-43513, CVE-2026-43512, CVE-2026-42498, CVE-2026-43515 -->
-			<!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-websocket</artifactId>
-				<version>${tomcat-embed.version}</version>
-				<scope>compile</scope>
-			</dependency>-->
+            <!--
+                 Temporary version overrides (mainly for security reasons)
+                 Hard code the version number here
+                 Also include CVE description like CVE-2025-48924
+             -->
+
+            <!-- CVE-2026-49844 -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>2.25.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-to-slf4j</artifactId>
+                <version>2.25.5</version>
+            </dependency>
+
+            <!-- CVE-2026-55276, CVE-2026-53434, CVE-2026-59083, CVE-2026-59084, CVE-2026-53404, CVE-2026-55956, CVE-2026-55955, CVE-2026-50229 -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>11.0.24</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>11.0.24</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>11.0.24</version>
+            </dependency>
+
+            <!-- Apache HttpComponents Core CVE-2026-54399(7.5), CVE-2026-54428(7.5) overrides -->
+
+
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.4.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>5.4.3</version>
+            </dependency>
+
+            <!-- Apache HttpComponents Core 5.4.3 to avoid CVE-2026-54399(7.5), CVE-2026-54428(7.5) -->
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>5.4.3</version>
+            </dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -150,20 +205,32 @@
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>uk.gov.companieshouse</groupId>
-			<artifactId>api-sdk-manager-java-library</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.servlet</groupId>
-					<artifactId>servlet-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>api-sdk-java</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>uk.gov.companieshouse</groupId>
 			<artifactId>private-api-sdk-java</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>sdk-manager-java</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>api-sdk-manager-java-library</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>uk.gov.companieshouse</groupId>
 			<artifactId>structured-logging</artifactId>
@@ -185,19 +252,21 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>${commons-io.version}</version>
 		</dependency>
-		<!--<dependency>
-			<groupId>org.eclipse.jetty.http2</groupId>
-			<artifactId>jetty-http2-server</artifactId>
-			<version>${jetty-http2-server.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty.ee10</groupId>
-			<artifactId>jetty-ee10-webapp</artifactId>
-			<version>${jetty-ee10-webapp.version}</version>
-		</dependency> -->
-		<!-- Test dependencies -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5-h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+        </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
@@ -211,7 +280,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.boot.version}</version>
+				<version>${spring-boot.version}</version>
 				<configuration>
 					<mainClass>${main.class}</mainClass>
 				</configuration>
