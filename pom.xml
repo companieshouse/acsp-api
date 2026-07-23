@@ -21,11 +21,9 @@
         <main.class>uk.gov.companieshouse.acsp.AcspApplication</main.class>
 
         <!-- CH dependencies -->
-        <ch-boms.version>0.1.13</ch-boms.version>
-        <private-api-sdk-java.version>7.0.11</private-api-sdk-java.version>
+        <ch-boms.version>0.1.15</ch-boms.version>
+        <private-api-sdk-java.version>7.1.3</private-api-sdk-java.version>
         <rest-service-common-library-version>2.0.9</rest-service-common-library-version>
-
-        <api-sdk-java.version>unversioned</api-sdk-java.version>
 
         <!-- external libraries not managed by Spring dependencies -->
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
@@ -105,25 +103,18 @@
              CH Libs
              -->
 
-            <!-- need version to match specification in SDK -->
             <dependency>
                 <groupId>uk.gov.companieshouse</groupId>
                 <artifactId>private-api-sdk-java</artifactId>
                 <version>${private-api-sdk-java.version}</version>
             </dependency>
 
-            <!-- some breaking change in tests between 2.0.9 and 2.0.14 -->
+            <!-- some breaking change in tests between 2.0.9 and 2.0.14
             <dependency>
                 <groupId>uk.gov.companieshouse</groupId>
                 <artifactId>rest-service-common-library</artifactId>
                 <version>${rest-service-common-library-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>uk.gov.companieshouse</groupId>
-                <artifactId>api-sdk-java</artifactId>
-                <version>${api-sdk-java.version}</version>
-            </dependency>
-
+            </dependency>-->
 
             <!--
                  Temporary version overrides (mainly for security reasons)
@@ -181,6 +172,14 @@
                 <artifactId>httpcore5-h2</artifactId>
                 <version>5.4.3</version>
             </dependency>
+
+            <!-- temp for CH Boms api lib PATCH issue (can be removed once this version or higher is in private-api-sdk-java -->
+            <dependency>
+                <groupId>uk.gov.companieshouse</groupId>
+                <artifactId>api-sdk-java</artifactId>
+                <version>7.2.1</version>
+            </dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -227,10 +226,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>uk.gov.companieshouse</groupId>
-            <artifactId>api-sdk-manager-java-library</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>uk.gov.companieshouse</groupId>
 			<artifactId>structured-logging</artifactId>
@@ -245,6 +240,10 @@
 			<groupId>uk.gov.companieshouse</groupId>
 			<artifactId>api-security-java</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>api-sdk-manager-java-library</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>uk.gov.companieshouse</groupId>
 			<artifactId>rest-service-common-library</artifactId>
