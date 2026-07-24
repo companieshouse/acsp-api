@@ -1,8 +1,7 @@
 package uk.gov.companieshouse.acsp.factory;
 
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.acsp.models.email.EmailData;
@@ -22,16 +21,16 @@ public class SendEmailFactory {
 
     private final String appId;
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
-    SendEmailFactory(@Value("${email.appId}") String appId, ObjectMapper objectMapper) {
+    SendEmailFactory(@Value("${email.appId}") String appId, JsonMapper jsonMapper) {
         this.appId = appId;
-        this.objectMapper = objectMapper;
+        this.jsonMapper = jsonMapper;
     }
 
-    public SendEmail createSendEmail(EmailData emailData, String messageType) throws JsonProcessingException {
+    public SendEmail createSendEmail(EmailData emailData, String messageType) throws JacksonException {
         var sendEmail = new SendEmail();
-        sendEmail.setJsonData(this.objectMapper.writeValueAsString(emailData));
+        sendEmail.setJsonData(this.jsonMapper.writeValueAsString(emailData));
         sendEmail.setEmailAddress(emailData.getTo());
         sendEmail.setAppId(appId);
         sendEmail.setMessageId(UUID.randomUUID().toString());

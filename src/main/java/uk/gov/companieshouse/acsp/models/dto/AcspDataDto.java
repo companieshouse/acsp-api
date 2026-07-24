@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.acsp.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 import uk.gov.companieshouse.acsp.models.enums.AcspType;
 import uk.gov.companieshouse.acsp.models.enums.BusinessSector;
 import uk.gov.companieshouse.acsp.models.enums.RoleType;

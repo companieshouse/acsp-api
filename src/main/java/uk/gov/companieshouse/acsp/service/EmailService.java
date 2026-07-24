@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.acsp.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.JacksonException;
 import uk.gov.companieshouse.acsp.client.EmailClient;
 import uk.gov.companieshouse.acsp.exception.EmailSendException;
 import uk.gov.companieshouse.acsp.factory.SendEmailFactory;
@@ -51,13 +51,13 @@ public class EmailService {
 
         try {
             sendEmail(emailData, messageType);
-        } catch (JsonProcessingException e) {
-            LOGGER.error(format("Failed to process JSON for referenceNumber: %s", referenceNumber));
+        } catch (JacksonException e) {
+            LOGGER.error(format("Failed to process JSON for referenceNumber: %s", referenceNumber), e);
             throw new EmailSendException("Error encoding email data: " + e.getMessage());
         }
     }
 
-    private void sendEmail(final EmailData emailData, final String messageType) throws EmailSendException, JsonProcessingException {
+    private void sendEmail(final EmailData emailData, final String messageType) throws EmailSendException, JacksonException {
         var sendEmail = sendEmailFactory.createSendEmail(emailData, messageType);
         emailClient.sendEmail(sendEmail);
     }
