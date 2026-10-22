@@ -15,13 +15,13 @@
 	<properties>
         <!-- Java and Spring -->
 		<java.version>21</java.version>
-		<spring-boot.version>4.1.0</spring-boot.version>
+		<spring-boot.version>4.1.1</spring-boot.version>
 
         <!-- Misc -->
         <main.class>uk.gov.companieshouse.acsp.AcspApplication</main.class>
 
         <!-- CH dependencies -->
-        <ch-boms.version>0.1.15</ch-boms.version>
+        <ch-boms.version>0.1.33</ch-boms.version>
         <private-api-sdk-java.version>7.1.3</private-api-sdk-java.version>
         <rest-service-common-library-version>2.0.9</rest-service-common-library-version>
 
@@ -125,23 +125,6 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-to-slf4j</artifactId>
                 <version>2.25.5</version>
-            </dependency>
-
-            <!-- CVE-2026-55276, CVE-2026-53434, CVE-2026-59083, CVE-2026-59084, CVE-2026-53404, CVE-2026-55956, CVE-2026-55955, CVE-2026-50229 -->
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>11.0.24</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-websocket</artifactId>
-                <version>11.0.24</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-el</artifactId>
-                <version>11.0.24</version>
             </dependency>
 
             <!-- temp for CH Boms api lib PATCH issue (can be removed once this version or higher is in private-api-sdk-java -->
