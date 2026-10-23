@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>uk.gov.companieshouse</groupId>
 		<artifactId>companies-house-parent</artifactId>
-		<version>2.1.14</version>
+		<version>3.0.0</version>
 		<relativePath/>
 	</parent>
 	<artifactId>acsp-api</artifactId>
@@ -40,8 +40,6 @@
 
         <!-- sonar config -->
         <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
-        <sonar.login></sonar.login>
-        <sonar.password></sonar.password>
         <sonar.projectName>acsp-api</sonar.projectName>
         <sonar.projectKey>uk.gov.companieshouse:acsp-api</sonar.projectKey>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
