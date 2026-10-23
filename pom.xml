@@ -38,18 +38,6 @@
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
 
-        <!-- sonar config -->
-        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
-        <sonar.projectName>acsp-api</sonar.projectName>
-        <sonar.projectKey>uk.gov.companieshouse:acsp-api</sonar.projectKey>
-        <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml,
-            ${project.basedir}/target/site/jacoco-it/jacoco.xml
-        </sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.jacoco.reports>${project.basedir}/target/site</sonar.jacoco.reports>
-        <sonar.java.binaries>${project.basedir}/target</sonar.java.binaries>
-        <sonar.exclusions>**/models/**</sonar.exclusions>
-
 	</properties>
 
 	<dependencyManagement>
