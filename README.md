@@ -120,5 +120,7 @@ For all endpoints, the following headers are required:
 - Use Postman to test API endpoints
 
 ### Build Command
+
 To build this repo from the pom.xml file, run the following command:
 - Build: `mvn clean build`
+
